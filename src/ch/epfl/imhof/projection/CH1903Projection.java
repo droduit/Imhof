@@ -10,6 +10,7 @@ import ch.epfl.imhof.geometry.Point;
  * modifée pour se conformer aux coordonnées en CH1903.
  *
  * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
  */
 public final class CH1903Projection implements Projection {
     public static Point Project (PointGeo pg) {

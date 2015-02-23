@@ -11,6 +11,7 @@ import ch.epfl.imhof.PointGeo;
  * est à éviter.
  *
  * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
  */
 public final class EquirectangularProjection implements Projection {
     public static Point Project (PointGeo pg) {
