@@ -1,9 +1,8 @@
 package ch.epfl.imhof;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.w3c.dom.Attr;
 
 /**
  * Représente un ensemble d'attributs et la valeur qui leur est associée.
@@ -26,7 +25,8 @@ public final class Attributes {
     } 
     
     public static final class Builder {
-        private Map<String, String> a;
+        private Map<String, String> a = new HashMap<String, String>();
+        
         /**
          * Ajoute l'association (clef, valeur) donnée à l'ensemble d'attributs en cours de construction.
          * Si un attribut de même nom avait déjà été ajouté précédemment à l'ensemble, sa valeur est remplacée par celle donnée.
