@@ -8,6 +8,7 @@ import java.util.Collections;
  * Une forme composée d'un contour et de trous.
  *
  * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
  */
 public final class Polygon {
     /** Le contour du Polygon */

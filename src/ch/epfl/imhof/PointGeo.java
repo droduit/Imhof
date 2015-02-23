@@ -5,6 +5,7 @@ package ch.epfl.imhof;
  * sphériques.
  *
  * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
  */
 public final class PointGeo {
     /** La longitude du point en radians */

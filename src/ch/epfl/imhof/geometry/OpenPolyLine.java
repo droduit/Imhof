@@ -8,6 +8,7 @@ import java.util.List;
  * la ligne ne dessine pas une forme fermée.
  *
  * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
  */
 public final class OpenPolyLine extends PolyLine {
     public OpenPolyLine (List<Point> points) {

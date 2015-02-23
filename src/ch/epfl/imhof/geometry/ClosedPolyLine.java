@@ -8,6 +8,7 @@ import java.util.List;
  * dessine alors une forme fermée.
  *
  * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
  */
 public final class ClosedPolyLine extends PolyLine {
     public ClosedPolyLine (List<Point> points) {

@@ -5,6 +5,7 @@ package ch.epfl.imhof.geometry;
  * cartésiennes.
  * 
  * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
  */
 public final class Point {
     /** L'abscisse du point */

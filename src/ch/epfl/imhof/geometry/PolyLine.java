@@ -8,6 +8,7 @@ import java.util.Collections;
  * Une ligne immuable, formée par une liste de points.
  *
  * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
  */
 public abstract class PolyLine {
     /**
@@ -17,7 +18,7 @@ public abstract class PolyLine {
      */
     public static class Builder {
         /** La liste des points de la future PolyLine. */
-        private ArrayList<Point> points = new ArrayList<Point>();
+        private List<Point> points = new ArrayList<Point>();
 
         /**
          * Ajoute un point à la liste des points de la future PolyLine.
