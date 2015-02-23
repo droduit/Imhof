@@ -10,7 +10,7 @@ import java.util.Set;
  * Cette classe n'est donc rien d'autre qu'une table associative immuable
  * dont les clefs et les valeurs sont des chaînes de caractères
  * @author Thierry Treyer (235116)
- * @author Dominique Roduit ()
+ * @author Dominique Roduit (234868)
  *
  */
 public final class Attributes {
@@ -89,9 +89,14 @@ public final class Attributes {
     * @return
     * @throws
     */
-    public int get(String key, int defaultValue) throws NumberFormatException {
+    public int get(String key, int defaultValue) {
         // TODO gestion exception : (si cette valeur n'est pas un entier valide -> defaultValue)
-        return contains(key) ? Integer.parseInt(get(key)) : defaultValue;
+        try {
+            int intVal = Integer.parseInt(get(key));
+            return contains(key) ? Integer.parseInt(get(key)) : defaultValue;
+        } catch(NumberFormatException e) {
+            return defaultValue;
+        }
     }
    
     /**
@@ -100,8 +105,11 @@ public final class Attributes {
      * @return
      */
     public Attributes keepOnlyKeys(Set<String> keysToKeep) {
-       // TODO
-        return null;
+        Map<String, String> toKeep = new HashMap<>();
+        for(String key : keysToKeep) {
+            toKeep.put(key, get(key));
+        }
+        return new Attributes(toKeep);
     }
    
 
