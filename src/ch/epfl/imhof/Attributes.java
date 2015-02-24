@@ -28,7 +28,7 @@ public final class Attributes {
          * @param value     La valeur de l'association
          */
         public void put (String key, String value) {
-            attr.put(key, value);
+            this.attr.put(key, value);
         }
 
         /**
@@ -37,7 +37,7 @@ public final class Attributes {
          * @return L'ensemble d'attributs associé
          */
         public Attributes build () {
-            return new Attributes(attr);
+            return new Attributes(this.attr);
         }
     }
 
@@ -60,7 +60,7 @@ public final class Attributes {
      * @return Vrai, si l'ensemble des attributs est vide
      */
     public boolean isEmpty () {
-        return attr.isEmpty();
+        return this.attr.isEmpty();
     }
     
     /**
@@ -71,7 +71,7 @@ public final class Attributes {
      * @return Vrai, si l'ensemble d'attributs contient la clef
      */
     public boolean contains (String key) {
-        return attr.containsKey(key);
+        return this.attr.containsKey(key);
     }
    
     /**
@@ -82,7 +82,7 @@ public final class Attributes {
      * @return La valeur associée à la clef ou null si la clef n'existe pas
      */
     public String get (String key) {
-        return attr.get(key);
+        return this.attr.get(key);
     }
    
     /**
@@ -95,7 +95,7 @@ public final class Attributes {
      * @return La valeur associée à la clef ou la valeur par défaut si la clef est absente
      */
     public String get (String key, String defaultValue) {
-        return attr.getOrDefault(key, defaultValue);
+        return this.attr.getOrDefault(key, defaultValue);
     }
    
     /**
@@ -109,9 +109,8 @@ public final class Attributes {
      * @return La valeur associée à la clef ou la valeur par défaut si la clef est absente
      */
     public int get (String key, int defaultValue) {
-        // TODO gestion exception : (si cette valeur n'est pas un entier valide -> defaultValue)
         try {
-            return contains(key) ? Integer.parseInt(get(key)) : defaultValue;
+            return Integer.parseInt(this.attr.get(key));
         } catch(NumberFormatException e) {
             return defaultValue;
         }
@@ -125,12 +124,12 @@ public final class Attributes {
      * @return Un nouvel ensemble Attributes contenant les clef demandées
      */
     public Attributes keepOnlyKeys (Set<String> keysToKeep) {
-        Map<String, String> toKeep = new HashMap<>();
+        Builder attrBuilder = new Builder();
 
-        for(String key : keysToKeep) {
-            toKeep.put(key, get(key));
+        for (String key : keysToKeep) {
+            attrBuilder.put(key, this.attr.get(key));
         }
 
-        return new Attributes(toKeep);
+        return attrBuilder.build();
     }
 }
