@@ -58,6 +58,15 @@ public final class Attributes {
     } 
     
     /**
+     * Retourne le nombre d'éléments de l'ensembles d'attributs.
+     *
+     * @return Le nombre de pair clef/valeur
+     */
+    public int size () {
+        return this.attr.keySet().size();
+    }
+
+    /**
      * Retourne vrai si et seulement si l'ensemble d'attributs est vide.
      *
      * @return Vrai, si l'ensemble des attributs est vide
@@ -130,7 +139,8 @@ public final class Attributes {
         Builder attrBuilder = new Builder();
 
         for (String key : keysToKeep) {
-            attrBuilder.put(key, this.attr.get(key));
+            if (this.contains(key))
+                attrBuilder.put(key, this.attr.get(key));
         }
 
         return attrBuilder.build();
