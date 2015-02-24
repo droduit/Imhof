@@ -139,8 +139,7 @@ public final class Attributes {
         Builder attrBuilder = new Builder();
 
         for (String key : keysToKeep) {
-            if (this.contains(key))
-                attrBuilder.put(key, this.attr.get(key));
+            attrBuilder.put(key, this.attr.get(key));
         }
 
         return attrBuilder.build();
