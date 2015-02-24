@@ -1,5 +1,6 @@
 package ch.epfl.imhof;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -9,90 +10,107 @@ import java.util.Set;
  * Les attributs et leur valeur sont des chaînes de caractères.
  * Cette classe n'est donc rien d'autre qu'une table associative immuable
  * dont les clefs et les valeurs sont des chaînes de caractères
+ *
  * @author Thierry Treyer (235116)
  * @author Dominique Roduit (234868)
- *
  */
 public final class Attributes {
-    private final Map<String, String> attr;
-    
-    /**
-     * Construit un ensemble d'attributs avec les paires clef/valeur présentes dans la table associative donnée.
-     * @param attributes
-     */
-    public Attributes(Map<String, String> attributes) {
-        this.attr = attributes;
-    } 
-    
     public static final class Builder {
-        private Map<String, String> a = new HashMap<String, String>();
+        /** Le hash modifiable servant à la construction */
+        private Map<String, String> attr = new HashMap<String, String>();
         
         /**
          * Ajoute l'association (clef, valeur) donnée à l'ensemble d'attributs en cours de construction.
-         * Si un attribut de même nom avait déjà été ajouté précédemment à l'ensemble, sa valeur est remplacée par celle donnée.
-         * @param key 
-         * @param value
+         * Si un attribut de même nom avait déjà été ajouté précédemment 
+         * à l'ensemble, sa valeur est remplacée par celle donnée.
+         *
+         * @param key       La clef de l'association
+         * @param value     La valeur de l'association
          */
-        public void put(String key, String value) {
-            a.put(key, value);
+        public void put (String key, String value) {
+            attr.put(key, value);
         }
+
         /**
          * Construit un ensemble d'attributs contenant les associations clef/valeur ajoutées jusqu'à présent
-         * @return
+         *
+         * @return L'ensemble d'attributs associé
          */
-        public Attributes build() {
-            return new Attributes(a);
+        public Attributes build () {
+            return new Attributes(attr);
         }
     }
+
+    /** L'ensemble des attributs */
+    private final Map<String, String> attr;
+    
+    /**
+     * Construit un ensemble immuable d'attributs avec les paires clef/valeur
+     * présentes dans la table associative donnée.
+     *
+     * @param attributes    L'ensemble des attributs
+     */
+    public Attributes (Map<String, String> attributes) {
+        this.attr = Collections.unmodifiableMap(new HashMap<String, String>(attributes));
+    } 
     
     /**
      * Retourne vrai si et seulement si l'ensemble d'attributs est vide.
-     * @return
+     *
+     * @return Vrai, si l'ensemble des attributs est vide
      */
-    public boolean isEmpty() {
-        return (attr.isEmpty());
+    public boolean isEmpty () {
+        return attr.isEmpty();
     }
     
     /**
      * Retourne vrai si l'ensemble d'attributs contient la clef donnée.
-     * @param key
-     * @return
+     *
+     * @param key       La clef dont on veut contrôler la présence
+     *
+     * @return Vrai, si l'ensemble d'attributs contient la clef
      */
-    public boolean contains(String key) {
+    public boolean contains (String key) {
         return attr.containsKey(key);
     }
    
     /**
      * Retourne la valeur associée à la clef donnée, ou null si la clef n'existe pas.
-     * @param key
-     * @return
+     *
+     * @param key       La clef dont on veut récupérer la valeur
+     *
+     * @return La valeur associée à la clef ou null si la clef n'existe pas
      */
-    public String get(String key){
-        return contains(key) ? attr.get(key) : null;
+    public String get (String key) {
+        return attr.get(key);
     }
    
     /**
-     * Retourne la valeur associée à la clef donnée, ou la valeur par défaut donnée si aucune valeur ne lui est associée.
-     * @param key
-     * @param defaultValue
-     * @return
+     * Retourne la valeur associée à la clef donnée, ou la valeur par 
+     * défaut donnée si aucune valeur ne lui est associée.
+     *
+     * @param key               La clef dont on veut récupérer la valeur
+     * @param defaultValue      La valeur à retourner si la clef n'existe pas
+     *
+     * @return La valeur associée à la clef ou la valeur par défaut si la clef est absente
      */
-    public String get(String key, String defaultValue) {
-        return contains(key) ? get(key) : defaultValue;
+    public String get (String key, String defaultValue) {
+        return attr.getOrDefault(key, defaultValue);
     }
    
     /**
-    * Retourne l'entier associé à la clef donnée, ou la valeur par défaut donnée si aucune valeur ne lui est associée,
-    * ou si cette valeur n'est pas un entier valide.
-    * @param key
-    * @param defaultValue
-    * @return
-    * @throws
-    */
-    public int get(String key, int defaultValue) {
+     * Retourne l'entier associé à la clef donnée, ou la valeur par défaut 
+     * donnée si aucune valeur ne lui est associée,
+     * ou si cette valeur n'est pas un entier valide.
+     *
+     * @param key               La clef dont on veut récupérer la valeur
+     * @param defaultValue      La valeur à retourner si la clef n'existe pas
+     *
+     * @return La valeur associée à la clef ou la valeur par défaut si la clef est absente
+     */
+    public int get (String key, int defaultValue) {
         // TODO gestion exception : (si cette valeur n'est pas un entier valide -> defaultValue)
         try {
-            int intVal = Integer.parseInt(get(key));
             return contains(key) ? Integer.parseInt(get(key)) : defaultValue;
         } catch(NumberFormatException e) {
             return defaultValue;
@@ -101,16 +119,18 @@ public final class Attributes {
    
     /**
      * Retourne une version filtrée des attributs ne contenant que ceux dont le nom figure dans l'ensemble passé.
-     * @param keysToKeep
-     * @return
+     *
+     * @param keysToKeep        Un set des clefs que l'on veut récuperer
+     *
+     * @return Un nouvel ensemble Attributes contenant les clef demandées
      */
-    public Attributes keepOnlyKeys(Set<String> keysToKeep) {
+    public Attributes keepOnlyKeys (Set<String> keysToKeep) {
         Map<String, String> toKeep = new HashMap<>();
+
         for(String key : keysToKeep) {
             toKeep.put(key, get(key));
         }
+
         return new Attributes(toKeep);
     }
-   
-
 }
