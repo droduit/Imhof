@@ -27,8 +27,10 @@ public final class Attributes {
          * @param key       La clef de l'association
          * @param value     La valeur de l'association
          */
-        public void put (String key, String value) {
+        public Builder put (String key, String value) {
             this.attr.put(key, value);
+
+            return this;
         }
 
         /**
