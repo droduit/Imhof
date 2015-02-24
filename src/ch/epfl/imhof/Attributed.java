@@ -1,8 +1,5 @@
 package ch.epfl.imhof;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Représente une entité de type T dotée d'attributs.
@@ -31,7 +28,7 @@ public final class Attributed<T> {
      */
     public Attributed(T value, Attributes attributes) {
         this.value = value;
-        this.attributes = (attributes!=null) ? attributes : new Attributes(new HashMap<String, String>());
+        this.attributes = attributes;
     }
 
     /**
@@ -115,5 +112,4 @@ public final class Attributed<T> {
     public int attributeValue(String attributeName, int defaultValue) {
         return attributes.get(attributeName, defaultValue);
     }
-
 }
