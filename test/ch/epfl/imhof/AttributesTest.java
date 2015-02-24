@@ -20,7 +20,7 @@ public class AttributesTest {
 
     @Before
     public void setUp () {
-        HashMap<String, String> hs = new HashMap<String, String>();
+        Map<String, String> hs = new HashMap<String, String>();
 
         this.emptyAttrs = Collections.unmodifiableMap(new HashMap<String, String>(hs));
 
