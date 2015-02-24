@@ -45,9 +45,13 @@ public class AttributesTest {
         this.noInterAttrs = Collections.unmodifiableMap(new HashMap<String, String>(hs));
     }
 
-    public void assertAttributesEquals (Map<String, String> expected, Attributes toTest) {
+    private void assertAttributesEquals (Map<String, String> expected, Attributes toTest) {
         assertEquals(expected.keySet().size(), toTest.size());
 
+        assertAttributesPresent(expected, toTest);
+    }
+
+    private void assertAttributesPresent (Map<String, String> expected, Attributes toTest) {
         for (String key : expected.keySet()) {
             assertEquals(expected.get(key), toTest.get(key));
         }
@@ -124,12 +128,15 @@ public class AttributesTest {
         Attributes oas = as.keepOnlyKeys(this.overInterAttrs.keySet());
         
         assertNull(oas.get(UNKNOWN_KEY));
-        assertAttributesEquals(this.attrs, oas);
+        assertTrue(oas.contains(UNKNOWN_KEY));
+        assertAttributesPresent(this.attrs, oas);
 
         Attributes eas = as.keepOnlyKeys(this.noInterAttrs.keySet());
+
         assertNull(eas.get(UNKNOWN_KEY));
+        assertTrue(oas.contains(UNKNOWN_KEY));
         for (String key : this.attrs.keySet()) {
-            assertNull(eas.get(key));
+            assertFalse(eas.contains(key));
         }
     }
 }
