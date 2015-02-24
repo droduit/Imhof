@@ -15,7 +15,8 @@ import java.util.Set;
  * @author Dominique Roduit (234868)
  */
 public final class Attributes {
-    public static final class Builder {
+    /** Le builder associé à la classe Attributes */
+    public final static class Builder {
         /** Le hash modifiable servant à la construction */
         private Map<String, String> attr = new HashMap<String, String>();
         
