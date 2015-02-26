@@ -128,13 +128,13 @@ public class AttributesTest {
         Attributes oas = as.keepOnlyKeys(this.overInterAttrs.keySet());
         
         assertNull(oas.get(UNKNOWN_KEY));
-        assertTrue(oas.contains(UNKNOWN_KEY));
+        assertFalse(oas.contains(UNKNOWN_KEY));
         assertAttributesPresent(this.attrs, oas);
 
         Attributes eas = as.keepOnlyKeys(this.noInterAttrs.keySet());
 
         assertNull(eas.get(UNKNOWN_KEY));
-        assertTrue(oas.contains(UNKNOWN_KEY));
+        assertFalse(oas.contains(UNKNOWN_KEY));
         for (String key : this.attrs.keySet()) {
             assertFalse(eas.contains(key));
         }
