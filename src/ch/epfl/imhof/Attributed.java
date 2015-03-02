@@ -25,6 +25,8 @@ public final class Attributed<T> {
      *            Objet auquel on attache les attributs
      * @param attributes
      *            Attributs attachés à l'objet value
+     * @throws NullPointerException
+     *            Si un des deux ou les deux arguments du constructeur sont null                       
      */
     public Attributed(T value, Attributes attributes) {
         if(value==null || attributes==null) 
