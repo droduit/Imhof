@@ -5,6 +5,7 @@ package ch.epfl.imhof;
  * Représente une entité de type T dotée d'attributs.
  * 
  * @author Dominique Roduit (234868)
+ * @author Thierry Treyer (235116)
  *
  * @param <T>
  *            Type de l'objet value auquel on va attacher les attributs passés
