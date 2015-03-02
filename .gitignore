@@ -36,3 +36,6 @@ local.properties
 
 # Archives
 *.zip
+
+# Tag files
+tags
