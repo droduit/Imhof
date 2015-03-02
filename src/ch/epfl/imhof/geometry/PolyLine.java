@@ -2,6 +2,7 @@ package ch.epfl.imhof.geometry;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Collections;
 
 /**
@@ -18,7 +19,7 @@ public abstract class PolyLine {
      */
     public static class Builder {
         /** La liste des points de la future PolyLine. */
-        private List<Point> points = new ArrayList<Point>();
+        private List<Point> points = new LinkedList<Point>();
 
         /**
          * Ajoute un point à la liste des points de la future PolyLine.
