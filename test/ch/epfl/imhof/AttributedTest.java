@@ -38,40 +38,35 @@ public class AttributedTest {
     
     @Test
     public void testRightValues() {
-        assertEquals("Doit retourner 372", ap.attributeValue("ele", 0), 372);
+        assertEquals("Doit retourner 372", 372, ap.attributeValue("ele", 0));
         attributeValueTest();
         
         // test hasAttributes
         assertTrue(ap.hasAttribute("ele"));
         assertFalse(ap.hasAttribute("test"));
         assertFalse(ap.hasAttribute(null));
-        
-        // ----------------------------------------------------
-        // On attribue mnt rien a un objet null mais on veut tout de meme que les erreurs soient evitées.
-        ap = new Attributed<>(null, null);
-        attributeValueTest();
-        assertNotNull("Ne doit pas etre null", ap.attributes());
-        
-        // test hasAttributes
-        assertFalse(ap.hasAttribute("ele"));
     }
     
     // Test de la methode attribute value
     public void attributeValueTest() {
-        assertEquals("Doit retourner 0", ap.attributeValue("ele0", 0), 0);
+        assertEquals("Doit retourner 0", 0, ap.attributeValue("ele0", 0));
         assertNull("Doit retourner null", ap.attributeValue("ele0"));
-        assertEquals("Doit retourner non", ap.attributeValue("ele0", "non"), "non");
-        assertEquals("Doit retourner 1", ap.attributeValue("name", 1), 1);
+        assertEquals("Doit retourner non", "non", ap.attributeValue("ele0", "non"));
+        assertEquals("Doit retourner 1", 1, ap.attributeValue("name", 1));
     }
     
     @Test
     public void testAttributes() {
-        assertNull(ap.attributes().contains("foo"));
+        assertFalse(ap.attributes().contains("foo"));
         HashSet<String> hash = new HashSet<String>();
         hash.add("foo");
         hash.add("ele");
-        assertNull(ap.attributes().keepOnlyKeys(hash).contains("foo"));
-        assertEquals(ap.attributes().keepOnlyKeys(hash).contains("ele"), "372");
+        assertFalse(ap.attributes().keepOnlyKeys(hash).contains("foo"));
+        assertTrue("372", ap.attributes().keepOnlyKeys(hash).contains("ele"));
     }
     
+    @Test (expected=NullPointerException.class)
+    public void testCrash() {
+        ap = new Attributed<>(null, null);
+    }
 }

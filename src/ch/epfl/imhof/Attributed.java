@@ -27,6 +27,9 @@ public final class Attributed<T> {
      *            Attributs attachés à l'objet value
      */
     public Attributed(T value, Attributes attributes) {
+        if(value==null || attributes==null) 
+            throw new NullPointerException("Les objets passés en paramètres ne doivent pas être null");
+        
         this.value = value;
         this.attributes = attributes;
     }
