@@ -8,6 +8,8 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 public class AttributesTest {
+    private final static String KNOWN_KEY = "foo";
+    private final static String KNOWN_VALUE = "bar";
     private final static String UNKNOWN_KEY = "randomkey";
     private final static String DEFAULT_STR = "default";
     private final static int DEFAULT_INT = 42;
@@ -29,7 +31,7 @@ public class AttributesTest {
 
         this.halfInterAttrs = Collections.unmodifiableMap(new HashMap<String, String>(hs));
 
-        hs.put("foo", "bar");
+        hs.put(KNOWN_KEY, KNOWN_VALUE);
         hs.put("int", "123");
         hs.put("float", "12.3");
 
@@ -73,6 +75,24 @@ public class AttributesTest {
         assertAttributesEquals(this.attrs, new Attributes(this.attrs));
     }
 
+    @Test (expected = NullPointerException.class)
+    public void testConstructorException () {
+        new Attributes(null);
+    }
+
+    @Test
+    public void testImmutability () {
+        Map<String, String> attrs = new HashMap<String, String>(this.attrs);
+        Attributes as = new Attributes(attrs);
+
+        assertEquals(KNOWN_VALUE, as.get(KNOWN_KEY));
+
+        attrs.put(KNOWN_KEY, DEFAULT_STR);
+        assertNotEquals(DEFAULT_STR, as.get(KNOWN_KEY));
+        assertEquals(DEFAULT_STR, attrs.get(KNOWN_KEY));
+        assertEquals(KNOWN_VALUE, as.get(KNOWN_KEY));
+    }
+
     @Test
     public void testIsEmpty () {
         Attributes emptyAttrs = new Attributes(new HashMap<String, String>());
@@ -112,7 +132,7 @@ public class AttributesTest {
 
         /* Get with default int value */
         assertEquals(123, as.get("int", DEFAULT_INT));
-        assertEquals(DEFAULT_INT, as.get("foo", DEFAULT_INT));
+        assertEquals(DEFAULT_INT, as.get(KNOWN_KEY, DEFAULT_INT));
         assertEquals(DEFAULT_INT, as.get("float", DEFAULT_INT));
         assertEquals(DEFAULT_INT, as.get(UNKNOWN_KEY, DEFAULT_INT));
     }
