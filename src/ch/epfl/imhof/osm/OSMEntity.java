@@ -57,10 +57,23 @@ public abstract class OSMEntity {
         }
         
         /**
-         * Construit un batisseur
-         * @return L'objet construit
+         * Retourne l'identifiant unique de l'entité.
+         * @return Identifiant unique de l'entité
          */
-        public abstract OSMEntity build();
+        public long id() {
+            return this.id;
+        }
+        
+        /**
+         * Retourne les attributs de l'entité
+         * @return Attributs de l'entité
+         */
+        public Attributes attributes() {
+            return this.attrBuilder.build();
+        }
+        
+
+        
     }
     
     /**
