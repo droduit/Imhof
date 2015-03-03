@@ -23,8 +23,8 @@ public final class OSMNode extends OSMEntity {
 
 		/**
 		 * Construit un bâtisseur pour un nœud ayant l'identifiant et la position donnés.
-		 * @param id
-		 * @param position
+		 * @param id Identifiant unique attaché au noeud
+		 * @param position Position géographique du noeud
 		 */
 		public Builder (long id, PointGeo position) {
 			super(id);
@@ -33,9 +33,10 @@ public final class OSMNode extends OSMEntity {
 		}
 
 		/**
-		 * Construit un nœud OSM avec l'identifiant et la position passés au constructeur, et les éventuels attributs ajoutés jusqu'ici au bâtisseur.
-		 * @return
-		 * @throws IllegalStateException
+		 * Construit un nœud OSM avec l'identifiant et la position passés au constructeur,
+		 * et les éventuels attributs ajoutés jusqu'ici au bâtisseur.
+		 * @return Noeud construit sur la base des informatoins ajoutés jusqu'ici au bâtisseur
+		 * @throws IllegalStateException Lorsque le noeud est encore incomplet
 		 */
 		public OSMNode build () {
 			if (this.isIncomplete())
@@ -55,9 +56,9 @@ public final class OSMNode extends OSMEntity {
 
 	/**
 	 * Construit un nœud OSM avec l'identifiant, la position et les attributs donnés
-	 * @param id
-	 * @param position
-	 * @param attributes
+	 * @param id Identifiant unique associé au noeud
+	 * @param position Position géographique du noeud
+	 * @param attributes Attributs attachés au noeud
 	 */
 	public OSMNode (long id, PointGeo position, Attributes attributes) {
 		super(id, attributes);

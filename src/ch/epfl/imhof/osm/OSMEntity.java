@@ -1,5 +1,7 @@
 package ch.epfl.imhof.osm;
 
+import java.util.Objects;
+
 import ch.epfl.imhof.Attributes;
 
 /**
@@ -101,12 +103,8 @@ public abstract class OSMEntity {
      *             Lorsque l'objet contenant les attribut est null
      */
     public OSMEntity(long id, Attributes attributes) {
-        if (attributes == null)
-            throw new NullPointerException(
-                    "L'objet attributes ne doit pas être null");
-
+        this.attr = Objects.requireNonNull(attributes,"L'objet attributes ne doit pas être null");
         this.id = id;
-        this.attr = attributes;
     }
 
     /**

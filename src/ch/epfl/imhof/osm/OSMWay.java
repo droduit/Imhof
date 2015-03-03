@@ -5,7 +5,6 @@ import ch.epfl.imhof.Attributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Représente un chemin OSM
@@ -17,7 +16,6 @@ import java.util.Objects;
 public final class OSMWay extends OSMEntity {
 
     private final List<OSMNode> nodes;
-    private final Attributes attributes;
 
     /**
      * Sert de bâtisseur à la classe OSMWay et permet de construire un chemin en
@@ -102,8 +100,7 @@ public final class OSMWay extends OSMEntity {
                     "La liste des noeuds doit contenir au minimum 2 noeuds");
 
         this.nodes = Collections.unmodifiableList(new ArrayList<>(nodes));
-        this.attributes = Objects.requireNonNull(attributes,
-                "L'objet contenant les attributs ne doit pas etre null");
+
     }
 
     /**
