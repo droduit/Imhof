@@ -33,6 +33,10 @@ public abstract class TestUtil {
 	public static int newId () {
 		return ID++;
 	}
+	
+	public static long newLongId() {
+	    return (long)(++ID);
+	}
 
 	public static Attributes newAttributes (Map<String, String> attrs) {
 		Attributes.Builder ab = new Attributes.Builder();
