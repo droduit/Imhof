@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.epfl.imhof.Attributes;
 
 public class OSMWayTest {
 
@@ -24,6 +23,7 @@ public class OSMWayTest {
         List<OSMNode> list = newOSMNodeList();
         list.clear();
         OSMWay way = new OSMWay(newId(), list, newAttributes());
+        assertNotNull(way.attributes());
     }
     
     @Test(expected=IllegalStateException.class) 
