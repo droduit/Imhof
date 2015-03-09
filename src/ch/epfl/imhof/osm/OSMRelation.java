@@ -15,14 +15,14 @@ import ch.epfl.imhof.Attributes;
  *
  */
 public final class OSMRelation extends OSMEntity {
-    /**
-     * Enumère les trois types de membres qu'une relation peut comporter,
-     * à savoir NODE pour les nœuds, WAY pour les chemins, et RELATION pour les relations
-     * @author Thierry Treyer (235116)
-     * @author Dominique Roduit (234868)
-     *
-     */
+	/**
+	 * Représente une entité appartenant à un relation.
+	 */
 	public final static class Member {
+		/**
+		 * Enumère les trois types de membres qu'une relation peut comporter,
+		 * à savoir NODE pour les nœuds, WAY pour les chemins, et RELATION pour les relations.
+		 */
 		public static enum Type {
 			NODE, WAY, RELATION
 		}
