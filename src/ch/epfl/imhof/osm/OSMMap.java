@@ -1,5 +1,6 @@
 package ch.epfl.imhof.osm;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,9 +14,6 @@ import java.util.Map;
  *
  */
 public final class OSMMap {
-
-    private final Collection<OSMWay> ways;
-    private final Collection<OSMRelation> relations;
     
     /**
      * Bâtisseur de la classe OSMMap. 
@@ -28,7 +26,6 @@ public final class OSMMap {
         private Map<Long, OSMNode> nodes = new HashMap<>();
         private Map<Long, OSMWay> ways = new HashMap<>();
         private Map<Long, OSMRelation> relations = new HashMap<>();
-        
         
         /**
          * Ajoute le nœud donné au bâtisseur
@@ -85,9 +82,10 @@ public final class OSMMap {
         public OSMMap build() {
             return new OSMMap(ways.values(), relations.values());
         }
-        
-
     }
+    
+    private final List<OSMWay> ways;
+    private final List<OSMRelation> relations;
     
     /**
      * Construit une carte OSM avec les chemins et les relations donnés.
@@ -95,22 +93,22 @@ public final class OSMMap {
      * @param relations Relations
      */
     public OSMMap(Collection<OSMWay> ways, Collection<OSMRelation> relations) {
-        this.ways = ways;
-        this.relations = relations;
+        this.ways = Collections.unmodifiableList(new ArrayList<OSMWay>(ways));
+        this.relations = Collections.unmodifiableList(new ArrayList<OSMRelation>(relations));
     }
      /**
      * Retourne la liste des chemins de la carte.
      * @return Liste des chemins de la carte
      */
     public List<OSMWay> ways() {
-        return (List<OSMWay>) this.ways;
+        return this.ways;
     }
     /**
      * Retourne la liste des relations de la carte.
      * @return Liste des relations de la carte
      */
     public List<OSMRelation> relations() {
-        return (List<OSMRelation>) this.relations;
+        return this.relations;
     }
 
     

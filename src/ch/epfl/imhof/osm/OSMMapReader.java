@@ -37,5 +37,4 @@ public final class OSMMapReader {
 
 		return null;
     }
-
 }
