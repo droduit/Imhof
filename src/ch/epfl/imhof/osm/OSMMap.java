@@ -1,0 +1,111 @@
+package ch.epfl.imhof.osm;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Représente une carte OpenStreetMap, c'est-à-dire un ensemble de chemins et de relations
+ * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
+ *
+ */
+public final class OSMMap {
+
+    private final Collection<OSMWay> ways;
+    private final Collection<OSMRelation> relations;
+    
+    /**
+     * Bâtisseur de la classe OSMMap. 
+     * Stocke les noeuds et permet de les récupérer contrairement à la classe OSMMap.
+     * @author Thierry Treyer (235116)
+     * @author Dominique Roduit (234868)
+     *
+     */
+    public static final class Builder {
+        /**
+         * Ajoute le nœud donné au bâtisseur
+         * @param newNode
+         */
+        public void addNode(OSMNode newNode) {
+            
+        }
+        /**
+         * Retourne le nœud dont l'identifiant unique est égal à celui donné,
+         * ou null si ce nœud n'a pas été ajouté précédemment au bâtisseur
+         * @param id
+         * @return
+         */
+        public OSMNode nodeForId(long id){
+            
+        }
+        /**
+         * Ajoute le chemin donné à la carte en cours de construction
+         * @param newWay
+         */
+        public void addWay(OSMWay newWay) {
+            
+        }
+        /**
+         * Retourne le chemin dont l'identifiant unique est égal à celui donné,
+         * ou null si ce chemin n'a pas été ajouté précédemment au bâtisseur
+         * @param id
+         * @return
+         */
+        public OSMWay wayForId(long id){
+            
+        }
+        /**
+         * Ajoute la relation donnée à la carte en cours de construction
+         * @param newRelation
+         */
+        public void addRelation(OSMRelation newRelation) {
+            
+        }
+        /**
+         * Retourne la relation dont l'identifiant unique est égal à celui donné,
+         * ou null si cette relation n'a pas été ajoutée précédemment au bâtisseur
+         * @param id
+         * @return
+         */
+        public OSMRelation relationForId(long id) {
+            
+        }
+        /**
+         * Construit une carte OSM avec les chemins et les relations ajoutés jusqu'à présent.
+         * @return
+         */
+        public OSMMap build() {
+            
+        }
+        
+
+    }
+    
+    /**
+     * Construit une carte OSM avec les chemins et les relations donnés.
+     * @param ways Chemins 
+     * @param relations Relations
+     */
+    public OSMMap(Collection<OSMWay> ways, Collection<OSMRelation> relations) {
+        this.ways = ways;
+        this.relations = relations;
+    }
+     /**
+     * Retourne la liste des chemins de la carte.
+     * @return Liste des chemins de la carte
+     */
+    public List<OSMWay> ways() {
+        return (List<OSMWay>) this.ways;
+    }
+    /**
+     * Retourne la liste des relations de la carte.
+     * @return Liste des relations de la carte
+     */
+    public List<OSMRelation> relations() {
+        return (List<OSMRelation>) this.relations;
+    }
+
+    
+    
+}
