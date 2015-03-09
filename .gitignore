@@ -39,3 +39,6 @@ local.properties
 
 # Tag files
 tags
+
+# Data dir
+data/
