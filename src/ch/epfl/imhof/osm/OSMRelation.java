@@ -49,9 +49,9 @@ public final class OSMRelation extends OSMEntity {
 
 		/**
 		 * Construit un membre ayant le type, le rôle et la valeur donnés.
-		 * @param type
-		 * @param role
-		 * @param member
+		 * @param type Type du membre
+		 * @param role  Role du membre
+		 * @param member Entité
 		 */
 		public Member (Type type, String role, OSMEntity member) {
 			this.type = Objects.requireNonNull(type, "type ne peut pas être null");
@@ -71,23 +71,24 @@ public final class OSMRelation extends OSMEntity {
 
 		/**
 		 * Construit un bâtisseur pour une relation ayant l'identifiant donné.
-		 * @param id
+		 * @param id Identifiant unique pour une relation
 		 */
 		public Builder (long id) { super(id); }
 
 		/**
 		 * Ajoute un nouveau membre de type et de rôle donnés à la relation.
-		 * @param type
-		 * @param role
-		 * @param newMember
+		 * @param type Type du membre 
+		 * @param role Rôle du membre
+		 * @param newMember Nouveau membre que l'on ajoute a la relation
 		 */
 		public void addMember (Member.Type type, String role, OSMEntity newMember) {
 			this.members.add(new Member(type, role, newMember));
 		}
 
 		/**
-		 * Construit et retourne la relation ayant l'identifiant passé au constructeur ainsi que les membres et les attributs ajoutés jusqu'à présent au bâtisseur
-		 * @return
+		 * Construit et retourne la relation ayant l'identifiant passé au constructeur
+		 * ainsi que les membres et les attributs ajoutés jusqu'à présent au bâtisseur
+		 * @return La relation construite sur la base de tout ce qui a été donné jusqu'ici 
 		 */
 		public OSMRelation build () {
 			if (this.isIncomplete())
@@ -107,9 +108,9 @@ public final class OSMRelation extends OSMEntity {
 
 	/**
 	 * Construit une relation étant donnés son identifiant unique, ses membres et ses attributs
-	 * @param id
-	 * @param members
-	 * @param attributes
+	 * @param id Identifiant unique relatif à la relation
+	 * @param members Membres de la relation
+	 * @param attributes Attributs attachés à la relation
 	 */
 	public OSMRelation (long id, List<Member> members, Attributes attributes) {
 		super(id, attributes);

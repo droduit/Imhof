@@ -3,13 +3,11 @@ package ch.epfl.imhof;
 import static org.junit.Assert.*;
 
 import java.util.Set;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
 
-import ch.epfl.imhof.*;
 import ch.epfl.imhof.osm.*;
 import static ch.epfl.imhof.osm.OSMRelation.Member.Type.*;
 
@@ -32,6 +30,10 @@ public abstract class TestUtil {
 
 	public static int newId () {
 		return ID++;
+	}
+	
+	public static long newLongId() {
+	    return (long)(++ID);
 	}
 
 	public static Attributes newAttributes (Map<String, String> attrs) {
