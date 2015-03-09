@@ -23,7 +23,7 @@ public final class OSMMapReader {
      * @param unGZip
      * @return
      */
-    public static OSMMap readOSMFile(String fileName, boolean unGZip) {
+    public static OSMMapTest readOSMFile(String fileName, boolean unGZip) {
         return null;
     }
 

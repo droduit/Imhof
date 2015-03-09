@@ -135,4 +135,17 @@ public abstract class TestUtil {
 	public static void assertNodeEquals (OSMNode expected, OSMNode node) {
 		assertNodeEquals(expected, node, newMap());
 	}
+	
+	public static void assertWayEquals(OSMWay expected, OSMWay actual) {
+	    assertEquals(expected.id(), actual.id());
+	    assertEquals(expected.nodesCount(), actual.nodesCount());
+	    for(int i=0; i<expected.nodes().size(); i++) {
+	        assertNodeEquals(expected.nodes().get(i), actual.nodes().get(i));
+	    }
+	}
+	
+	public static void assertRelationEquals(OSMRelation expected, OSMRelation actual) {
+	    assertEquals(expected.id(), actual.id());
+	    // TODO A faire par Thierry Threyer le pro ^^
+	}
 }
