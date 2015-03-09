@@ -4,10 +4,12 @@ import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.util.Deque;
 import java.util.LinkedList;
+
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
 import ch.epfl.imhof.*;
+import ch.epfl.imhof.osm.OSMRelation.Member;
 
 /**
  * Permet de construire une carte OpenStreetMap à partir de données stockées
@@ -18,16 +20,32 @@ import ch.epfl.imhof.*;
  *
  */
 public final class OSMMapReader {
+    private static OSMMap.Builder mapBuilder = new OSMMap.Builder();
+
+    /**
+     * Gestionnaire de contenu pour interpéter le contenu du fichier XML
+     * et instancier les différentes entités.
+     * 
+     * @author Thierry Treyer (235116)
+     * @author Dominique Roduit (234868)
+     *
+     */
 	public static final class OSMMapReaderHandler extends DefaultHandler {
-		public static enum Type {
+		/** Différents types possibles d'entités **/
+	    public static enum Type {
 			NODE, WAY, ND, RELATION, MEMBER, TAG, UNKNOWN
 		}
 
-		OSMMap.Builder mapBuilder = new OSMMap.Builder();
-
+		//OSMMap.Builder mapBuilder = new OSMMap.Builder();
+	    
+	    /** Contient les types des entitées **/
 		Deque<Type> entitiesType = new LinkedList<Type>();
+		/** Contient les builder des différentes entitées du fichier XML **/
 		Deque<OSMEntity.Builder> entities = new LinkedList<OSMEntity.Builder>();
 
+		/**
+		 * Lorsqu'une balise ouvrante est rencontrée
+		 */
 		public void startElement (String uri, String lName, String qName, org.xml.sax.Attributes attr) throws SAXException {
 			System.out.println("Starting element: " + lName);
 
@@ -44,6 +62,12 @@ public final class OSMMapReader {
 				case "tag":
 					this.addTag(uri, lName, qName, attr);
 					break;
+				case "relation":
+				    this.addRelation(uri, lName, qName, attr);
+				    break;
+				case "member":
+				    this.addRelationMember(uri, lName, qName, attr);
+				    break;
 				default:
 					System.out.println("Unknown element: " + lName);
 					this.entitiesType.addLast(Type.UNKNOWN);
@@ -52,6 +76,9 @@ public final class OSMMapReader {
 			}
 		}
 
+		/**
+		 * Lorsqu'une balise fermante est rencontrée
+		 */
 		public void endElement (String uri, String lName, String qName) throws SAXException {
 			System.out.println("Ending element: " + lName);
 
@@ -63,11 +90,13 @@ public final class OSMMapReader {
 
 			switch (type) {
 				case NODE:
-					this.mapBuilder.addNode( ( (OSMNode.Builder)builder ).build() );
+				    mapBuilder.addNode( ( (OSMNode.Builder)builder ).build() );
 					break;
 				case WAY:
-					this.mapBuilder.addWay( ( (OSMWay.Builder)builder ).build() );
+					mapBuilder.addWay( ( (OSMWay.Builder)builder ).build() );
 					break;
+				case RELATION:
+				    mapBuilder.addRelation( ((OSMRelation.Builder)builder).build() );
 				case ND:
 				case TAG:
 				default:
@@ -75,6 +104,13 @@ public final class OSMMapReader {
 			}
 		}
 
+		/**
+		 * Ajout d'un noeud dans le deque
+		 * @param uri 
+		 * @param lName
+		 * @param qName
+		 * @param attr Attributs attachés à l'élément
+		 */
 		private void addNode (String uri, String lName, String qName, org.xml.sax.Attributes attr) {
 			long id = Long.parseLong(attr.getValue("id"));
 			double lon = Math.toRadians(Double.parseDouble(attr.getValue("lon")));
@@ -86,6 +122,13 @@ public final class OSMMapReader {
 			this.entities.addLast(nb);
 		}
 
+		/**
+		 * Ajout d'un chemin dans le deque
+		 * @param uri
+		 * @param lName
+		 * @param qName
+		 * @param attr Attributs attachés à l'élément
+		 */
 		private void addWay (String uri, String lName, String qName, org.xml.sax.Attributes attr) {
 			long id = Long.parseLong(attr.getValue("id"));
 
@@ -95,10 +138,17 @@ public final class OSMMapReader {
 			this.entities.addLast(wb);
 		}
 
+		/**
+		 * Ajout d'un noeud au bâtisseur du dernier chemin dans le deque
+		 * @param uri
+		 * @param lName
+		 * @param qName
+		 * @param attr Attributs attachés à l'élément
+		 */
 		private void addNodeRef (String uri, String lName, String qName, org.xml.sax.Attributes attr) {
 			long ref = Long.parseLong(attr.getValue("ref"));
 
-			OSMNode node = this.mapBuilder.nodeForId(ref);
+			OSMNode node = mapBuilder.nodeForId(ref);
 			OSMWay.Builder builder = (OSMWay.Builder)this.entities.getLast();
 
 			if (node == null)
@@ -110,6 +160,13 @@ public final class OSMMapReader {
 			this.entities.addLast(null);
 		}
 
+		/**
+		 * Ajout d'un attribut à la dernière entité dans le deque
+		 * @param uri
+		 * @param lName
+		 * @param qName
+		 * @param attr Attributs attachés à l'élément
+		 */
 		private void addTag (String uri, String lName, String qName, org.xml.sax.Attributes attr) {
 			String key = attr.getValue("k");
 			String value = attr.getValue("v");
@@ -119,6 +176,61 @@ public final class OSMMapReader {
 			this.entitiesType.addLast(Type.TAG);
 			this.entities.addLast(null);
 		}
+		
+		/**
+		 * Ajout d'une relation dans le deque
+		 * @param uri
+		 * @param lName
+		 * @param qName
+		 * @param attr Attributs attachés à l'élément
+		 */
+		private void addRelation(String uri, String lName, String qName, org.xml.sax.Attributes attr) {
+		    long id = Long.parseLong(attr.getValue("id"));
+		    
+		    OSMRelation.Builder rel = new OSMRelation.Builder(id);
+		  
+		    this.entitiesType.add(Type.RELATION);
+		    this.entities.addLast(rel);
+		}
+		
+		/**
+		 * Ajout d'un membre à la dernière relation dans le deque
+		 * @param uri
+		 * @param lName
+		 * @param qName
+		 * @param attr Attributs attachés à l'élément
+		 */
+		private void addRelationMember(String uri, String lName, String qName, org.xml.sax.Attributes attr) {
+		    long ref = Long.parseLong(attr.getValue("ref"));
+		    OSMRelation.Member.Type type = OSMRelation.Member.Type.valueOf(attr.getValue("type").toUpperCase());
+		    String role = attr.getValue("role");
+		    
+		    OSMEntity member = null;
+		    switch(type) {
+    		    case NODE:
+    		        member = mapBuilder.nodeForId(ref);
+    		        break;
+    		    case WAY :
+    		        member = mapBuilder.wayForId(ref);
+    		        break;
+    		    case RELATION:
+    		        member = mapBuilder.relationForId(ref);
+    		        break;
+    		    default:
+    		        break;
+		    }
+		    
+		    OSMRelation.Builder builder = (OSMRelation.Builder)this.entities.getLast();
+		    
+		    if(member==null) {
+		        builder.setIncomplete();
+		    } else {
+		        builder.addMember(type, role, member);
+		    }
+		    
+		    this.entitiesType.add(Type.MEMBER);
+		    this.entities.addLast(null);
+		}
 	}
 
     /**
@@ -127,12 +239,14 @@ public final class OSMMapReader {
     private OSMMapReader() {}
 
     /**
-     * Lit la carte OSM contenue dans le fichier de nom donné, en le décompressant avec gzip ssi le second argument est vrai.
-     * Lève l'exception SAXException en cas d'erreur dans le format du fichier XML contenant la carte,
-     * ou l'exception IOException en cas d'autre erreur d'entrée/sortie, p.ex. si le fichier n'existe pas.
-     * @param fileName
-     * @param unGZip
-     * @return
+     * Lit la carte OSM contenue dans le fichier de nom donné,
+     * en le décompressant avec gzip ssi le second argument est vrai.
+     * 
+     * @param fileName Nom du fichier OSM à parser
+     * @param unGZip true si le fichier est compressé
+     * @return Carte OpenStreetMap à partir de données stockées dans un fichier au format OSM.
+     * @throws IOException En cas d'erreur d'entrée/sortie, par exemple si le fichier n'existe pas
+     * @throws SAXException En cas d'erreur dans le format du fichier XML contenant la carte
      */
     public static OSMMap readOSMFile (String fileName, boolean unGZip) throws IOException, SAXException {
 		String filePath = OSMMapReader.class.getResource(fileName).getFile();
@@ -145,12 +259,45 @@ public final class OSMMapReader {
 			reader.parse(new InputSource(input));
 		}
 
-		return null;
+		return mapBuilder.build();
     }
 
 	public static void main (String args[]) throws Exception {
 		System.out.println("Begin parsing...");
-		OSMMapReader.readOSMFile("/bc.osm", false);
+		OSMMap map = OSMMapReader.readOSMFile("/lc.osm", false);
 		System.out.println("End parsing!");
+		
+		
+		/*
+		// Chemins
+		for(OSMWay w : map.ways()) {
+		    System.out.println("---- Way : "+w.id());
+		    
+		    System.out.println("Nodes : ");
+		    for(OSMNode n : w.nodes()) {
+		        System.out.println(n.id()+" : lat: "+n.position().latitude()+" , long :"+n.position().longitude());
+		    }
+		    System.out.println(w.attributeValue("building"));
+		}
+		*/
+		
+		// Relations
+		for(OSMRelation r : map.relations()) {    
+		    System.out.println("----- Relation : "+r.id());
+		    
+		    
+		    System.out.println("Membres de la relation ("+r.members().size()+") : ----");
+		    for(Member m : r.members()) {
+		        System.out.println(m.member().id()+" - "+m.type()+" - "+m.role());
+		    }
+		    
+		    System.out.println(r.attributeValue("building"));
+	          System.out.println(r.attributeValue("layer"));
+	          System.out.println(r.attributeValue("name"));
+	          System.out.println(r.attributeValue("ref"));
+	          System.out.println(r.attributeValue("type"));
+	          
+		}
+		
 	}
 }

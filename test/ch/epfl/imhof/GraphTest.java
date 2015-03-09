@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.ArrayList;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
+import static org.junit.Assert.*;
 import ch.epfl.imhof.osm.OSMNode;
 import static ch.epfl.imhof.TestUtil.*;
 
@@ -76,5 +76,12 @@ public class GraphTest {
 		for (int i = 0; i < NODES_COUNT; i++) {
 			assertEquals(edges.get(i), graph.neighborsOf(nodes[i]));
 		}
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void crashTest1() {
+        Graph.Builder<Integer> gb = new Graph.Builder<>();
+        gb.addNode(1);
+        gb.addEdge(2, 3);
     }
 }

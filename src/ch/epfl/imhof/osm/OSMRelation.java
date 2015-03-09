@@ -16,7 +16,7 @@ import ch.epfl.imhof.Attributes;
  */
 public final class OSMRelation extends OSMEntity {
 	/**
-	 * Représente une entité appartenant à un relation.
+	 * Représente une entité appartenant à une relation.
 	 */
 	public final static class Member {
 		/**

@@ -17,7 +17,7 @@ public final class OSMMap {
     
     /**
      * Bâtisseur de la classe OSMMap. 
-     * Stocke les noeuds et permet de les récupérer contrairement à la classe OSMMap.
+     * Stocke les entitées et permet de les récupérer
      * @author Thierry Treyer (235116)
      * @author Dominique Roduit (234868)
      *
@@ -32,7 +32,8 @@ public final class OSMMap {
          * @param newNode Nouveau noeud à ajouter au bâtisseur
          */
         public void addNode(OSMNode newNode) {
-            nodes.put(newNode.id(),  newNode);
+            if(newNode!=null)
+                nodes.put(newNode.id(),  newNode);
         }
         /**
          * Retourne le nœud dont l'identifiant unique est égal à celui donné,
@@ -48,7 +49,8 @@ public final class OSMMap {
          * @param newWay Nouveau chemin à ajouter à la Map
          */
         public void addWay(OSMWay newWay) {
-            ways.put(newWay.id(), newWay);
+            if(newWay!=null)
+                ways.put(newWay.id(), newWay);
         }
         /**
          * Retourne le chemin dont l'identifiant unique est égal à celui donné,
@@ -64,7 +66,8 @@ public final class OSMMap {
          * @param newRelation Nouvelle relation à ajouter à la carte
          */
         public void addRelation(OSMRelation newRelation) {
-            relations.put(newRelation.id(), newRelation);
+            if(newRelation!=null)
+                relations.put(newRelation.id(), newRelation);
         }
         /**
          * Retourne la relation dont l'identifiant unique est égal à celui donné,

@@ -68,6 +68,15 @@ public class OSMMapTest {
         assertNodeEquals(nodeList.get(0), builder.nodeForId(idsNodes.get(0)));
         assertWayEquals(wayList.get(0), builder.wayForId(idsWays.get(0))); 
         assertRelationEquals(relationList.get(0), builder.relationForId(idsRelations.get(0)));
+        
+        OSMMap.Builder build = new OSMMap.Builder();
+        assertNull(build.relationForId(123));
+        assertNull(build.nodeForId(1));
+        assertNull(build.wayForId(8));
+        
+        build.addNode(null);
+        build.addRelation(null);
+        build.addWay(null);
     }
     
     @Test(expected=UnsupportedOperationException.class)
