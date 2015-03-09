@@ -1,5 +1,9 @@
 package ch.epfl.imhof.osm;
 
+import java.io.*;
+import java.util.zip.GZIPInputStream;
+import org.xml.sax.*;
+
 /**
  * Permet de construire une carte OpenStreetMap à partir de données stockées
  * dans un fichier au format OSM
@@ -23,8 +27,15 @@ public final class OSMMapReader {
      * @param unGZip
      * @return
      */
-    public static OSMMap readOSMFile(String fileName, boolean unGZip) {
-        return null;
+    public static OSMMap readOSMFile (String fileName, boolean unGZip) throws IOException, SAXException {
+		try (InputStream file = new FileInputStream(fileName)) {
+			InputStream input = file;
+
+			if (unGZip)
+				input = new GZIPInputStream(file);
+		}
+
+		return null;
     }
 
 }
