@@ -100,7 +100,7 @@ public abstract class TestUtil {
 	}
 
 	/** Méthodes d'assertion */
-	public static void assertPositionEquals (PointGeo expected, PointGeo point) {
+	public static void assertPointGeoEquals (PointGeo expected, PointGeo point) {
 		assertEquals(expected.longitude(), point.longitude(), DOUBLE_DELTA);
 		assertEquals(expected.latitude(), point.latitude(), DOUBLE_DELTA);
 	}
@@ -122,7 +122,7 @@ public abstract class TestUtil {
 
 	public static void assertNodeEquals (OSMNode expected, OSMNode node, Set<String> attrKeys) {
 		assertEquals(expected.id(), node.id());
-		assertPositionEquals(expected.position(), node.position());
+		assertPointGeoEquals(expected.position(), node.position());
 		assertAttributesEquals(expected.attributes(), node.attributes(), attrKeys);
 	}
 
