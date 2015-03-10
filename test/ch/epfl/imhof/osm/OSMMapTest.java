@@ -42,6 +42,7 @@ public class OSMMapTest {
         }
     }
     
+    /*
     @Test(expected=NullPointerException.class)
     public void testAddWayNullPointerException() {
         builder.addWay(null);
@@ -56,6 +57,7 @@ public class OSMMapTest {
     public void testAddRelationNullPointerException() {
         builder.addRelation(null);
     }
+    */
     
     @Test
     public void testFailBuild() {

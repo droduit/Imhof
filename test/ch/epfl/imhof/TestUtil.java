@@ -146,6 +146,7 @@ public abstract class TestUtil {
 	
 	public static void assertRelationEquals(OSMRelation expected, OSMRelation actual) {
 	    assertEquals(expected.id(), actual.id());
-	    // TODO A faire par Thierry Threyer le pro ^^
+	    //for(int i=0; i<expected.members().size(); i++)
+	        //assertMemberEquals(expected.members().get(0), actual.members().get(i));
 	}
 }
