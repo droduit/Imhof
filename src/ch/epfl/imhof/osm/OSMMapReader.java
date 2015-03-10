@@ -28,7 +28,6 @@ public final class OSMMapReader {
      * 
      * @author Thierry Treyer (235116)
      * @author Dominique Roduit (234868)
-     *
      */
 	public static final class OSMMapReaderHandler extends DefaultHandler {
 		/** Différents types possibles d'entités **/
@@ -36,9 +35,10 @@ public final class OSMMapReader {
 			NODE, WAY, ND, RELATION, MEMBER, TAG, UNKNOWN
 		}
 
+		/** Une entité du document XML */
 		private class Entity {
-			private Type type;
-			private OSMEntity.Builder builder;
+			private final Type type;
+			private final OSMEntity.Builder builder;
 
 			public Type type () { return this.type; }
 			public OSMEntity.Builder builder () { return this.builder; }
@@ -49,34 +49,33 @@ public final class OSMMapReader {
 			}
 		}
 
-		//OSMMap.Builder mapBuilder = new OSMMap.Builder();
-	    
+		/** Le stack des entités parcourus lors du parse */
 		Deque<Entity> entities = new LinkedList<Entity>();
 
 		/**
-		 * Lorsqu'une balise ouvrante est rencontrée
+		 * Callback lorsqu'une balise ouvrante est rencontrée
 		 */
 		public void startElement (String uri, String lName, String qName, org.xml.sax.Attributes attr) throws SAXException {
 			System.out.println("Starting element: " + lName);
 
 			switch (lName) {
 				case "node":
-					this.addNode(uri, lName, qName, attr);
+					this.addNode(attr);
 					break;
 				case "way":
-					this.addWay(uri, lName, qName, attr);
+					this.addWay(attr);
 					break;
 				case "nd":
-					this.addNodeRef(uri, lName, qName, attr);
+					this.addNodeRef(attr);
 					break;
 				case "tag":
-					this.addTag(uri, lName, qName, attr);
+					this.addTag(attr);
 					break;
 				case "relation":
-				    this.addRelation(uri, lName, qName, attr);
+				    this.addRelation(attr);
 				    break;
 				case "member":
-				    this.addRelationMember(uri, lName, qName, attr);
+				    this.addRelationMember(attr);
 				    break;
 				default:
 					System.out.println("Unknown element: " + lName);
@@ -93,13 +92,13 @@ public final class OSMMapReader {
 
 			Entity entity = this.entities.removeLast();
 
-			Type type = entity.type();
 			OSMEntity.Builder builder = entity.builder();
 
+			/* Ignorer les builder incomplets */
 			if (builder == null || builder.isIncomplete())
 				return;
 
-			switch (type) {
+			switch (entity.type()) {
 				case NODE:
 				    mapBuilder.addNode( ( (OSMNode.Builder)builder ).build() );
 					break;
@@ -107,8 +106,10 @@ public final class OSMMapReader {
 					mapBuilder.addWay( ( (OSMWay.Builder)builder ).build() );
 					break;
 				case RELATION:
-				    mapBuilder.addRelation( ((OSMRelation.Builder)builder).build() );
+				    mapBuilder.addRelation( ( (OSMRelation.Builder)builder ).build() );
+					break;
 				case ND:
+				case MEMBER:
 				case TAG:
 				default:
 					break;
@@ -116,13 +117,11 @@ public final class OSMMapReader {
 		}
 
 		/**
-		 * Ajout d'un noeud dans le deque
-		 * @param uri 
-		 * @param lName
-		 * @param qName
-		 * @param attr Attributs attachés à l'élément
+		 * Ajout d'un nœud dans le deque.
+		 *
+		 * @param attr Attributs attachés au nœud
 		 */
-		private void addNode (String uri, String lName, String qName, org.xml.sax.Attributes attr) {
+		private void addNode (org.xml.sax.Attributes attr) {
 			long id = Long.parseLong(attr.getValue("id"));
 			double lon = Math.toRadians(Double.parseDouble(attr.getValue("lon")));
 			double lat = Math.toRadians(Double.parseDouble(attr.getValue("lat")));
@@ -133,13 +132,11 @@ public final class OSMMapReader {
 		}
 
 		/**
-		 * Ajout d'un chemin dans le deque
-		 * @param uri
-		 * @param lName
-		 * @param qName
-		 * @param attr Attributs attachés à l'élément
+		 * Ajout d'un chemin dans le deque.
+		 *
+		 * @param attr Attributs attachés au chemin
 		 */
-		private void addWay (String uri, String lName, String qName, org.xml.sax.Attributes attr) {
+		private void addWay (org.xml.sax.Attributes attr) {
 			long id = Long.parseLong(attr.getValue("id"));
 
 			OSMWay.Builder wb = new OSMWay.Builder(id);
@@ -148,20 +145,19 @@ public final class OSMMapReader {
 		}
 
 		/**
-		 * Ajout d'un noeud au bâtisseur du dernier chemin dans le deque
-		 * @param uri
-		 * @param lName
-		 * @param qName
-		 * @param attr Attributs attachés à l'élément
+		 * Ajout d'un noeud au bâtisseur du dernier chemin dans le deque.
+		 *
+		 * @param attr Attributs attachés à la référence du nœud
 		 */
-		private void addNodeRef (String uri, String lName, String qName, org.xml.sax.Attributes attr) {
+		private void addNodeRef (org.xml.sax.Attributes attr) {
 			long ref = Long.parseLong(attr.getValue("ref"));
 
 			OSMNode node = mapBuilder.nodeForId(ref);
 			Entity parent = this.entities.getLast();
 
+			/* Contrôle du type du bâtisseur parent */
 			if (parent.type() != Type.WAY)
-				throw new IllegalStateException("Parent must be of type WAY, not " + parent.type());
+				throw new IllegalStateException("Le bâtisseur parent doit être du type WAY, et non " + parent.type());
 
 			OSMWay.Builder builder = (OSMWay.Builder)parent.builder();
 
@@ -174,13 +170,11 @@ public final class OSMMapReader {
 		}
 
 		/**
-		 * Ajout d'un attribut à la dernière entité dans le deque
-		 * @param uri
-		 * @param lName
-		 * @param qName
+		 * Ajout d'un attribut à la dernière entité dans le deque.
+		 *
 		 * @param attr Attributs attachés à l'élément
 		 */
-		private void addTag (String uri, String lName, String qName, org.xml.sax.Attributes attr) {
+		private void addTag (org.xml.sax.Attributes attr) {
 			String key = attr.getValue("k");
 			String value = attr.getValue("v");
 
@@ -190,13 +184,11 @@ public final class OSMMapReader {
 		}
 		
 		/**
-		 * Ajout d'une relation dans le deque
-		 * @param uri
-		 * @param lName
-		 * @param qName
-		 * @param attr Attributs attachés à l'élément
+		 * Ajout d'une relation dans le deque.
+		 *
+		 * @param attr Attributs attachés à la relation
 		 */
-		private void addRelation(String uri, String lName, String qName, org.xml.sax.Attributes attr) {
+		private void addRelation (org.xml.sax.Attributes attr) {
 		    long id = Long.parseLong(attr.getValue("id"));
 		    
 		    OSMRelation.Builder rel = new OSMRelation.Builder(id);
@@ -205,19 +197,17 @@ public final class OSMMapReader {
 		}
 		
 		/**
-		 * Ajout d'un membre à la dernière relation dans le deque
-		 * @param uri
-		 * @param lName
-		 * @param qName
-		 * @param attr Attributs attachés à l'élément
+		 * Ajout d'un membre à la dernière relation dans le deque.
+		 *
+		 * @param attr Attributs attachés au membre
 		 */
-		private void addRelationMember(String uri, String lName, String qName, org.xml.sax.Attributes attr) {
+		private void addRelationMember (org.xml.sax.Attributes attr) {
 		    long ref = Long.parseLong(attr.getValue("ref"));
 		    OSMRelation.Member.Type type = OSMRelation.Member.Type.valueOf(attr.getValue("type").toUpperCase());
 		    String role = attr.getValue("role");
 		    
 		    OSMEntity member = null;
-		    switch(type) {
+		    switch (type) {
     		    case NODE:
     		        member = mapBuilder.nodeForId(ref);
     		        break;
@@ -233,8 +223,9 @@ public final class OSMMapReader {
 		    
 			Entity parent = this.entities.getLast();
 
+			/* Contrôle du type du bâtisseur parent */
 			if (parent.type() != Type.RELATION)
-				throw new IllegalStateException("Parent must be of type RELATION, not " + parent.type());
+				throw new IllegalStateException("Le bâtisseur parent doit être du type RELATION, et non " + parent.type());
 
 		    OSMRelation.Builder builder = (OSMRelation.Builder)this.entities.getLast().builder();
 		    
