@@ -36,12 +36,22 @@ public final class OSMMapReader {
 			NODE, WAY, ND, RELATION, MEMBER, TAG, UNKNOWN
 		}
 
+		private class Entity {
+			private Type type;
+			private OSMEntity.Builder builder;
+
+			public Type type () { return this.type; }
+			public OSMEntity.Builder builder () { return this.builder; }
+
+			public Entity (Type type, OSMEntity.Builder builder) {
+				this.type = type;
+				this.builder = builder;
+			}
+		}
+
 		//OSMMap.Builder mapBuilder = new OSMMap.Builder();
 	    
-	    /** Contient les types des entitées **/
-		Deque<Type> entitiesType = new LinkedList<Type>();
-		/** Contient les builder des différentes entitées du fichier XML **/
-		Deque<OSMEntity.Builder> entities = new LinkedList<OSMEntity.Builder>();
+		Deque<Entity> entities = new LinkedList<Entity>();
 
 		/**
 		 * Lorsqu'une balise ouvrante est rencontrée
@@ -70,8 +80,7 @@ public final class OSMMapReader {
 				    break;
 				default:
 					System.out.println("Unknown element: " + lName);
-					this.entitiesType.addLast(Type.UNKNOWN);
-					this.entities.addLast(null);
+					this.entities.addLast( new Entity(Type.UNKNOWN, null) );
 					break;
 			}
 		}
@@ -82,8 +91,10 @@ public final class OSMMapReader {
 		public void endElement (String uri, String lName, String qName) throws SAXException {
 			System.out.println("Ending element: " + lName);
 
-			Type type = this.entitiesType.removeLast();
-			OSMEntity.Builder builder = this.entities.removeLast();
+			Entity entity = this.entities.removeLast();
+
+			Type type = entity.type();
+			OSMEntity.Builder builder = entity.builder();
 
 			if (builder == null || builder.isIncomplete())
 				return;
@@ -118,8 +129,7 @@ public final class OSMMapReader {
 
 			OSMNode.Builder nb = new OSMNode.Builder(id, new PointGeo(lon, lat));
 
-			this.entitiesType.addLast(Type.NODE);
-			this.entities.addLast(nb);
+			this.entities.addLast( new Entity(Type.NODE, nb) );
 		}
 
 		/**
@@ -134,8 +144,7 @@ public final class OSMMapReader {
 
 			OSMWay.Builder wb = new OSMWay.Builder(id);
 
-			this.entitiesType.addLast(Type.WAY);
-			this.entities.addLast(wb);
+			this.entities.addLast( new Entity(Type.WAY, wb) );
 		}
 
 		/**
@@ -149,15 +158,19 @@ public final class OSMMapReader {
 			long ref = Long.parseLong(attr.getValue("ref"));
 
 			OSMNode node = mapBuilder.nodeForId(ref);
-			OSMWay.Builder builder = (OSMWay.Builder)this.entities.getLast();
+			Entity parent = this.entities.getLast();
+
+			if (parent.type() != Type.WAY)
+				throw new IllegalStateException("Parent must be of type WAY, not " + parent.type());
+
+			OSMWay.Builder builder = (OSMWay.Builder)parent.builder();
 
 			if (node == null)
 				builder.setIncomplete();
 			else
 				builder.addNode(node);
 
-			this.entitiesType.addLast(Type.ND);
-			this.entities.addLast(null);
+			this.entities.addLast( new Entity(Type.ND, null) );
 		}
 
 		/**
@@ -171,10 +184,9 @@ public final class OSMMapReader {
 			String key = attr.getValue("k");
 			String value = attr.getValue("v");
 
-			this.entities.getLast().setAttribute(key, value);
+			this.entities.getLast().builder().setAttribute(key, value);
 
-			this.entitiesType.addLast(Type.TAG);
-			this.entities.addLast(null);
+			this.entities.addLast(new Entity(Type.TAG, null) );
 		}
 		
 		/**
@@ -189,8 +201,7 @@ public final class OSMMapReader {
 		    
 		    OSMRelation.Builder rel = new OSMRelation.Builder(id);
 		  
-		    this.entitiesType.add(Type.RELATION);
-		    this.entities.addLast(rel);
+			this.entities.addLast( new Entity(Type.RELATION, rel) );
 		}
 		
 		/**
@@ -220,16 +231,19 @@ public final class OSMMapReader {
     		        break;
 		    }
 		    
-		    OSMRelation.Builder builder = (OSMRelation.Builder)this.entities.getLast();
+			Entity parent = this.entities.getLast();
+
+			if (parent.type() != Type.RELATION)
+				throw new IllegalStateException("Parent must be of type RELATION, not " + parent.type());
+
+		    OSMRelation.Builder builder = (OSMRelation.Builder)this.entities.getLast().builder();
 		    
-		    if(member==null) {
+		    if (member == null)
 		        builder.setIncomplete();
-		    } else {
+		    else
 		        builder.addMember(type, role, member);
-		    }
 		    
-		    this.entitiesType.add(Type.MEMBER);
-		    this.entities.addLast(null);
+			this.entities.addLast( new Entity(Type.MEMBER, null) );
 		}
 	}
 
