@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.net.URL;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -56,8 +57,6 @@ public final class OSMMapReader {
 		 * Callback lorsqu'une balise ouvrante est rencontrée
 		 */
 		public void startElement (String uri, String lName, String qName, org.xml.sax.Attributes attr) throws SAXException {
-			System.out.println("Starting element: " + lName);
-
 			switch (lName) {
 				case "node":
 					this.addNode(attr);
@@ -88,8 +87,6 @@ public final class OSMMapReader {
 		 * Lorsqu'une balise fermante est rencontrée
 		 */
 		public void endElement (String uri, String lName, String qName) throws SAXException {
-			System.out.println("Ending element: " + lName);
-
 			Entity entity = this.entities.removeLast();
 
 			OSMEntity.Builder builder = entity.builder();
@@ -254,7 +251,12 @@ public final class OSMMapReader {
      * @throws SAXException En cas d'erreur dans le format du fichier XML contenant la carte
      */
     public static OSMMap readOSMFile (String fileName, boolean unGZip) throws IOException, SAXException {
-		String filePath = OSMMapReader.class.getResource(fileName).getFile();
+		URL fileURL = OSMMapReader.class.getResource(fileName);
+
+		if (fileURL == null)
+			throw new FileNotFoundException("Fichier introuvable: " + fileName);
+
+		String filePath = fileURL.getFile();
 
 		try (InputStream file = new FileInputStream(filePath)) {
 			InputStream input = (unGZip == false) ? file : new GZIPInputStream(file);
@@ -269,7 +271,7 @@ public final class OSMMapReader {
 
 	public static void main (String args[]) throws Exception {
 		System.out.println("Begin parsing...");
-		OSMMap map = OSMMapReader.readOSMFile("/lc.osm", false);
+		OSMMap map = OSMMapReader.readOSMFile("/lc.osm", true);
 		System.out.println("End parsing!");
 		
 		
