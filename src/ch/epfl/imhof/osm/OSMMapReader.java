@@ -21,7 +21,7 @@ import ch.epfl.imhof.osm.OSMRelation.Member;
  *
  */
 public final class OSMMapReader {
-    private static OSMMap.Builder mapBuilder = new OSMMap.Builder();
+    private static OSMMap.Builder mapBuilder;
 
     /**
      * Gestionnaire de contenu pour interpéter le contenu du fichier XML
@@ -251,7 +251,9 @@ public final class OSMMapReader {
      * @throws SAXException En cas d'erreur dans le format du fichier XML contenant la carte
      */
     public static OSMMap readOSMFile (String fileName, boolean unGZip) throws IOException, SAXException {
-		URL fileURL = OSMMapReader.class.getResource(fileName);
+        mapBuilder = new OSMMap.Builder();
+        
+        URL fileURL = OSMMapReader.class.getResource(fileName);
 
 		if (fileURL == null)
 			throw new FileNotFoundException("Fichier introuvable: " + fileName);
@@ -269,13 +271,14 @@ public final class OSMMapReader {
 		return mapBuilder.build();
     }
 
+    /*
 	public static void main (String args[]) throws Exception {
 		System.out.println("Begin parsing...");
-		OSMMap map = OSMMapReader.readOSMFile("/lc.osm", true);
+		OSMMap map = OSMMapReader.readOSMFile("/bc.osm", false);
 		System.out.println("End parsing!");
 		
 		
-		/*
+		
 		// Chemins
 		for(OSMWay w : map.ways()) {
 		    System.out.println("---- Way : "+w.id());
@@ -286,7 +289,7 @@ public final class OSMMapReader {
 		    }
 		    System.out.println(w.attributeValue("building"));
 		}
-		*/
+		
 		
 		// Relations
 		for(OSMRelation r : map.relations()) {    
@@ -307,4 +310,5 @@ public final class OSMMapReader {
 		}
 		
 	}
+	*/
 }
