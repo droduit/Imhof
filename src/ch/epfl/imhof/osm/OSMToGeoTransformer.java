@@ -107,6 +107,18 @@ public final class OSMToGeoTransformer {
 		return graphBuilder.build();
 	}
 
+	private OSMNode pickUnvisitedNode (Set<OSMNode> nodes, Set<OSMNode> visited) {
+		for (OSMNode node : nodes) {
+			if (visited.contains(node) == false) {
+				visited.add(node);
+
+				return node;
+			}
+		}
+
+		return null;
+	}
+
     /**
      * Calcule et retourne l'ensemble des anneaux de la relation donnée ayant le rôle spécifié.
      * Cette méthode retourne une liste vide si le calcul des anneaux échoue.
@@ -117,7 +129,23 @@ public final class OSMToGeoTransformer {
     private List<ClosedPolyLine> ringsForRole (OSMRelation relation, String role) {
 		Graph<OSMNode> graph = buildGraphForRole(relation, role);
 
-		return null;
+		Set<OSMNode> nodesSet = graph.nodes();
+		Set<OSMNode> visitedNodes = new HashSet<OSMNode>();
+
+		List<ClosedPolyLine> rings = new LinkedList<ClosedPolyLine>();
+
+		OSMNode current = null;
+		while ((current = this.pickUnvisitedNode(nodesSet, visitedNodes)) != null) {
+			PolyLine.Builder builder = new PolyLine.Builder();
+
+			do {
+				builder.addPoint( this.projection.project( current.position() ) );
+			} while ((current = this.pickUnvisitedNode(graph.neighborsOf(current), visitedNodes)) != null);
+
+			rings.add(builder.buildClosed());
+		}
+
+		return rings;
     }
 
     /**
