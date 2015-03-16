@@ -1,6 +1,5 @@
 package ch.epfl.imhof;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 import static ch.epfl.imhof.TestUtil.*;
 

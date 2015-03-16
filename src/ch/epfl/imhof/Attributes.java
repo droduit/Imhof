@@ -15,6 +15,9 @@ import java.util.Set;
  * @author Dominique Roduit (234868)
  */
 public final class Attributes {
+    /** L'ensemble des attributs */
+    private final Map<String, String> attr;
+    
     /** Le builder associé à la classe Attributes */
     public final static class Builder {
         /** Le hash modifiable servant à la construction */
@@ -43,9 +46,6 @@ public final class Attributes {
             return new Attributes(this.attr);
         }
     }
-
-    /** L'ensemble des attributs */
-    private final Map<String, String> attr;
     
     /**
      * Construit un ensemble immuable d'attributs avec les paires clef/valeur

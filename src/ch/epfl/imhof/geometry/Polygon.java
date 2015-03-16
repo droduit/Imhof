@@ -18,6 +18,17 @@ public final class Polygon {
     private List<ClosedPolyLine> holes;
 
     /**
+     * Construit un Polygon à partir d'un contour et d'une liste de trous.
+     *
+     * @param shell     Le contour du Polygon
+     * @param holes     Les trous dans le Polygon
+     */
+    public Polygon (ClosedPolyLine shell, List<ClosedPolyLine> holes) {
+        this.shell = shell;
+        this.holes = Collections.unmodifiableList(new ArrayList<ClosedPolyLine>(holes));
+    }
+    
+    /**
      * Retourne le contour du Polygon.
      *
      * @return Le contour de Polygon
@@ -30,17 +41,6 @@ public final class Polygon {
      * @return La liste de trous du Polygon
      */
     public List<ClosedPolyLine> holes () { return this.holes; }
-
-    /**
-     * Construit un Polygon à partir d'un contour et d'une liste de trous.
-     *
-     * @param shell     Le contour du Polygon
-     * @param holes     Les trous dans le Polygon
-     */
-    public Polygon (ClosedPolyLine shell, List<ClosedPolyLine> holes) {
-        this.shell = shell;
-        this.holes = Collections.unmodifiableList(new ArrayList<ClosedPolyLine>(holes));
-    }
 
     /**
      * Construit un Polygon sans trou à partir d'un contour.

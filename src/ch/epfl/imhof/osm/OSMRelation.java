@@ -15,6 +15,8 @@ import ch.epfl.imhof.Attributes;
  *
  */
 public final class OSMRelation extends OSMEntity {
+    private final List<Member> members;
+    
 	/**
 	 * Représente une entité appartenant à une relation.
 	 */
@@ -27,9 +29,21 @@ public final class OSMRelation extends OSMEntity {
 			NODE, WAY, RELATION
 		}
 
-		private Type type;
-		private String role;
-		private OSMEntity member;
+		private final Type type;
+		private final String role;
+		private final OSMEntity member;
+		
+	    /**
+         * Construit un membre ayant le type, le rôle et la valeur donnés.
+         * @param type Type du membre
+         * @param role  Role du membre
+         * @param member Entité
+         */
+        public Member (Type type, String role, OSMEntity member) {
+            this.type = Objects.requireNonNull(type, "type ne peut pas être null");
+            this.role = Objects.requireNonNull(role, "role ne peut pas être null");
+            this.member = Objects.requireNonNull(member, "member ne peut pas être null");
+        }
 
 		/**
 		 * Retourne le type du membre.
@@ -46,18 +60,6 @@ public final class OSMRelation extends OSMEntity {
 		 * @return Le membre lui-meme
 		 */
 		public OSMEntity member () { return this.member; }
-
-		/**
-		 * Construit un membre ayant le type, le rôle et la valeur donnés.
-		 * @param type Type du membre
-		 * @param role  Role du membre
-		 * @param member Entité
-		 */
-		public Member (Type type, String role, OSMEntity member) {
-			this.type = Objects.requireNonNull(type, "type ne peut pas être null");
-			this.role = Objects.requireNonNull(role, "role ne peut pas être null");
-			this.member = Objects.requireNonNull(member, "member ne peut pas être null");
-		}
 	}
 	
 	/**
@@ -97,8 +99,18 @@ public final class OSMRelation extends OSMEntity {
 			return new OSMRelation(this.id(), this.members, this.attributes());
 		}
 	}
+	
+	/**
+     * Construit une relation étant donnés son identifiant unique, ses membres et ses attributs
+     * @param id Identifiant unique relatif à la relation
+     * @param members Membres de la relation
+     * @param attributes Attributs attachés à la relation
+     */
+    public OSMRelation (long id, List<Member> members, Attributes attributes) {
+        super(id, attributes);
 
-	private List<Member> members;
+        this.members = Collections.unmodifiableList(new ArrayList<Member>(members));
+    }
 
 	/**
 	 * Retourne la liste des membres de la relation.
@@ -106,15 +118,4 @@ public final class OSMRelation extends OSMEntity {
 	 */
 	public List<Member> members () { return this.members; }
 
-	/**
-	 * Construit une relation étant donnés son identifiant unique, ses membres et ses attributs
-	 * @param id Identifiant unique relatif à la relation
-	 * @param members Membres de la relation
-	 * @param attributes Attributs attachés à la relation
-	 */
-	public OSMRelation (long id, List<Member> members, Attributes attributes) {
-		super(id, attributes);
-
-		this.members = Collections.unmodifiableList(new ArrayList<Member>(members));
-	}
 }

@@ -11,6 +11,10 @@ import java.util.List;
  * @author Dominique Roduit (234868)
  */
 public final class OpenPolyLine extends PolyLine {
+    /**
+     * Construit une polyligne ouverte de sommets donnés
+     * @param points Sommets de la polyligne ouverte
+     */
     public OpenPolyLine (List<Point> points) {
         super(points);
     }

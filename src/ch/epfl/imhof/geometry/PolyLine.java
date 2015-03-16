@@ -12,6 +12,9 @@ import java.util.Collections;
  * @author Dominique Roduit (234868)
  */
 public abstract class PolyLine {
+    /** La liste des points composants la PolyLine. */
+    final private List<Point> points;
+    
     /**
      * Un Constructeur pour la class immuable PolyLine.
      *
@@ -48,9 +51,22 @@ public abstract class PolyLine {
             return new ClosedPolyLine(this.points);
         }
     }
+    
+    /**
+     * Construit une PolyLine avec les points donnés.
+     *
+     * @param points
+     *    La liste des points composants la PolyLine
+     * @throws IllegalArgumentException
+     *    Si la liste de points est vide
+     */
+    public PolyLine (List<Point> points) {
+        if (areValidPoints(points) == false) {
+            throw new IllegalArgumentException("Invalid list of points");
+        }
 
-    /** La liste des points composants la PolyLine. */
-    final private List<Point> points;
+        this.points = Collections.unmodifiableList(new ArrayList<Point>(points));
+    }
 
     /**
      * Retourne la liste des points composants la PolyLine.
@@ -77,22 +93,6 @@ public abstract class PolyLine {
      */
     private boolean areValidPoints (List<Point> points) {
         return (points != null && points.size() > 0);
-    }
-
-    /**
-     * Construit une PolyLine avec les points donnés.
-     *
-     * @param points
-     *    La liste des points composants la PolyLine
-     * @throws IllegalArgumentException
-     *    Si la liste de points est vide
-     */
-    public PolyLine (List<Point> points) {
-        if (areValidPoints(points) == false) {
-            throw new IllegalArgumentException("Invalid list of points");
-        }
-
-        this.points = Collections.unmodifiableList(new ArrayList<Point>(points));
     }
 
     /**

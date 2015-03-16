@@ -14,6 +14,8 @@ import java.util.Map;
  *
  */
 public final class OSMMap {
+    private final List<OSMWay> ways;
+    private final List<OSMRelation> relations;
     
     /**
      * Bâtisseur de la classe OSMMap. 
@@ -35,6 +37,7 @@ public final class OSMMap {
             if(newNode!=null)
                 nodes.put(newNode.id(),  newNode);
         }
+        
         /**
          * Retourne le nœud dont l'identifiant unique est égal à celui donné,
          * ou null si ce nœud n'a pas été ajouté précédemment au bâtisseur
@@ -44,6 +47,7 @@ public final class OSMMap {
         public OSMNode nodeForId(long id){
             return nodes.get(id);
         }
+        
         /**
          * Ajoute le chemin donné à la carte en cours de construction
          * @param newWay Nouveau chemin à ajouter à la Map
@@ -52,6 +56,7 @@ public final class OSMMap {
             if(newWay!=null)
                 ways.put(newWay.id(), newWay);
         }
+        
         /**
          * Retourne le chemin dont l'identifiant unique est égal à celui donné,
          * ou null si ce chemin n'a pas été ajouté précédemment au bâtisseur
@@ -61,6 +66,7 @@ public final class OSMMap {
         public OSMWay wayForId(long id){
             return ways.get(id);
         }
+        
         /**
          * Ajoute la relation donnée à la carte en cours de construction
          * @param newRelation Nouvelle relation à ajouter à la carte
@@ -69,6 +75,7 @@ public final class OSMMap {
             if(newRelation!=null)
                 relations.put(newRelation.id(), newRelation);
         }
+        
         /**
          * Retourne la relation dont l'identifiant unique est égal à celui donné,
          * ou null si cette relation n'a pas été ajoutée précédemment au bâtisseur
@@ -78,6 +85,7 @@ public final class OSMMap {
         public OSMRelation relationForId(long id) {
             return relations.get(id);
         }
+        
         /**
          * Construit une carte OSM avec les chemins et les relations ajoutés jusqu'à présent.
          * @return Carte OSM construite sur la base des chemins et relations ajoutés jusqu'à présent
@@ -86,9 +94,7 @@ public final class OSMMap {
             return new OSMMap(ways.values(), relations.values());
         }
     }
-    
-    private final List<OSMWay> ways;
-    private final List<OSMRelation> relations;
+ 
     
     /**
      * Construit une carte OSM avec les chemins et les relations donnés.
@@ -99,6 +105,7 @@ public final class OSMMap {
         this.ways = Collections.unmodifiableList(new ArrayList<OSMWay>(ways));
         this.relations = Collections.unmodifiableList(new ArrayList<OSMRelation>(relations));
     }
+    
      /**
      * Retourne la liste des chemins de la carte.
      * @return Liste des chemins de la carte
@@ -106,6 +113,7 @@ public final class OSMMap {
     public List<OSMWay> ways() {
         return this.ways;
     }
+    
     /**
      * Retourne la liste des relations de la carte.
      * @return Liste des relations de la carte
@@ -113,7 +121,5 @@ public final class OSMMap {
     public List<OSMRelation> relations() {
         return this.relations;
     }
-
-    
-    
+  
 }

@@ -18,7 +18,7 @@ public final class Map {
 
     private final List<Attributed<PolyLine>> polylines;
     private final List<Attributed<Polygon>> polygons;
-    
+
     /**
      * Construit une carte à partir des listes de polylignes et polygones attribués donnés
      * @param polylines Liste de polylignes attribuées
@@ -28,7 +28,7 @@ public final class Map {
         this.polylines = Collections.unmodifiableList(new ArrayList<>(polylines));
         this.polygons = Collections.unmodifiableList(new ArrayList<>(polygons));
     }
-    
+
     /**
      * Retourne la liste des polylignes attribuées de la carte
      * @return Liste des polylignes attribuées de la carte
@@ -36,7 +36,7 @@ public final class Map {
     public List<Attributed<PolyLine>> polyLines() {
         return polylines;
     }
-    
+
     /**
      * Retourne la liste des polygones attribués de la carte
      * @return Liste des polygones attribués de la carte
@@ -44,14 +44,14 @@ public final class Map {
     public List<Attributed<Polygon>> polygons() {
         return polygons;
     }
-    
+
     /**
      * Bâtisseur de la classe Map
      */
     public static class Builder {
         private final List<Attributed<PolyLine>> polylines;
         private final List<Attributed<Polygon>> polygons;
-      
+
         public Builder() {
             polylines = new ArrayList<>();
             polygons = new ArrayList<>();
@@ -78,5 +78,5 @@ public final class Map {
             return new Map(polylines, polygons);
         }
     }
-    
+
 }
