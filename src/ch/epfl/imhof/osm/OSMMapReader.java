@@ -10,7 +10,6 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
 import ch.epfl.imhof.*;
-import ch.epfl.imhof.osm.OSMRelation.Member;
 
 /**
  * Permet de construire une carte OpenStreetMap à partir de données stockées
@@ -77,7 +76,6 @@ public final class OSMMapReader {
 				    this.addRelationMember(attr);
 				    break;
 				default:
-					System.out.println("Unknown element: " + lName);
 					this.entities.addLast( new Entity(Type.UNKNOWN, null) );
 					break;
 			}
@@ -264,51 +262,11 @@ public final class OSMMapReader {
 			InputStream input = (unGZip == false) ? file : new GZIPInputStream(file);
 
 			XMLReader reader = XMLReaderFactory.createXMLReader();
+			reader.setErrorHandler(null); // On gère nous même les exceptions
 			reader.setContentHandler(new OSMMapReaderHandler());
 			reader.parse(new InputSource(input));
 		}
 
 		return mapBuilder.build();
     }
-
-    /*
-	public static void main (String args[]) throws Exception {
-		System.out.println("Begin parsing...");
-		OSMMap map = OSMMapReader.readOSMFile("/bc.osm", false);
-		System.out.println("End parsing!");
-		
-		
-		
-		// Chemins
-		for(OSMWay w : map.ways()) {
-		    System.out.println("---- Way : "+w.id());
-		    
-		    System.out.println("Nodes : ");
-		    for(OSMNode n : w.nodes()) {
-		        System.out.println(n.id()+" : lat: "+n.position().latitude()+" , long :"+n.position().longitude());
-		    }
-		    System.out.println(w.attributeValue("building"));
-		}
-		
-		
-		// Relations
-		for(OSMRelation r : map.relations()) {    
-		    System.out.println("----- Relation : "+r.id());
-		    
-		    
-		    System.out.println("Membres de la relation ("+r.members().size()+") : ----");
-		    for(Member m : r.members()) {
-		        System.out.println(m.member().id()+" - "+m.type()+" - "+m.role());
-		    }
-		    
-		    System.out.println(r.attributeValue("building"));
-	          System.out.println(r.attributeValue("layer"));
-	          System.out.println(r.attributeValue("name"));
-	          System.out.println(r.attributeValue("ref"));
-	          System.out.println(r.attributeValue("type"));
-	          
-		}
-		
-	}
-	*/
 }

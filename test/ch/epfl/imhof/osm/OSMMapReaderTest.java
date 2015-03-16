@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.zip.ZipException;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -17,46 +16,36 @@ public class OSMMapReaderTest {
     // test FileNotFoundException lorsqu'on veut atteindre un fichier qui n'existe pas
     @Test(expected=FileNotFoundException.class)
     public void FNFE() throws IOException, SAXException {
-        OSMMap map = OSMMapReader.readOSMFile("foo.osm", false);
+        OSMMapReader.readOSMFile("foo.osm", false);
     }
     
     // test MalformedByteSequenceException lorsqu'un fichier compressé n'est pas décompressé avant le parsing
     @Test(expected=MalformedByteSequenceException.class)
     public void MBSE() throws IOException, SAXException {
-        OSMMap map = OSMMapReader.readOSMFile("/lausanne.osm.gz", false);
-        
+        OSMMapReader.readOSMFile("/lausanne.osm.gz", false);
     }
     
     // test ZipException lorsqu'on tente de décompresser un xml qui n'est pas compressé
     @Test(expected=ZipException.class)
     public void ZE() throws IOException, SAXException {
-        OSMMap map = OSMMapReader.readOSMFile("/lc.osm", true);
+        OSMMapReader.readOSMFile("/lc.osm", true);
     }
     
     // test SAXException lorsqu'on a un fichier XML non valide
     @Test(expected=SAXException.class)
     public void SAXE() throws IOException, SAXException {
-        OSMMap map = OSMMapReader.readOSMFile("/nonvalidxml.osm", false);
+        OSMMapReader.readOSMFile("/nonvalidxml.osm", false);
     }
     
     // test IllegalStateException
     @Test(expected=IllegalStateException.class)
     public void IllegalStateExTest() throws IOException, SAXException {
-        OSMMap map = OSMMapReader.readOSMFile("/illegalStateException.osm", false);
+        OSMMapReader.readOSMFile("/illegalStateException.osm", false);
     }
     
     @Test
     public void testExistenceAndQuantity() throws IOException, SAXException {
         OSMMap map = OSMMapReader.readOSMFile("/test1.osm", false);
-        
-        for(OSMWay w : map.ways()) {
-            System.out.println("\nChemin : "+w.id());
-            System.out.println("Noeuds : "+w.nodesCount());
-            
-            for(OSMNode n : w.nodes()) {
-                System.out.println("("+n.id()+") - "+n.position().latitude());
-            }
-        }
         
         // On doit avoir 2 chemins seulement car le 3e ne possède qu'une reference
         // vers un noeud qui n'existe pas donc on ne le construit pas.
@@ -84,6 +73,7 @@ public class OSMMapReaderTest {
            assertEquals(OSMRelation.Member.Type.WAY.toString(), m.type().toString());
            assertEquals("outer", m.role());
        }
+
 
        OSMRelation rel = map.relations().get(0);
        assertEquals("yes", rel.attributeValue("building"));
