@@ -10,6 +10,7 @@ import java.util.Collections;
  * Représente un graphe non orienté générique.
  *
  * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
  */
 public final class Graph<N> {
 	/**

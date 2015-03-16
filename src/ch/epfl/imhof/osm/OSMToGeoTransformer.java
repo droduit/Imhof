@@ -10,8 +10,9 @@ import ch.epfl.imhof.projection.Projection;
 import ch.epfl.imhof.geometry.*;
 
 /**
- *  Représente un convertisseur de données OSM en carte
- * @author Dominique Roduit
+ * Représente un convertisseur de données OSM en carte
+ * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
  *
  */
 public final class OSMToGeoTransformer {

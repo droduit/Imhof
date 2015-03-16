@@ -7,6 +7,12 @@ import java.util.List;
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;
 
+/**
+ * Représente une carte projetée, composée d'entités géométriques attribuées.
+ * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
+ *
+ */
 public final class Map {
 
     private final List<Attributed<PolyLine>> polylines;
@@ -38,21 +44,36 @@ public final class Map {
         return polygons;
     }
     
+    /**
+     * Bâtisseur de la classe Map
+     */
     public static class Builder {
         private final List<Attributed<PolyLine>> polylines;
         private final List<Attributed<Polygon>> polygons;
-        
+      
         public Builder() {
             polylines = new ArrayList<>();
             polygons = new ArrayList<>();
         }
         
+        /**
+         * Ajoute une polyligne attribuée à la carte en cours de construction
+         * @param newPolyLine Polyligne à ajouter à la carte
+         */
         public void addPolyLine(Attributed<PolyLine> newPolyLine) {
             polylines.add(newPolyLine);
         }
+        /**
+         * Ajoute un polygone attribué à la carte en cours de construction
+         * @param newPolygon Polygone à ajouter à la carte
+         */
         public void addPolygon(Attributed<Polygon> newPolygon) {
             polygons.add(newPolygon);
         }
+        /**
+         * Construit une carte avec les polylignes et polygones ajoutés jusqu'à présent
+         * @return Carte avec les polylignes et polygones ajoutés jusqu'à présent
+         */
         public Map build() {
             return new Map(polylines, polygons);
         }
