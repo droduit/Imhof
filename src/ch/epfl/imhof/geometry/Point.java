@@ -13,6 +13,17 @@ public final class Point {
 
     /** L'ordonnée du point */
     private final double y;
+    
+    /**
+     * Construit un point avec l'abscisse et l'ordonnée données.
+     * 
+     * @param x     L'abscisse du point
+     * @param y     L'ordonnée du point
+     */
+    public Point (double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
 
     /**
      * Retourne la coordonnée de l'abscisse.
@@ -28,14 +39,4 @@ public final class Point {
      */
     public double y () { return this.y; }
 
-    /**
-     * Construit un point avec l'abscisse et l'ordonnée données.
-     * 
-     * @param x     L'abscisse du point
-     * @param y     L'ordonnée du point
-     */
-    public Point (double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
 }

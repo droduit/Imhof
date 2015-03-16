@@ -13,7 +13,7 @@ import ch.epfl.imhof.geometry.Point;
  * @author Dominique Roduit (234868)
  */
 public final class CH1903Projection implements Projection {
-    public static Point Project (PointGeo pg) {
+    public Point project (PointGeo pg) {
         double lon = Math.toDegrees(pg.longitude());
         double lat = Math.toDegrees(pg.latitude());
 
@@ -31,7 +31,7 @@ public final class CH1903Projection implements Projection {
         return new Point(x, y);
     }
 
-    public static PointGeo Inverse (Point p) {
+    public PointGeo inverse (Point p) {
         double x = p.x();
         double y = p.y();
 
@@ -52,11 +52,4 @@ public final class CH1903Projection implements Projection {
         return new PointGeo(Math.toRadians(lon), Math.toRadians(lat));
     }
 
-    public Point project (PointGeo pg) {
-        return CH1903Projection.Project(pg);
-    }
-
-    public PointGeo inverse (Point p) {
-        return CH1903Projection.Inverse(p);
-    }
 }

@@ -11,6 +11,10 @@ import java.util.List;
  * @author Dominique Roduit (234868)
  */
 public final class ClosedPolyLine extends PolyLine {
+    /**
+     * Construit une polyligne fermée ayant les sommets donnés
+     * @param points Points définissant la polyligne fermée
+     */
     public ClosedPolyLine (List<Point> points) {
         super(points);
     }

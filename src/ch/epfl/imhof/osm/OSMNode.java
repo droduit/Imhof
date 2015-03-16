@@ -12,6 +12,8 @@ import ch.epfl.imhof.Attributes;
  *
  */
 public final class OSMNode extends OSMEntity {
+    private PointGeo position;
+    
     /**
      * Sert de bâtisseur à la classe OSMNode et permet de construire un nœud en plusieurs étapes
      * @author Thierry Treyer (235116)
@@ -46,23 +48,22 @@ public final class OSMNode extends OSMEntity {
 		}
 	}
 
-	private PointGeo position;
+	/**
+     * Construit un nœud OSM avec l'identifiant, la position et les attributs donnés
+     * @param id Identifiant unique associé au noeud
+     * @param position Position géographique du noeud
+     * @param attributes Attributs attachés au noeud
+     */
+    public OSMNode (long id, PointGeo position, Attributes attributes) {
+        super(id, attributes);
 
+        this.position = Objects.requireNonNull(position, "position ne doit pas être null");
+    }
+    
 	/**
 	 * Retourne la position du nœud
 	 * @return Position du nœud
 	 */
 	public PointGeo position () { return this.position; }
 
-	/**
-	 * Construit un nœud OSM avec l'identifiant, la position et les attributs donnés
-	 * @param id Identifiant unique associé au noeud
-	 * @param position Position géographique du noeud
-	 * @param attributes Attributs attachés au noeud
-	 */
-	public OSMNode (long id, PointGeo position, Attributes attributes) {
-		super(id, attributes);
-
-		this.position = Objects.requireNonNull(position, "position ne doit pas être null");
-	}
 }

@@ -13,6 +13,9 @@ import java.util.Collections;
  * @author Dominique Roduit (234868)
  */
 public final class Graph<N> {
+    /** La liste des nœuds et de leurs voisins */
+    public Map<N, Set<N>> neighbors;
+    
 	/**
 	 * Le constructeur de la class Graph.
 	 */
@@ -58,9 +61,6 @@ public final class Graph<N> {
 			return new Graph<N> (this.neighbors);
 		}
 	}
-
-	/** La liste des nœuds et de leurs voisins */
-	public Map<N, Set<N>> neighbors;
 
 	/**
 	 * Construit un graph immuable à partir d'un Map.

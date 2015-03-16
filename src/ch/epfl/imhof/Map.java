@@ -3,6 +3,7 @@ package ch.epfl.imhof;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;
@@ -17,7 +18,7 @@ public final class Map {
 
     private final List<Attributed<PolyLine>> polylines;
     private final List<Attributed<Polygon>> polygons;
-    
+
     /**
      * Construit une carte à partir des listes de polylignes et polygones attribués donnés
      * @param polylines Liste de polylignes attribuées
@@ -27,7 +28,7 @@ public final class Map {
         this.polylines = Collections.unmodifiableList(new ArrayList<>(polylines));
         this.polygons = Collections.unmodifiableList(new ArrayList<>(polygons));
     }
-    
+
     /**
      * Retourne la liste des polylignes attribuées de la carte
      * @return Liste des polylignes attribuées de la carte
@@ -35,7 +36,7 @@ public final class Map {
     public List<Attributed<PolyLine>> polyLines() {
         return polylines;
     }
-    
+
     /**
      * Retourne la liste des polygones attribués de la carte
      * @return Liste des polygones attribués de la carte
@@ -43,32 +44,31 @@ public final class Map {
     public List<Attributed<Polygon>> polygons() {
         return polygons;
     }
-    
+
     /**
      * Bâtisseur de la classe Map
      */
     public static class Builder {
         private final List<Attributed<PolyLine>> polylines;
         private final List<Attributed<Polygon>> polygons;
-      
+
         public Builder() {
             polylines = new ArrayList<>();
             polygons = new ArrayList<>();
         }
-        
         /**
          * Ajoute une polyligne attribuée à la carte en cours de construction
          * @param newPolyLine Polyligne à ajouter à la carte
          */
         public void addPolyLine(Attributed<PolyLine> newPolyLine) {
-            polylines.add(newPolyLine);
+            polylines.add(Objects.requireNonNull(newPolyLine));
         }
         /**
          * Ajoute un polygone attribué à la carte en cours de construction
          * @param newPolygon Polygone à ajouter à la carte
          */
         public void addPolygon(Attributed<Polygon> newPolygon) {
-            polygons.add(newPolygon);
+            polygons.add(Objects.requireNonNull(newPolygon));
         }
         /**
          * Construit une carte avec les polylignes et polygones ajoutés jusqu'à présent
@@ -78,5 +78,5 @@ public final class Map {
             return new Map(polylines, polygons);
         }
     }
-    
+
 }

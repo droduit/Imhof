@@ -14,19 +14,17 @@ import ch.epfl.imhof.PointGeo;
  * @author Dominique Roduit (234868)
  */
 public final class EquirectangularProjection implements Projection {
-    public static Point Project (PointGeo pg) {
+    /**
+     * Projection equirectangulaire d'un point géographique
+     */
+    public Point project (PointGeo pg) {
         return new Point(pg.longitude(), pg.latitude());
     }
 
-    public static PointGeo Inverse (Point p) {
-        return new PointGeo(p.x(), p.y());
-    }
-
-    public Point project (PointGeo pg) {
-        return EquirectangularProjection.Project(pg);
-    }
-
+    /**
+     * Dé-projection équirectangulaire d'un Point geographique
+     */
     public PointGeo inverse (Point p) {
-        return EquirectangularProjection.Inverse(p);
+        return new PointGeo(p.x(), p.y());
     }
 }
