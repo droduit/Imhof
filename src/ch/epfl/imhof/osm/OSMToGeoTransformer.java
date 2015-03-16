@@ -9,6 +9,7 @@ import java.util.HashMap;
 import ch.epfl.imhof.Attributed;
 import ch.epfl.imhof.Attributes;
 import ch.epfl.imhof.Map;
+import ch.epfl.imhof.Graph;
 import ch.epfl.imhof.geometry.ClosedPolyLine;
 import ch.epfl.imhof.projection.Projection;
 import ch.epfl.imhof.geometry.*;
@@ -82,6 +83,30 @@ public final class OSMToGeoTransformer {
 		}
 	}
 
+	private Graph<OSMNode> buildGraphForRole (OSMRelation relation, String role) {
+		Graph.Builder<OSMNode> graphBuilder = new Graph.Builder<OSMNode>();
+
+		for (OSMRelation.Member member : relation.members()) {
+			if (member.type() != OSMRelation.Member.Type.WAY) continue;
+			if (member.role().equals(role) == false) continue;
+
+			OSMWay way = (OSMWay)member.member();
+			List<OSMNode> nodes = way.nodes();
+
+			for (int i = 1, l = nodes.size(); i < l; i++) {
+				OSMNode n1 = nodes.get(i - 1);
+				OSMNode n2 = nodes.get(i);
+
+				graphBuilder.addNode(n1);
+				graphBuilder.addNode(n2);
+
+				graphBuilder.addEdge(n1, n2);
+			}
+		}
+
+		return graphBuilder.build();
+	}
+
     /**
      * Calcule et retourne l'ensemble des anneaux de la relation donnée ayant le rôle spécifié.
      * Cette méthode retourne une liste vide si le calcul des anneaux échoue.
@@ -89,8 +114,10 @@ public final class OSMToGeoTransformer {
      * @param role
      * @return
      */
-    private List<ClosedPolyLine> ringsForRole(OSMRelation relation, String role) {
-        return null;
+    private List<ClosedPolyLine> ringsForRole (OSMRelation relation, String role) {
+		Graph<OSMNode> graph = buildGraphForRole(relation, role);
+
+		return null;
     }
 
     /**
