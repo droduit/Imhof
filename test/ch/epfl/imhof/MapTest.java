@@ -6,9 +6,23 @@ import org.junit.Test;
 
 public class MapTest {
 
-    @Test
-    public void test() {
+    @Test(expected=UnsupportedOperationException.class)
+    public void testImmuability() {
+        
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void testNPEConstructor() {
         
     }
 
+    @Test(expected=NullPointerException.class)
+    public void testNPEAddPolygon() {
+        
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void testNPEAddPolyLigne() {
+        
+    }
 }

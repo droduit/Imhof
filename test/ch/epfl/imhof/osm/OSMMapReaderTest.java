@@ -49,15 +49,6 @@ public class OSMMapReaderTest {
     public void testExistenceAndQuantity() throws IOException, SAXException {
         OSMMap map = OSMMapReader.readOSMFile("/test1.osm", false);
         
-        for(OSMWay w : map.ways()) {
-            System.out.println("\nChemin : "+w.id());
-            System.out.println("Noeuds : "+w.nodesCount());
-            
-            for(OSMNode n : w.nodes()) {
-                System.out.println("("+n.id()+") - "+n.position().latitude());
-            }
-        }
-        
         // On doit avoir 2 chemins seulement car le 3e ne possède qu'une reference
         // vers un noeud qui n'existe pas donc on ne le construit pas.
        assertEquals(2, map.ways().size());
