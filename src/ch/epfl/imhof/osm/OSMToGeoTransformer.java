@@ -148,6 +148,28 @@ public final class OSMToGeoTransformer {
 		return rings;
     }
 
+	private boolean isInside (ClosedPolyLine inner, ClosedPolyLine outer) {
+		if (inner.points().isEmpty())
+			return false;
+
+		for (Point point : inner.points()) {
+			if (outer.containsPoint(point) == false)
+				return false;
+		}
+
+		return true;
+	}
+
+	private boolean isAreaSmaller (ClosedPolyLine poly1, ClosedPolyLine poly2) {
+		if (poly1 == null)
+			return false;
+
+		if (poly2 == null)
+			return true;
+
+		return poly1.area() < poly2.area();
+	}
+
     /**
      * Calcule et retourne la liste des polygones attribués de la relation donnée, en leur attachant les attributs donnés.
      * @param relation
@@ -155,6 +177,25 @@ public final class OSMToGeoTransformer {
      * @return
      */
     private List<Attributed<Polygon>> assemblePolygon(OSMRelation relation, Attributes attributes) {
+		List<ClosedPolyLine> inners = this.ringsForRole(relation, "inner");
+		List<ClosedPolyLine> outers = this.ringsForRole(relation, "outer");
+
+		java.util.Map<ClosedPolyLine, List<ClosedPolyLine>> rawPolygons = new HashMap<ClosedPolyLine, List<ClosedPolyLine>>();
+		for (ClosedPolyLine outer : outers)
+			rawPolygons.put(outer, new LinkedList<ClosedPolyLine>());
+
+		for (ClosedPolyLine inner : inners) {
+			ClosedPolyLine container = null;
+
+			for (ClosedPolyLine outer : outers) {
+				if (isInside(inner, outer) && isAreaSmaller(outer, container))
+					container = outer;
+			}
+
+			if (container != null)
+				rawPolygons.get(container).add(inner);
+		}
+
         return null;
     }
 }
