@@ -3,6 +3,7 @@ package ch.epfl.imhof;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;
@@ -55,20 +56,19 @@ public final class Map {
             polylines = new ArrayList<>();
             polygons = new ArrayList<>();
         }
-        
         /**
          * Ajoute une polyligne attribuée à la carte en cours de construction
          * @param newPolyLine Polyligne à ajouter à la carte
          */
         public void addPolyLine(Attributed<PolyLine> newPolyLine) {
-            polylines.add(newPolyLine);
+            polylines.add(Objects.requireNonNull(newPolyLine));
         }
         /**
          * Ajoute un polygone attribué à la carte en cours de construction
          * @param newPolygon Polygone à ajouter à la carte
          */
         public void addPolygon(Attributed<Polygon> newPolygon) {
-            polygons.add(newPolygon);
+            polygons.add(Objects.requireNonNull(newPolygon));
         }
         /**
          * Construit une carte avec les polylignes et polygones ajoutés jusqu'à présent

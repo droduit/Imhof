@@ -2,12 +2,17 @@ package ch.epfl.imhof;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
 
+import ch.epfl.imhof.geometry.ClosedPolyLine;
+import ch.epfl.imhof.geometry.Point;
+import ch.epfl.imhof.geometry.PolyLine;
+import ch.epfl.imhof.geometry.Polygon;
 import ch.epfl.imhof.osm.*;
 import static ch.epfl.imhof.osm.OSMRelation.Member.Type.*;
 
@@ -100,6 +105,47 @@ public abstract class TestUtil {
 
 		return members;
 	}
+	
+	public static List<Point> newListPoints() {
+	    List<Point> points = new ArrayList<>();
+        for(int i=0;i<10; i++)
+            points.add(new Point(Math.random()*10, Math.random()+10));
+        return points;
+	}
+	
+	public static ClosedPolyLine newClosedPolyLine() {
+        ClosedPolyLine polyligne = new ClosedPolyLine(newListPoints());
+        return polyligne;
+	}
+	
+	public static Attributed<PolyLine> newAttributedPolyLine() {
+	    return new Attributed<PolyLine>(newClosedPolyLine(), newAttributes());
+	}
+	
+	public static List<Attributed<PolyLine>> newAttributedPolyLineList() {
+	    List<Attributed<PolyLine>> list = new ArrayList<>();
+	    for(int i=0; i<10; ++i) {
+	        list.add(newAttributedPolyLine());
+	    }
+	    return list;
+	}
+	
+	public static Polygon newPolygon() {
+        Polygon polygon = new Polygon(newClosedPolyLine());
+        return polygon;
+    }
+	
+	public static Attributed<Polygon> newAttributedPolygon() {
+        return new Attributed<Polygon>(newPolygon(), newAttributes());
+    }
+	
+	public static List<Attributed<Polygon>> newAttributedPolygoneList() {
+        List<Attributed<Polygon>> list = new ArrayList<>();
+        for(int i=0; i<10; ++i) {
+            list.add(newAttributedPolygon());
+        }
+        return list;
+    }
 
 	/** Méthodes d'assertion */
 	public static void assertPointGeoEquals (PointGeo expected, PointGeo point) {
