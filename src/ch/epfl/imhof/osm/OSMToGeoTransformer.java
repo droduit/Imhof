@@ -1,5 +1,7 @@
 package ch.epfl.imhof.osm;
 
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Set;
@@ -25,17 +27,29 @@ public final class OSMToGeoTransformer {
 
 	private final String AREA_KEY = "area";
 
-	private final Set<String> AREA_VALUES = new HashSet<String>() {{
+	@SuppressWarnings("serial")
+    private final Set<String> AREA_VALUES = new HashSet<String>() {{
 		add("yes"); add("1"); add("true");
 	}};
 
-	private final Set<String> AREA_ATTRS = new HashSet<String>() {{
+	@SuppressWarnings("serial")
+    private final Set<String> AREA_ATTRS = new HashSet<String>() {{
 		add("aeroway"); add("amenity"); add("building"); add("harbour");
 		add("historic"); add("landuse"); add("leisure"); add("man_made");
 		add("military"); add("natural"); add("office"); add("place");
 		add("power"); add("public_transport"); add("shop"); add("sport");
 		add("tourism"); add("water"); add("waterway"); add("wetland");
 	}};
+	
+    private final Set<String> FILTER_POLYLINE_ATTRS = new HashSet<String>(
+	        Arrays.asList("bridge", "highway", "layer", "man_made", "railway", "tunnel", "waterway")
+	);
+	
+	private final Set<String> FILTER_POLYGONE_ATTRS = new HashSet<String>(
+            Arrays.asList("building", "landuse", "layer", "leisure", "natural", "waterway")
+    );
+	
+	
 
 	private java.util.Map<Long, Attributed<Polygon>> polygons = new HashMap<Long, Attributed<Polygon>>();
 	private java.util.Map<Long, Attributed<OpenPolyLine>> lines = new HashMap<Long, Attributed<OpenPolyLine>>();
@@ -146,6 +160,7 @@ public final class OSMToGeoTransformer {
 		}
 
 		return rings;
+
     }
 
 	private boolean isInside (ClosedPolyLine inner, ClosedPolyLine outer) {
@@ -171,12 +186,27 @@ public final class OSMToGeoTransformer {
 	}
 
     /**
+     * Retourne l'index du plus petit anneau extérieur de la liste contenant
+     * l'anneau intérieur passé en paramètre. La liste des anneau extérieurs est triée par ordre croissant.
+     * @return
+     */
+    private int getIdOfSmallerRingsContainingPolygon(List<ClosedPolyLine> outer, ClosedPolyLine inner) {
+        int id = -1;
+        for(int i=0; i<outer.size(); i++) {
+            if(outer.get(i).containsPoint(inner.firstPoint())) 
+                return i;
+        }
+        return id;
+    }
+    
+    /**
      * Calcule et retourne la liste des polygones attribués de la relation donnée, en leur attachant les attributs donnés.
      * @param relation
      * @param attributes
      * @return
      */
     private List<Attributed<Polygon>> assemblePolygon(OSMRelation relation, Attributes attributes) {
+
 		List<ClosedPolyLine> inners = this.ringsForRole(relation, "inner");
 		List<ClosedPolyLine> outers = this.ringsForRole(relation, "outer");
 

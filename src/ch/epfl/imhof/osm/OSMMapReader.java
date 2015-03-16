@@ -258,14 +258,14 @@ public final class OSMMapReader {
 
 		String filePath = fileURL.getFile();
 
-		try (InputStream file = new FileInputStream(filePath)) {
+		try (InputStream file = new BufferedInputStream(new FileInputStream(filePath))) {
 			InputStream input = (unGZip == false) ? file : new GZIPInputStream(file);
 
 			XMLReader reader = XMLReaderFactory.createXMLReader();
 			reader.setErrorHandler(null); // On gère nous même les exceptions
 			reader.setContentHandler(new OSMMapReaderHandler());
 			reader.parse(new InputSource(input));
-		}
+		} 
 
 		return mapBuilder.build();
     }
