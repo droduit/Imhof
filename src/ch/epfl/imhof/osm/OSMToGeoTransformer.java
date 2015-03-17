@@ -1,7 +1,10 @@
 package ch.epfl.imhof.osm;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Set;
@@ -49,11 +52,16 @@ public final class OSMToGeoTransformer {
             Arrays.asList("building", "landuse", "layer", "leisure", "natural", "waterway")
     );
 	
-	
-
 	private java.util.Map<Long, Attributed<Polygon>> polygons = new HashMap<Long, Attributed<Polygon>>();
 	private java.util.Map<Long, Attributed<OpenPolyLine>> lines = new HashMap<Long, Attributed<OpenPolyLine>>();
 
+	private Comparator<ClosedPolyLine> comparatorClosedPolyLine = new Comparator<ClosedPolyLine>() {
+        @Override
+        public int compare(ClosedPolyLine o1, ClosedPolyLine o2) {
+            return (int)(o1.area())-(int)(o2.area());
+        }  
+	};
+	
     /**
      * Construit un convertisseur OSM en géométrie qui utilise la projection donnée
      * @param projection
@@ -73,30 +81,51 @@ public final class OSMToGeoTransformer {
 		return null;
     }
 
+    /**
+     * 
+     * @param way
+     * @return
+     */
 	private boolean isArea (OSMWay way) {
 		return AREA_VALUES.contains(way.attributeValue(AREA_KEY))
 			|| !way.attributes().keepOnlyKeys(AREA_ATTRS).isEmpty();
 	}
 
+	/**
+	 * Construit soit les polygones soit les polylignes a partir des chemins de la map
+	 * en y attachant les attribus filtrés
+	 * @param ways Liste des chemins de la map
+	 */
 	private void buildWays (List<OSMWay> ways) {
 		for (OSMWay way : ways) {
 			PolyLine.Builder builder = new PolyLine.Builder();
-
+			Attributes attr = null;
+			
 			for (OSMNode node : way.nodes())
 				builder.addPoint( this.projection.project( node.position() ) );
 
 			if (this.isArea(way)) {
 				Polygon polygon = new Polygon(builder.buildClosed());
-
-				this.polygons.put( way.id(), new Attributed<Polygon>( polygon, way.attributes() ) );
+				attr = way.attributes().keepOnlyKeys(FILTER_POLYGONE_ATTRS);
+				
+				if(attr.size()>0)
+				    this.polygons.put( way.id(), new Attributed<Polygon>( polygon, attr ) );
 			} else {
 				OpenPolyLine line = builder.buildOpen();
-
-				this.lines.put( way.id(), new Attributed<OpenPolyLine>( line, way.attributes() ) );
+				attr = way.attributes().keepOnlyKeys(FILTER_POLYLINE_ATTRS);
+				
+				if(attr.size()>0)
+				    this.lines.put( way.id(), new Attributed<OpenPolyLine>( line, attr ) );
 			}
 		}
 	}
 
+	/**
+	 * Construction du graphe pour les membres d'une relation ayant le rôle donné
+	 * @param relation Relation contenant les membres avec lesquels on veut construire le graphe
+	 * @param role Rôle des membres de la relation dont on veut construire le graphe
+	 * @return Le graphe pour les membres de la relation ayant le rôle donné
+	 */
 	private Graph<OSMNode> buildGraphForRole (OSMRelation relation, String role) {
 		Graph.Builder<OSMNode> graphBuilder = new Graph.Builder<OSMNode>();
 
@@ -121,6 +150,12 @@ public final class OSMToGeoTransformer {
 		return graphBuilder.build();
 	}
 
+	/**
+	 * Sélectionne un noeud encore non visité parmi l'ensemble des noeuds
+	 * @param nodes Ensemble des noeuds
+	 * @param visited Noeuds déjà visités
+	 * @return Noeud encore non visité qui se trouve dans l'ensemble node privé de l'ensemble visited
+	 */
 	private OSMNode pickUnvisitedNode (Set<OSMNode> nodes, Set<OSMNode> visited) {
 		for (OSMNode node : nodes) {
 			if (visited.contains(node) == false) {
@@ -136,9 +171,9 @@ public final class OSMToGeoTransformer {
     /**
      * Calcule et retourne l'ensemble des anneaux de la relation donnée ayant le rôle spécifié.
      * Cette méthode retourne une liste vide si le calcul des anneaux échoue.
-     * @param relation
-     * @param role
-     * @return
+     * @param relation Relation contenant les anneaux à récupérer
+     * @param role Role des membres de la relation pour lesquels ont veut récupérer les anneaux
+     * @return Liste des anneaux de la relation ayant le role spécifié ou liste vide si le calcul des anneaux échoue
      */
     private List<ClosedPolyLine> ringsForRole (OSMRelation relation, String role) {
 		Graph<OSMNode> graph = buildGraphForRole(relation, role);
@@ -163,6 +198,12 @@ public final class OSMToGeoTransformer {
 
     }
 
+    /**
+     * Contrôle que la polyligne fermée inner soit contenu dans la polyligne fermée outer
+     * @param inner Polyligne dont on veut contrôler si elle est contenue dans outer
+     * @param outer Polyligne dont on veut contrôler si elle contient inner
+     * @return true si la polyligne inner est contenue dans la poyligne outer
+     */
 	private boolean isInside (ClosedPolyLine inner, ClosedPolyLine outer) {
 		if (inner.points().isEmpty())
 			return false;
@@ -175,6 +216,7 @@ public final class OSMToGeoTransformer {
 		return true;
 	}
 
+	/*
 	private boolean isAreaSmaller (ClosedPolyLine poly1, ClosedPolyLine poly2) {
 		if (poly1 == null)
 			return false;
@@ -184,26 +226,13 @@ public final class OSMToGeoTransformer {
 
 		return poly1.area() < poly2.area();
 	}
-
-    /**
-     * Retourne l'index du plus petit anneau extérieur de la liste contenant
-     * l'anneau intérieur passé en paramètre. La liste des anneau extérieurs est triée par ordre croissant.
-     * @return
-     */
-    private int getIdOfSmallerRingsContainingPolygon(List<ClosedPolyLine> outer, ClosedPolyLine inner) {
-        int id = -1;
-        for(int i=0; i<outer.size(); i++) {
-            if(outer.get(i).containsPoint(inner.firstPoint())) 
-                return i;
-        }
-        return id;
-    }
+	*/
     
     /**
      * Calcule et retourne la liste des polygones attribués de la relation donnée, en leur attachant les attributs donnés.
-     * @param relation
-     * @param attributes
-     * @return
+     * @param relation Relation pour laquelle on veut récupérer les polygones attribués
+     * @param attributes Attributs à attacher aux polygones de la relation
+     * @return Liste des polygones attribués de la relation
      */
     private List<Attributed<Polygon>> assemblePolygon(OSMRelation relation, Attributes attributes) {
 
@@ -214,18 +243,31 @@ public final class OSMToGeoTransformer {
 		for (ClosedPolyLine outer : outers)
 			rawPolygons.put(outer, new LinkedList<ClosedPolyLine>());
 
+		Collections.sort(outers, comparatorClosedPolyLine);
+		
 		for (ClosedPolyLine inner : inners) {
 			ClosedPolyLine container = null;
 
 			for (ClosedPolyLine outer : outers) {
-				if (isInside(inner, outer) && isAreaSmaller(outer, container))
+				if (isInside(inner, outer))
 					container = outer;
 			}
 
 			if (container != null)
 				rawPolygons.get(container).add(inner);
 		}
+		
+		Attributes filter_attr = attributes.keepOnlyKeys(FILTER_POLYGONE_ATTRS);
+        
+		List<Attributed<Polygon>> polygonList = new ArrayList<>();
+		Set<ClosedPolyLine> keys = rawPolygons.keySet();
+		for(ClosedPolyLine k : keys) {
+		    Polygon p = (rawPolygons.get(k).size()==0) ? new Polygon(k) : new Polygon(k, rawPolygons.get(k));
+		   
+		    polygonList.add(new Attributed<>(p, filter_attr));
+		}
+		
 
-        return null;
+        return polygonList;
     }
 }
