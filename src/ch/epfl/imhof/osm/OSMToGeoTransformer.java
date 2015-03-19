@@ -53,10 +53,10 @@ public final class OSMToGeoTransformer {
 
 	private Map.Builder mapBuilder;
 
-	private Comparator<ClosedPolyLine> comparatorClosedPolyLine = new Comparator<ClosedPolyLine>() {
+	private Comparator<ClosedPolyLine> areaComparator = new Comparator<ClosedPolyLine>() {
         @Override
-        public int compare(ClosedPolyLine o1, ClosedPolyLine o2) {
-            return (int)(o1.area())-(int)(o2.area());
+        public int compare (ClosedPolyLine o1, ClosedPolyLine o2) {
+            return (int)Math.signum(o1.area() - o2.area());
         }  
 	};
 	
@@ -78,6 +78,13 @@ public final class OSMToGeoTransformer {
 
 		for (OSMWay way : map.ways())
 			this.buildWay(way);
+
+		for (OSMRelation relation : map.relations()) {
+			List<Attributed<Polygon>> polygons = this.assemblePolygon(relation, relation.attributes());
+
+			for (Attributed<Polygon> polygon : polygons)
+				this.mapBuilder.addPolygon(polygon);
+		}
 
 		return this.mapBuilder.build();
     }
@@ -203,29 +210,14 @@ public final class OSMToGeoTransformer {
      * @return true si la polyligne inner est contenue dans la poyligne outer
      */
 	private boolean isInside (ClosedPolyLine inner, ClosedPolyLine outer) {
-		if (inner.points().isEmpty())
+		List<Point> innerPoints = inner.points();
+
+		if (innerPoints.isEmpty())
 			return false;
 
-		for (Point point : inner.points()) {
-			if (outer.containsPoint(point) == false)
-				return false;
-		}
-
-		return true;
+		return outer.containsPoint(innerPoints.get(0));
 	}
 
-	/*
-	private boolean isAreaSmaller (ClosedPolyLine poly1, ClosedPolyLine poly2) {
-		if (poly1 == null)
-			return false;
-
-		if (poly2 == null)
-			return true;
-
-		return poly1.area() < poly2.area();
-	}
-	*/
-    
     /**
      * Calcule et retourne la liste des polygones attribués de la relation donnée, en leur attachant les attributs donnés.
      * @param relation Relation pour laquelle on veut récupérer les polygones attribués
@@ -240,31 +232,33 @@ public final class OSMToGeoTransformer {
 		for (ClosedPolyLine outer : outers)
 			rawPolygons.put(outer, new LinkedList<ClosedPolyLine>());
 
-		Collections.sort(outers, comparatorClosedPolyLine);
+		Collections.sort(outers, areaComparator);
 		
 		for (ClosedPolyLine inner : inners) {
 			ClosedPolyLine container = null;
 
 			for (ClosedPolyLine outer : outers) {
-				if (isInside(inner, outer))
+				if (isInside(inner, outer)) {
 					container = outer;
+					break;
+				}
 			}
 
 			if (container != null)
 				rawPolygons.get(container).add(inner);
 		}
 		
-		Attributes filter_attr = attributes.keepOnlyKeys(FILTER_POLYGONE_ATTRS);
-        
-		List<Attributed<Polygon>> polygonList = new ArrayList<>();
-		Set<ClosedPolyLine> keys = rawPolygons.keySet();
-		for(ClosedPolyLine k : keys) {
-		    Polygon p = (rawPolygons.get(k).size()==0) ? new Polygon(k) : new Polygon(k, rawPolygons.get(k));
-		   
-		    polygonList.add(new Attributed<>(p, filter_attr));
-		}
-		
+		List<Attributed<Polygon>> polygons = new ArrayList<Attributed<Polygon>>();
+		Attributes attr = attributes.keepOnlyKeys(FILTER_POLYGONE_ATTRS);
 
-        return polygonList;
+		if (attr.size() > 0) {
+			for(ClosedPolyLine shell : rawPolygons.keySet()) {
+				Polygon poly = new Polygon( shell, rawPolygons.get(shell) );
+
+				polygons.add( new Attributed<Polygon>(poly, attr) );
+			}
+		}
+
+        return polygons;
     }
 }
