@@ -30,30 +30,28 @@ public final class OSMToGeoTransformer {
 
 	private final String AREA_KEY = "area";
 
-	@SuppressWarnings("serial")
-    private final Set<String> AREA_VALUES = new HashSet<String>() {{
-		add("yes"); add("1"); add("true");
-	}};
+    private final Set<String> AREA_VALUES = new HashSet<String>(
+		Arrays.asList("yes", "1", "true")
+	);
 
-	@SuppressWarnings("serial")
-    private final Set<String> AREA_ATTRS = new HashSet<String>() {{
-		add("aeroway"); add("amenity"); add("building"); add("harbour");
-		add("historic"); add("landuse"); add("leisure"); add("man_made");
-		add("military"); add("natural"); add("office"); add("place");
-		add("power"); add("public_transport"); add("shop"); add("sport");
-		add("tourism"); add("water"); add("waterway"); add("wetland");
-	}};
+    private final Set<String> AREA_ATTRS = new HashSet<String>(
+		Arrays.asList(
+			"aeroway", "amenity", "building", "harbour", "historic",
+			"landuse", "leisure", "man_made", "military", "natural",
+			"office", "place", "power", "public_transport", "shop",
+			"sport", "tourism", "water", "waterway", "wetland"
+		)
+	);
 	
     private final Set<String> FILTER_POLYLINE_ATTRS = new HashSet<String>(
-	        Arrays.asList("bridge", "highway", "layer", "man_made", "railway", "tunnel", "waterway")
+		Arrays.asList("bridge", "highway", "layer", "man_made", "railway", "tunnel", "waterway")
 	);
 	
 	private final Set<String> FILTER_POLYGONE_ATTRS = new HashSet<String>(
-            Arrays.asList("building", "landuse", "layer", "leisure", "natural", "waterway")
+		Arrays.asList("building", "landuse", "layer", "leisure", "natural", "waterway")
     );
-	
-	private java.util.Map<Long, Attributed<Polygon>> polygons = new HashMap<Long, Attributed<Polygon>>();
-	private java.util.Map<Long, Attributed<OpenPolyLine>> lines = new HashMap<Long, Attributed<OpenPolyLine>>();
+
+	private Map.Builder mapBuilder;
 
 	private Comparator<ClosedPolyLine> comparatorClosedPolyLine = new Comparator<ClosedPolyLine>() {
         @Override
@@ -76,9 +74,12 @@ public final class OSMToGeoTransformer {
      * @return
      */
     public Map transform (OSMMap map) {
-		this.buildWays(map.ways());
+		this.mapBuilder = new Map.Builder();
 
-		return null;
+		for (OSMWay way : map.ways())
+			this.buildWay(way);
+
+		return this.mapBuilder.build();
     }
 
     /**
@@ -96,27 +97,24 @@ public final class OSMToGeoTransformer {
 	 * en y attachant les attribus filtrés
 	 * @param ways Liste des chemins de la map
 	 */
-	private void buildWays (List<OSMWay> ways) {
-		for (OSMWay way : ways) {
-			PolyLine.Builder builder = new PolyLine.Builder();
-			Attributes attr = null;
-			
-			for (OSMNode node : way.nodes())
-				builder.addPoint( this.projection.project( node.position() ) );
+	private void buildWay (OSMWay way) {
+		PolyLine.Builder builder = new PolyLine.Builder();
+		
+		for (OSMNode node : way.nodes())
+			builder.addPoint( this.projection.project( node.position() ) );
 
-			if (this.isArea(way)) {
-				Polygon polygon = new Polygon(builder.buildClosed());
-				attr = way.attributes().keepOnlyKeys(FILTER_POLYGONE_ATTRS);
-				
-				if(attr.size()>0)
-				    this.polygons.put( way.id(), new Attributed<Polygon>( polygon, attr ) );
-			} else {
-				OpenPolyLine line = builder.buildOpen();
-				attr = way.attributes().keepOnlyKeys(FILTER_POLYLINE_ATTRS);
-				
-				if(attr.size()>0)
-				    this.lines.put( way.id(), new Attributed<OpenPolyLine>( line, attr ) );
-			}
+		if (this.isArea(way)) {
+			Polygon polygon = new Polygon(builder.buildClosed());
+			Attributes attr = way.attributes().keepOnlyKeys(FILTER_POLYGONE_ATTRS);
+			
+			if (attr.size() > 0)
+				this.mapBuilder.addPolygon( new Attributed<Polygon>( polygon, attr ) );
+		} else {
+			OpenPolyLine line = builder.buildOpen();
+			Attributes attr = way.attributes().keepOnlyKeys(FILTER_POLYLINE_ATTRS);
+			
+			if (attr.size() > 0)
+				this.mapBuilder.addPolyLine( new Attributed<PolyLine>( line, attr ) );
 		}
 	}
 
@@ -235,7 +233,6 @@ public final class OSMToGeoTransformer {
      * @return Liste des polygones attribués de la relation
      */
     private List<Attributed<Polygon>> assemblePolygon(OSMRelation relation, Attributes attributes) {
-
 		List<ClosedPolyLine> inners = this.ringsForRole(relation, "inner");
 		List<ClosedPolyLine> outers = this.ringsForRole(relation, "outer");
 
