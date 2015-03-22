@@ -29,6 +29,7 @@ public final class OSMToGeoTransformer {
 	private final Projection projection;
 
 	private final String AREA_KEY = "area";
+	private final String MULTIPOLYGONE_KEY = "multipolygone";
 
     private final Set<String> AREA_VALUES = new HashSet<String>(
 		Arrays.asList("yes", "1", "true")
@@ -62,7 +63,7 @@ public final class OSMToGeoTransformer {
 	
     /**
      * Construit un convertisseur OSM en géométrie qui utilise la projection donnée
-     * @param projection
+     * @param projection Type de la projection à utiliser
      */
     public OSMToGeoTransformer (Projection projection) {
 		this.projection = projection;
@@ -70,8 +71,8 @@ public final class OSMToGeoTransformer {
 
     /**
      * Convertit une carte OSM en une carte géométrique projetée
-     * @param map
-     * @return
+     * @param map Carte OSM à convertur en carte géométrique projetée
+     * @return Carte géométrique projetée
      */
     public Map transform (OSMMap map) {
 		this.mapBuilder = new Map.Builder();
@@ -80,19 +81,22 @@ public final class OSMToGeoTransformer {
 			this.buildWay(way);
 
 		for (OSMRelation relation : map.relations()) {
-			List<Attributed<Polygon>> polygons = this.assemblePolygon(relation, relation.attributes());
-
-			for (Attributed<Polygon> polygon : polygons)
-				this.mapBuilder.addPolygon(polygon);
+		    // On ne transforme que les relations de type multipolygone
+		    if(relation.attributeValue("type").equals(MULTIPOLYGONE_KEY)) {
+    			List<Attributed<Polygon>> polygons = this.assemblePolygon(relation, relation.attributes());
+    
+    			for (Attributed<Polygon> polygon : polygons)
+    				this.mapBuilder.addPolygon(polygon);
+		    }
 		}
 
 		return this.mapBuilder.build();
     }
 
     /**
-     * 
-     * @param way
-     * @return
+     * Détermine si un chemin est de type area
+     * @param way Le chemin dont on veut savoir s'il est de type area
+     * @return true si le chemin est de type area
      */
 	private boolean isArea (OSMWay way) {
 		return AREA_VALUES.contains(way.attributeValue(AREA_KEY))
@@ -207,7 +211,7 @@ public final class OSMToGeoTransformer {
      * Contrôle que la polyligne fermée inner soit contenu dans la polyligne fermée outer
      * @param inner Polyligne dont on veut contrôler si elle est contenue dans outer
      * @param outer Polyligne dont on veut contrôler si elle contient inner
-     * @return true si la polyligne inner est contenue dans la poyligne outer
+     * @return true si la polyligne inner est contenue dans la polyligne outer
      */
 	private boolean isInside (ClosedPolyLine inner, ClosedPolyLine outer) {
 		List<Point> innerPoints = inner.points();
