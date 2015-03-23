@@ -28,9 +28,10 @@ import ch.epfl.imhof.geometry.*;
 public final class OSMToGeoTransformer {
 	private final Projection projection;
 
-	private final String AREA_KEY = "area";
-	private final String MULTIPOLYGONE_KEY = "multipolygone";
+	private final String TYPE_KEY = "type";
+	private final String TYPE_MULTIPOLYGONE = "multipolygone";
 
+	private final String AREA_KEY = "area";
     private final Set<String> AREA_VALUES = new HashSet<String>(
 		Arrays.asList("yes", "1", "true")
 	);
@@ -69,6 +70,11 @@ public final class OSMToGeoTransformer {
 		this.projection = projection;
     }
 
+	private boolean isMultipolygon (OSMRelation relation) {
+		return relation.attributeValue(TYPE_KEY).equals(TYPE_MULTIPOLYGONE) &&
+			!relation.attributes().keepOnlyKeys(FILTER_POLYGONE_ATTRS).isEmpty();
+	}
+
     /**
      * Convertit une carte OSM en une carte géométrique projetée
      * @param map Carte OSM à convertur en carte géométrique projetée
@@ -81,13 +87,12 @@ public final class OSMToGeoTransformer {
 			this.buildWay(way);
 
 		for (OSMRelation relation : map.relations()) {
-		    // On ne transforme que les relations de type multipolygone
-		    if(relation.attributeValue("type").equals(MULTIPOLYGONE_KEY)) {
-    			List<Attributed<Polygon>> polygons = this.assemblePolygon(relation, relation.attributes());
-    
-    			for (Attributed<Polygon> polygon : polygons)
-    				this.mapBuilder.addPolygon(polygon);
-		    }
+			if (isMultipolygon(relation)) {
+				List<Attributed<Polygon>> polygons = this.assemblePolygon(relation, relation.attributes());
+
+				for (Attributed<Polygon> polygon : polygons)
+					this.mapBuilder.addPolygon(polygon);
+			}
 		}
 
 		return this.mapBuilder.build();
