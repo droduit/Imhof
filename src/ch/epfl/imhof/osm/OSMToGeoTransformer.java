@@ -165,7 +165,7 @@ public final class OSMToGeoTransformer {
 
         /* On contrôle le nombre de voisins */
         for (OSMNode node : graph.nodes()) {
-            if (graph.neighborsOf(node).size() > 2)
+            if (graph.neighborsOf(node).size() != 2)
                 return new Graph<OSMNode>(new HashMap<OSMNode, Set<OSMNode>>());
         }
 
