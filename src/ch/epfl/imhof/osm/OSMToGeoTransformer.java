@@ -1,6 +1,5 @@
 package ch.epfl.imhof.osm;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +15,7 @@ import ch.epfl.imhof.Attributes;
 import ch.epfl.imhof.Map;
 import ch.epfl.imhof.Graph;
 import ch.epfl.imhof.geometry.ClosedPolyLine;
-import ch.epfl.imhof.projection.Projection;
+import ch.epfl.imhof.projection.*;
 import ch.epfl.imhof.geometry.*;
 
 /**
@@ -29,7 +28,7 @@ public final class OSMToGeoTransformer {
 	private final Projection projection;
 
 	private final String TYPE_KEY = "type";
-	private final String TYPE_MULTIPOLYGONE = "multipolygone";
+	private final String TYPE_MULTIPOLYGON = "multipolygon";
 
 	private final String AREA_KEY = "area";
     private final Set<String> AREA_VALUES = new HashSet<String>(
@@ -71,7 +70,8 @@ public final class OSMToGeoTransformer {
     }
 
 	private boolean isMultipolygon (OSMRelation relation) {
-		return relation.attributeValue(TYPE_KEY).equals(TYPE_MULTIPOLYGONE) &&
+		return relation.attributeValue(TYPE_KEY) != null &&
+            relation.attributeValue(TYPE_KEY).equals(TYPE_MULTIPOLYGON) &&
 			!relation.attributes().keepOnlyKeys(FILTER_POLYGONE_ATTRS).isEmpty();
 	}
 
@@ -269,5 +269,19 @@ public final class OSMToGeoTransformer {
 		}
 
         return polygons;
+    }
+
+    public static void main (String args[]) {
+        try {
+            OSMMap osmMap = OSMMapReader.readOSMFile("/lausanne.osm.gz", true);
+
+            OSMToGeoTransformer optimus = new OSMToGeoTransformer(new CH1903Projection());
+
+            Map map = optimus.transform(osmMap);
+
+            System.out.format("On a %d polylines et %d polygones!\n", map.polyLines().size(), map.polygons().size());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
