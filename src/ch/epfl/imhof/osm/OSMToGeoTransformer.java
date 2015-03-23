@@ -161,7 +161,15 @@ public final class OSMToGeoTransformer {
 			}
 		}
 
-		return graphBuilder.build();
+        Graph<OSMNode> graph = graphBuilder.build();
+
+        /* On contrôle le nombre de voisins */
+        for (OSMNode node : graph.nodes()) {
+            if (graph.neighborsOf(node).size() > 2)
+                return new Graph<OSMNode>(new HashMap<OSMNode, Set<OSMNode>>());
+        }
+
+		return graph;
 	}
 
 	/**
@@ -274,6 +282,9 @@ public final class OSMToGeoTransformer {
     public static void main (String args[]) {
         try {
             OSMMap osmMap = OSMMapReader.readOSMFile("/lausanne.osm.gz", true);
+
+            System.out.format("On a lu %d ways\n", osmMap.ways().size());
+            System.out.format("On a lu %d relations\n", osmMap.relations().size());
 
             OSMToGeoTransformer optimus = new OSMToGeoTransformer(new CH1903Projection());
 
