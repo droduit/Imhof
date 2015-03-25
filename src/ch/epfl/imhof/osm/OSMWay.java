@@ -56,7 +56,7 @@ public final class OSMWay extends OSMEntity {
          * @return true : si le nombre de noeud formant le chemin <2
          */
         public boolean isIncomplete() {
-            return (this.nodes.size() < 2);
+            return super.isIncomplete() || this.nodes.size() < 2;
         }
 
         /**

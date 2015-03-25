@@ -126,14 +126,14 @@ public final class OSMToGeoTransformer {
 			Polygon polygon = new Polygon(builder.buildClosed());
 			Attributes attr = way.attributes().keepOnlyKeys(FILTER_POLYGONE_ATTRS);
 			
-			if (attr.size() > 0)
+			if (attr.isEmpty() == false)
 				this.mapBuilder.addPolygon( new Attributed<Polygon>( polygon, attr ) );
 		} else {
-			PolyLine line = (way.isClosed()) ? builder.buildClosed() : builder.buildOpen();
+			PolyLine poly = (way.isClosed()) ? builder.buildClosed() : builder.buildOpen();
 			Attributes attr = way.attributes().keepOnlyKeys(FILTER_POLYLINE_ATTRS);
 			
-			if (attr.size() > 0)
-				this.mapBuilder.addPolyLine( new Attributed<PolyLine>( line, attr ) );
+			if (attr.isEmpty() == false)
+				this.mapBuilder.addPolyLine( new Attributed<PolyLine>( poly, attr ) );
 		}
 	}
 
@@ -283,7 +283,7 @@ public final class OSMToGeoTransformer {
 
     public static void main (String args[]) {
         try {
-            OSMMap osmMap = OSMMapReader.readOSMFile("/berne.osm.gz", true);
+            OSMMap osmMap = OSMMapReader.readOSMFile("/lausanne.osm.gz", true);
 
             System.out.format("On a lu %d ways\n", osmMap.ways().size());
             System.out.format("On a lu %d relations\n", osmMap.relations().size());
