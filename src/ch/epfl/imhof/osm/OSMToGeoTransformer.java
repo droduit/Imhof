@@ -58,7 +58,7 @@ public final class OSMToGeoTransformer {
         @Override
         public int compare (ClosedPolyLine o1, ClosedPolyLine o2) {
             return (int)Math.signum(o1.area() - o2.area());
-        }  
+        }
 	};
 	
     /**
@@ -104,8 +104,11 @@ public final class OSMToGeoTransformer {
      * @return true si le chemin est de type area
      */
 	private boolean isArea (OSMWay way) {
-		return AREA_VALUES.contains(way.attributeValue(AREA_KEY))
-			|| !way.attributes().keepOnlyKeys(AREA_ATTRS).isEmpty();
+		return
+            way.isClosed() && (
+                AREA_VALUES.contains(way.attributeValue(AREA_KEY)) ||
+                !way.attributes().keepOnlyKeys(AREA_ATTRS).isEmpty()
+            );
 	}
 
 	/**
@@ -116,7 +119,7 @@ public final class OSMToGeoTransformer {
 	private void buildWay (OSMWay way) {
 		PolyLine.Builder builder = new PolyLine.Builder();
 		
-		for (OSMNode node : way.nodes())
+		for (OSMNode node : way.nonRepeatingNodes())
 			builder.addPoint( this.projection.project( node.position() ) );
 
 		if (this.isArea(way)) {
@@ -126,7 +129,7 @@ public final class OSMToGeoTransformer {
 			if (attr.size() > 0)
 				this.mapBuilder.addPolygon( new Attributed<Polygon>( polygon, attr ) );
 		} else {
-			OpenPolyLine line = builder.buildOpen();
+			PolyLine line = (way.isClosed()) ? builder.buildClosed() : builder.buildOpen();
 			Attributes attr = way.attributes().keepOnlyKeys(FILTER_POLYLINE_ATTRS);
 			
 			if (attr.size() > 0)
@@ -217,7 +220,6 @@ public final class OSMToGeoTransformer {
 		}
 
 		return rings;
-
     }
 
     /**
@@ -281,7 +283,7 @@ public final class OSMToGeoTransformer {
 
     public static void main (String args[]) {
         try {
-            OSMMap osmMap = OSMMapReader.readOSMFile("/lausanne.osm.gz", true);
+            OSMMap osmMap = OSMMapReader.readOSMFile("/interlaken.osm.gz", true);
 
             System.out.format("On a lu %d ways\n", osmMap.ways().size());
             System.out.format("On a lu %d relations\n", osmMap.relations().size());
