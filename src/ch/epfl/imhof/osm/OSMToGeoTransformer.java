@@ -229,12 +229,12 @@ public final class OSMToGeoTransformer {
      * @return true si la polyligne inner est contenue dans la polyligne outer
      */
 	private boolean isInside (ClosedPolyLine inner, ClosedPolyLine outer) {
-		List<Point> innerPoints = inner.points();
+        for (Point p : inner.points()) {
+            if (outer.containsPoint(p) == false)
+                return false;
+        }
 
-		if (innerPoints.isEmpty())
-			return false;
-
-		return outer.containsPoint(innerPoints.get(0));
+		return true;
 	}
 
     /**
@@ -283,7 +283,7 @@ public final class OSMToGeoTransformer {
 
     public static void main (String args[]) {
         try {
-            OSMMap osmMap = OSMMapReader.readOSMFile("/interlaken.osm.gz", true);
+            OSMMap osmMap = OSMMapReader.readOSMFile("/berne.osm.gz", true);
 
             System.out.format("On a lu %d ways\n", osmMap.ways().size());
             System.out.format("On a lu %d relations\n", osmMap.relations().size());
