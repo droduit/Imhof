@@ -251,14 +251,7 @@ public final class OSMMapReader {
     public static OSMMap readOSMFile (String fileName, boolean unGZip) throws IOException, SAXException {
         mapBuilder = new OSMMap.Builder();
         
-        URL fileURL = OSMMapReader.class.getResource(fileName);
-
-		if (fileURL == null)
-			throw new FileNotFoundException("Fichier introuvable: " + fileName);
-
-		String filePath = fileURL.getFile();
-
-		try (InputStream file = new BufferedInputStream(new FileInputStream(filePath))) {
+		try (InputStream file = new BufferedInputStream(new FileInputStream(fileName))) {
 			InputStream input = (unGZip == false) ? file : new GZIPInputStream(file);
 
 			XMLReader reader = XMLReaderFactory.createXMLReader();

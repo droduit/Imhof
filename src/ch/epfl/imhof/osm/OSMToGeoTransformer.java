@@ -283,7 +283,7 @@ public final class OSMToGeoTransformer {
 
     public static void main (String args[]) {
         try {
-            OSMMap osmMap = OSMMapReader.readOSMFile("/lausanne.osm.gz", true);
+            OSMMap osmMap = OSMMapReader.readOSMFile("/interlaken.osm.gz", true);
 
             System.out.format("On a lu %d ways\n", osmMap.ways().size());
             System.out.format("On a lu %d relations\n", osmMap.relations().size());

@@ -1,5 +1,6 @@
 package ch.epfl.imhof.osm;
 
+import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,8 +54,7 @@ public final class OSMMap {
          * @param newWay Nouveau chemin à ajouter à la Map
          */
         public void addWay(OSMWay newWay) {
-            if(newWay!=null)
-                ways.put(newWay.id(), newWay);
+            ways.put(newWay.id(), Objects.requireNonNull(newWay));
         }
         
         /**
@@ -72,8 +72,7 @@ public final class OSMMap {
          * @param newRelation Nouvelle relation à ajouter à la carte
          */
         public void addRelation(OSMRelation newRelation) {
-            if(newRelation!=null)
-                relations.put(newRelation.id(), newRelation);
+            relations.put(newRelation.id(), Objects.requireNonNull(newRelation));
         }
         
         /**
