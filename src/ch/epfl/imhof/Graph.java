@@ -13,14 +13,12 @@ import java.util.Collections;
  * @author Dominique Roduit (234868)
  */
 public final class Graph<N> {
-    /** La liste des nœuds et de leurs voisins */
     public Map<N, Set<N>> neighbors;
 
     /**
      * Le constructeur de la class Graph.
      */
     public static final class Builder<N> {
-        /** La liste des voisins en construction */
         public Map<N, Set<N>> neighbors = new HashMap<N, Set<N>>();
 
         /**

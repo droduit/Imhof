@@ -12,7 +12,6 @@ import java.util.Collections;
  * @author Dominique Roduit (234868)
  */
 public abstract class PolyLine {
-    /** La liste des points composants la PolyLine. */
     final private List<Point> points;
 
     /**
@@ -22,7 +21,6 @@ public abstract class PolyLine {
      * @author Dominique Roduit (234868)
      */
     public static class Builder {
-        /** La liste des points de la future PolyLine. */
         private List<Point> points = new LinkedList<Point>();
 
         /**

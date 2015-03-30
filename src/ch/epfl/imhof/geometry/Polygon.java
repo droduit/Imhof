@@ -11,9 +11,7 @@ import java.util.Collections;
  * @author Dominique Roduit (234868)
  */
 public final class Polygon {
-    /** Le contour du Polygon */
     private ClosedPolyLine shell;
-    /** Les trous du Polygon */
     private List<ClosedPolyLine> holes;
 
     /**

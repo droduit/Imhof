@@ -7,10 +7,8 @@ package ch.epfl.imhof;
  * @author Dominique Roduit (234868)
  */
 public final class PointGeo {
-    /** La longitude du point en radians */
     private final double longitude;
 
-    /** La latitude du point en radians */
     private final double latitude;
 
     /**

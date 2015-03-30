@@ -27,15 +27,12 @@ public final class OSMMapReader {
      * @author Dominique Roduit (234868)
      */
     public static final class OSMMapReaderHandler extends DefaultHandler {
-        /** Différents types possibles d'entités **/
         public static enum Type {
             NODE, WAY, ND, RELATION, MEMBER, TAG, UNKNOWN
         }
         
-        /** Le stack des entités parcourus lors du parse */
         private Deque<Entity> entities = new LinkedList<Entity>();
 
-        /** Une entité du document XML caractérisée par son Type (@see {@link OSMMapReader.OSMMapReaderHandler.Type}) ainsi que son bâtisseur */
         private class Entity {
             private final Type type;
             private final OSMEntity.Builder builder;
