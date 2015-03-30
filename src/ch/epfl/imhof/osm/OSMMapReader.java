@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.util.Deque;
 import java.util.ArrayDeque;
-import java.util.LinkedList;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import ch.epfl.imhof.*;
@@ -28,7 +27,7 @@ public final class OSMMapReader {
      * @author Dominique Roduit (234868)
      */
     public static final class OSMMapReaderHandler extends DefaultHandler {
-        private Deque<Entity> entities = new LinkedList<>();
+        private Deque<Entity> entities = new ArrayDeque<>();
 
         private static class Entity {
             public static enum Type {
