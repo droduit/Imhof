@@ -27,13 +27,13 @@ public final class OSMMapReader {
      * @author Dominique Roduit (234868)
      */
     public static final class OSMMapReaderHandler extends DefaultHandler {
-        public static enum Type {
-            NODE, WAY, ND, RELATION, MEMBER, TAG, UNKNOWN
-        }
-        
         private Deque<Entity> entities = new LinkedList<>();
 
-        private class Entity {
+        private static class Entity {
+            public static enum Type {
+                NODE, WAY, ND, RELATION, MEMBER, TAG, UNKNOWN
+            }
+
             private final Type type;
             private final OSMEntity.Builder builder;
 
@@ -90,7 +90,7 @@ public final class OSMMapReader {
                     this.addRelationMember(attr);
                     break;
                 default:
-                    this.entities.addLast(new Entity(Type.UNKNOWN, null));
+                    this.entities.addLast(new Entity(Entity.Type.UNKNOWN, null));
                     break;
             }
         }
@@ -138,7 +138,7 @@ public final class OSMMapReader {
 
             OSMNode.Builder nb = new OSMNode.Builder(id, new PointGeo(lon, lat));
 
-            this.entities.addLast(new Entity(Type.NODE, nb));
+            this.entities.addLast(new Entity(Entity.Type.NODE, nb));
         }
 
         /**
@@ -152,7 +152,7 @@ public final class OSMMapReader {
 
             OSMWay.Builder wb = new OSMWay.Builder(id);
 
-            this.entities.addLast(new Entity(Type.WAY, wb));
+            this.entities.addLast(new Entity(Entity.Type.WAY, wb));
         }
 
         /**
@@ -170,7 +170,7 @@ public final class OSMMapReader {
             Entity parent = this.entities.getLast();
 
             /* Contrôle du type du bâtisseur parent */
-            if (parent.type() != Type.WAY)
+            if (parent.type() != Entity.Type.WAY)
                 throw new IllegalStateException(
                         "Le bâtisseur parent doit être du type WAY, et non " + parent.type());
 
@@ -181,7 +181,7 @@ public final class OSMMapReader {
             else
                 builder.addNode(node);
 
-            this.entities.addLast(new Entity(Type.ND, null));
+            this.entities.addLast(new Entity(Entity.Type.ND, null));
         }
 
         /**
@@ -196,7 +196,7 @@ public final class OSMMapReader {
 
             this.entities.getLast().builder().setAttribute(key, value);
 
-            this.entities.addLast(new Entity(Type.TAG, null));
+            this.entities.addLast(new Entity(Entity.Type.TAG, null));
         }
 
         /**
@@ -210,7 +210,7 @@ public final class OSMMapReader {
 
             OSMRelation.Builder rel = new OSMRelation.Builder(id);
 
-            this.entities.addLast(new Entity(Type.RELATION, rel));
+            this.entities.addLast(new Entity(Entity.Type.RELATION, rel));
         }
 
         /**
@@ -245,7 +245,7 @@ public final class OSMMapReader {
             Entity parent = this.entities.getLast();
 
             /* Contrôle du type du bâtisseur parent */
-            if (parent.type() != Type.RELATION)
+            if (parent.type() != Entity.Type.RELATION)
                 throw new IllegalStateException(
                         "Le bâtisseur parent doit être du type RELATION, et non " + parent.type());
 
@@ -256,7 +256,7 @@ public final class OSMMapReader {
             else
                 builder.addMember(type, role, member);
 
-            this.entities.addLast(new Entity(Type.MEMBER, null));
+            this.entities.addLast(new Entity(Entity.Type.MEMBER, null));
         }
     }
 
