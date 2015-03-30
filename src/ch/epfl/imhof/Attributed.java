@@ -11,10 +11,7 @@ package ch.epfl.imhof;
  *            en arguments dans le constructeur.
  */
 public final class Attributed<T> {
-
-    /** Objet auquel on attache les attributs */
     private final T value;
-    /** Attributs attachés à l'objet value */
     private final Attributes attributes;
 
     /**
@@ -25,9 +22,6 @@ public final class Attributed<T> {
      *            Objet auquel on attache les attributs
      * @param attributes
      *            Attributs attachés à l'objet value
-     * @throws NullPointerException
-     *             Si un des deux ou les deux arguments du constructeur sont
-     *             null
      */
     public Attributed (T value, Attributes attributes) {
         if (value == null || attributes == null)

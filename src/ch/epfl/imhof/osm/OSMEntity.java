@@ -100,8 +100,6 @@ public abstract class OSMEntity {
      *            Identifiant unique pour l'entité
      * @param attributes
      *            Attributs attachés à l'entité
-     * @throws NullPointerException
-     *             Lorsque l'objet contenant les attribut est null
      */
     public OSMEntity (long id, Attributes attributes) {
         this.attr = Objects.requireNonNull(attributes, "L'objet attributes ne doit pas être null");
