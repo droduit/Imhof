@@ -49,8 +49,8 @@ public abstract class PolyLine {
 
     /**
      * Vérifie que la liste de points passée en paramètre correspond aux
-     * critères nécessaires à une PolyLine. C.a.d. : 1. La liste n'est pas null
-     * 2. La liste contient au moins un élément
+     * critères nécessaires à une PolyLine. C.a.d. : la liste n'est pas null et
+     * la liste contient au moins un élément.
      *
      * @return True si la liste correspond aux critères
      */
