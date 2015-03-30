@@ -3,6 +3,7 @@ package ch.epfl.imhof.osm;
 import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.util.Deque;
+import java.util.ArrayDeque;
 import java.util.LinkedList;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;

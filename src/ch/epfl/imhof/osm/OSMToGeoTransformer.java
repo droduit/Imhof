@@ -265,6 +265,13 @@ public final class OSMToGeoTransformer {
      * @return Liste des polygones attribués de la relation
      */
     private List<Attributed<Polygon>> assemblePolygon (OSMRelation relation, Attributes attributes) {
+        List<Attributed<Polygon>> polygons = new LinkedList<>();
+        Attributes attr = attributes.keepOnlyKeys(FILTER_POLYGONE_ATTRS);
+
+        /* Pas de travail si notre relation n'est pas un polygone valide */
+        if (attr.size() <= 0)
+            return polygons;
+
         List<ClosedPolyLine> inners = this.ringsForRole(relation, "inner");
         List<ClosedPolyLine> outers = this.ringsForRole(relation, "outer");
 
@@ -288,17 +295,38 @@ public final class OSMToGeoTransformer {
                 rawPolygons.get(container).add(inner);
         }
 
-        List<Attributed<Polygon>> polygons = new ArrayList<>();
-        Attributes attr = attributes.keepOnlyKeys(FILTER_POLYGONE_ATTRS);
+        for (java.util.Map.Entry<ClosedPolyLine, List<ClosedPolyLine>> rawPoly : rawPolygons.entrySet()) {
+            Polygon poly = new Polygon(rawPoly.getKey(), rawPoly.getValue());
 
-        if (attr.size() > 0) {
-            for (ClosedPolyLine shell : rawPolygons.keySet()) {
-                Polygon poly = new Polygon(shell, rawPolygons.get(shell));
-
-                polygons.add(new Attributed<Polygon>(poly, attr));
-            }
+            polygons.add(new Attributed<Polygon>(poly, attr));
         }
 
         return polygons;
+    }
+
+    public static void main (String args[]) {
+        try {
+            long start = System.currentTimeMillis();
+            OSMMap osmMap = OSMMapReader.readOSMFile(OSMMapReader.class.getResource("/berne.osm.gz").getFile(), true);
+
+            System.out.format("On a lu %d ways\n", osmMap.ways().size());
+            System.out.format("On a lu %d relations\n", osmMap.relations().size());
+
+            long step = System.currentTimeMillis();
+
+            OSMToGeoTransformer optimus = new OSMToGeoTransformer(new CH1903Projection());
+
+            Map map = optimus.transform(osmMap);
+
+            long end = System.currentTimeMillis();
+            System.out.format("On a %d polylines et %d polygones!\n", map.polyLines().size(), map
+                    .polygons().size());
+
+            System.out.format("Lecture en %.4fs\n", (step - start) / 1000.0);
+            System.out.format("Transformation en %.4fs\n", (end - step) / 1000.0);
+            System.out.format("Totale en %.4fs\n", (end - start) / 1000.0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
