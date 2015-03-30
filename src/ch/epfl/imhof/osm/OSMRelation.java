@@ -82,6 +82,34 @@ public final class OSMRelation extends OSMEntity {
         }
     }
 
+
+    /**
+     * Construit une relation étant donnés son identifiant unique, ses membres
+     * et ses attributs
+     * 
+     * @param id
+     *            Identifiant unique relatif à la relation
+     * @param members
+     *            Membres de la relation
+     * @param attributes
+     *            Attributs attachés à la relation
+     */
+    public OSMRelation (long id, List<Member> members, Attributes attributes) {
+        super(id, attributes);
+
+        this.members = Collections.unmodifiableList(new ArrayList<Member>(members));
+    }
+
+    /**
+     * Retourne la liste des membres de la relation.
+     * 
+     * @return La liste des membres de la relation
+     */
+    public List<Member> members () {
+        return this.members;
+    }
+
+    
     /**
      * Sert de bâtisseur à la classe OSMRelation et permet de construire une
      * relation en plusieurs étapes.
@@ -122,41 +150,16 @@ public final class OSMRelation extends OSMEntity {
          * constructeur ainsi que les membres et les attributs ajoutés jusqu'à
          * présent au bâtisseur
          * 
+         * @throws IllegalStateException
+         *          Si la relation est incomplète
          * @return La relation construite sur la base de tout ce qui a été donné
          *         jusqu'ici
          */
         public OSMRelation build () {
             if (this.isIncomplete())
-                throw new IllegalStateException("relation incomplète");
+                throw new IllegalStateException("Relation incomplète");
 
             return new OSMRelation(this.id(), this.members, this.attributes());
         }
     }
-
-    /**
-     * Construit une relation étant donnés son identifiant unique, ses membres
-     * et ses attributs
-     * 
-     * @param id
-     *            Identifiant unique relatif à la relation
-     * @param members
-     *            Membres de la relation
-     * @param attributes
-     *            Attributs attachés à la relation
-     */
-    public OSMRelation (long id, List<Member> members, Attributes attributes) {
-        super(id, attributes);
-
-        this.members = Collections.unmodifiableList(new ArrayList<>(members));
-    }
-
-    /**
-     * Retourne la liste des membres de la relation.
-     * 
-     * @return La liste des membres de la relation
-     */
-    public List<Member> members () {
-        return this.members;
-    }
-
 }

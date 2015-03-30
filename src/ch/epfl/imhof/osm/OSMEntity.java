@@ -16,6 +16,60 @@ public abstract class OSMEntity {
     private final Attributes attr;
 
     /**
+     * Construit une entité OSM dotée de l'identifiant unique et des attributs
+     * donnés.
+     * 
+     * @param id
+     *            Identifiant unique pour l'entité
+     * @param attributes
+     *            Attributs attachés à l'entité
+     */
+    public OSMEntity (long id, Attributes attributes) {
+        this.attr = Objects.requireNonNull(attributes, "L'objet attributes ne doit pas être null");
+        this.id = id;
+    }
+
+    /**
+     * Retourne l'identifiant unique de l'entité.
+     * 
+     * @return Identifiant unique de l'entité
+     */
+    public long id () {
+        return this.id;
+    }
+
+    /**
+     * Retourne les attributs de l'entité
+     * 
+     * @return Attributs de l'entité
+     */
+    public Attributes attributes () {
+        return this.attr;
+    }
+
+    /**
+     * Retourne vrai ssi l'entité possède l'attribut passé en argument.
+     * 
+     * @param key
+     *            Clé correspondant a l'attribut
+     * @return true : si l'entité possède l'attribut
+     */
+    public boolean hasAttribute (String key) {
+        return attr.contains(key);
+    }
+
+    /**
+     * Retourne la valeur de l'attribut donné, ou null si celui-ci n'existe pas.
+     * 
+     * @param key
+     *            Clé de l'attribut dont on veut la valeur
+     * @return Valeur de l'attribut
+     */
+    public String attributeValue (String key) {
+        return this.attr.get(key);
+    }
+
+    /**
      * Sert de classe mère à toutes les classes de bâtisseurs d'entités OSM.
      * 
      * @author Thierry Treyer (235116)
@@ -89,61 +143,5 @@ public abstract class OSMEntity {
         public Attributes attributes () {
             return this.attrBuilder.build();
         }
-
     }
-
-    /**
-     * Construit une entité OSM dotée de l'identifiant unique et des attributs
-     * donnés.
-     * 
-     * @param id
-     *            Identifiant unique pour l'entité
-     * @param attributes
-     *            Attributs attachés à l'entité
-     */
-    public OSMEntity (long id, Attributes attributes) {
-        this.attr = Objects.requireNonNull(attributes, "L'objet attributes ne doit pas être null");
-        this.id = id;
-    }
-
-    /**
-     * Retourne l'identifiant unique de l'entité.
-     * 
-     * @return Identifiant unique de l'entité
-     */
-    public long id () {
-        return this.id;
-    }
-
-    /**
-     * Retourne les attributs de l'entité
-     * 
-     * @return Attributs de l'entité
-     */
-    public Attributes attributes () {
-        return this.attr;
-    }
-
-    /**
-     * Retourne vrai ssi l'entité possède l'attribut passé en argument.
-     * 
-     * @param key
-     *            Clé correspondant a l'attribut
-     * @return true : si l'entité possède l'attribut
-     */
-    public boolean hasAttribute (String key) {
-        return attr.contains(key);
-    }
-
-    /**
-     * Retourne la valeur de l'attribut donné, ou null si celui-ci n'existe pas.
-     * 
-     * @param key
-     *            Clé de l'attribut dont on veut la valeur
-     * @return Valeur de l'attribut
-     */
-    public String attributeValue (String key) {
-        return this.attr.get(key);
-    }
-
 }
