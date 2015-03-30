@@ -1,162 +1,151 @@
 package ch.epfl.imhof;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import java.util.HashMap;
+import java.util.HashSet;
+
+import org.junit.Test;
 
 public class AttributesTest {
-    private final static String KNOWN_KEY = "foo";
-    private final static String KNOWN_VALUE = "bar";
-    private final static String UNKNOWN_KEY = "randomkey";
-    private final static String DEFAULT_STR = "default";
-    private final static int DEFAULT_INT = 42;
 
-    private Map<String, String> attrs;
-    private Map<String, String> overInterAttrs;
-    private Map<String, String> halfInterAttrs;
-    private Map<String, String> noInterAttrs;
-    private Map<String, String> emptyAttrs;
+	private HashMap<String, String> sampleAttributesValues() {
+		HashMap<String, String> testData = new HashMap<>();
+		testData.put("testKey 1", "testValue 1");
+		testData.put("testKey 2", "testValue 2");
+		testData.put("testKey 3", "testValue 3");
+		return testData;
+	}
 
-    @Before
-    public void setUp () {
-        Map<String, String> hs = new HashMap<String, String>();
+	@Test
+	public void constructorAndNonMutableAttributes() {
+		HashMap<String, String> testData = sampleAttributesValues();
+		Attributes testAttributes = new Attributes(testData);
+		testData.put("testKey 4", "testValue 4");
+		assertTrue(testData.containsKey("testKey 4"));
+		assertFalse(testAttributes.contains("testKey 4"));
+	}
 
-        this.emptyAttrs = Collections.unmodifiableMap(new HashMap<String, String>(hs));
+	@Test
+	public void emptyAttributesIndication() {
+		Attributes testAttributes = new Attributes(new HashMap<>());
+		assertTrue(testAttributes.isEmpty());
+	}
 
-        hs.put("Hello", "World");
-        hs.put("Oh", "Hay");
+	@Test
+	public void attributesIsEmptyWhenNotEmpty() {
+		HashMap<String, String> testData = sampleAttributesValues();
+		Attributes testAttributes = new Attributes(testData);
+		assertFalse(testAttributes.isEmpty());
+	}
 
-        this.halfInterAttrs = Collections.unmodifiableMap(new HashMap<String, String>(hs));
+	@Test
+	public void containedKeys() {
+		HashMap<String, String> testData = sampleAttributesValues();
+		Attributes testAttributes = new Attributes(testData);
+		assertTrue(testAttributes.contains("testKey 1")
+				&& testAttributes.contains("testKey 2")
+				&& testAttributes.contains("testKey 3"));
+		assertFalse(testAttributes.contains("testKey 4"));
+	}
 
-        hs.put(KNOWN_KEY, KNOWN_VALUE);
-        hs.put("int", "123");
-        hs.put("float", "12.3");
+	@Test
+	public void getTheValue() {
+		HashMap<String, String> testData = sampleAttributesValues();
+		Attributes testAttributes = new Attributes(testData);
+		assertEquals("testValue 1", testAttributes.get("testKey 1"));
+		assertEquals("testValue 2", testAttributes.get("testKey 2"));
+		assertEquals("testValue 3", testAttributes.get("testKey 3"));
+		assertEquals(null, testAttributes.get("testKey 4"));
+	}
 
-        this.attrs = Collections.unmodifiableMap(new HashMap<String, String>(hs));
+	@Test
+	public void getWhereNoSuch() {
+		HashMap<String, String> testData = sampleAttributesValues();
+		Attributes testAttributes = new Attributes(testData);
+		assertEquals("testValue 1", testAttributes.get("testKey 1", "No Such"));
+		assertEquals("No Such", testAttributes.get("testKey 4", "No Such"));
+	}
 
-        hs.put(UNKNOWN_KEY, DEFAULT_STR);
+	@Test
+	public void getIntFromString() {
+		HashMap<String, String> testData = new HashMap<>();
+		testData.put("testKey 1", "-81");
+		testData.put("testKey 2", "42");
+		testData.put("testKey 3", "yes");
+		testData.put("testKey 5", null);
+		Attributes testAttributes = new Attributes(testData);
+		assertEquals(-81, testAttributes.get("testKey 1", 0));
+		assertEquals(42, testAttributes.get("testKey 2", 0));
+		assertEquals(0, testAttributes.get("testKey 3", 0));
+		assertEquals(0, testAttributes.get("testKey 4", 0));
+		assertEquals(0, testAttributes.get("testKey 5", 0));
+	}
 
-        this.overInterAttrs = Collections.unmodifiableMap(new HashMap<String, String>(hs));
+	@Test
+	public void builderBuilt() {
+		Attributes.Builder testBuild = new Attributes.Builder();
+		testBuild.put("testKey 1", "testValue 1");
+		testBuild.put("testKey 2", "testValue 2");
+		testBuild.put("testKey 3", "testValue 3");
+		Attributes test = testBuild.build();
+		assertTrue(test.contains("testKey 1") && test.contains("testKey 2")
+				&& test.contains("testKey 3"));
+		assertEquals(test.get("testKey 1"), "testValue 1");
+		assertEquals(test.get("testKey 2"), "testValue 2");
+		assertEquals(test.get("testKey 3"), "testValue 3");
+		testBuild.put("testKey 4", "testValue 4");
+		assertFalse(test.contains("testKey 4"));
+	}
 
-        hs.clear();
-        hs.put(UNKNOWN_KEY, DEFAULT_STR);
+	@Test
+	public void keysWithEmptySet() {
+		HashMap<String, String> testData = sampleAttributesValues();
+		Attributes testAttributes = new Attributes(testData);
+		HashSet<String> keptKeys = new HashSet<>();
+		Attributes testResult = testAttributes.keepOnlyKeys(keptKeys);
+		assertTrue(testResult.isEmpty());
+	}
 
-        this.noInterAttrs = Collections.unmodifiableMap(new HashMap<String, String>(hs));
-    }
+	@Test
+	public void someKeysKeepingFromInitial() {
+		HashMap<String, String> testData = sampleAttributesValues();
+		Attributes testAttributes = new Attributes(testData);
+		HashSet<String> keptKeys = new HashSet<>();
+		keptKeys.add("testKey 1");
+		keptKeys.add("testKey 3");
+		Attributes testResult = testAttributes.keepOnlyKeys(keptKeys);
+		assertTrue(testResult.contains("testKey 1")
+				&& testResult.contains("testKey 3")
+				&& !testResult.contains("testKey 2"));
+	}
 
-    private void assertAttributesEquals (Map<String, String> expected, Attributes toTest) {
-        assertEquals(expected.keySet().size(), toTest.size());
+	@Test
+	public void allKeysKeepingFromInitial() {
+		HashMap<String, String> testData = sampleAttributesValues();
+		Attributes testAttributes = new Attributes(testData);
+		HashSet<String> keptKeys = new HashSet<>();
+		keptKeys.add("testKey 1");
+		keptKeys.add("testKey 2");
+		keptKeys.add("testKey 3");
+		keptKeys.add("testKey 4");
+		Attributes testResult = testAttributes.keepOnlyKeys(keptKeys);
+		assertTrue(testResult.contains("testKey 1")
+				&& testResult.contains("testKey 2")
+				&& testResult.contains("testKey 3")
+				&& !testResult.contains("testKey 4"));
+	}
 
-        assertAttributesPresent(expected, toTest);
-    }
+	@Test
+	public void keysWithKeyNotInMap() {
+		HashMap<String, String> testData = sampleAttributesValues();
+		Attributes testAttributes = new Attributes(testData);
+		HashSet<String> keptKeys = new HashSet<>();
+		keptKeys.add("testKey 4");
+		Attributes testResult = testAttributes.keepOnlyKeys(keptKeys);
+		assertTrue(testResult.isEmpty());
+	}
 
-    private void assertAttributesPresent (Map<String, String> expected, Attributes toTest) {
-        for (String key : expected.keySet()) {
-            assertEquals(expected.get(key), toTest.get(key));
-        }
-    }
-
-    @Test
-    public void testBuilder () {
-        Attributes.Builder ab = new Attributes.Builder();
-
-        for (String key : this.attrs.keySet()) {
-            ab.put(key, this.attrs.get(key));
-        }
-
-        assertAttributesEquals(this.attrs, ab.build());
-    }
-
-    @Test
-    public void testConstructor () {
-        assertAttributesEquals(this.attrs, new Attributes(this.attrs));
-    }
-
-    @Test (expected = NullPointerException.class)
-    public void testConstructorException () {
-        new Attributes(null);
-    }
-
-    @Test
-    public void testImmutability () {
-        Map<String, String> attrs = new HashMap<String, String>(this.attrs);
-        Attributes as = new Attributes(attrs);
-
-        assertEquals(KNOWN_VALUE, as.get(KNOWN_KEY));
-
-        attrs.put(KNOWN_KEY, DEFAULT_STR);
-        assertNotEquals(DEFAULT_STR, as.get(KNOWN_KEY));
-        assertEquals(DEFAULT_STR, attrs.get(KNOWN_KEY));
-        assertEquals(KNOWN_VALUE, as.get(KNOWN_KEY));
-    }
-
-    @Test
-    public void testIsEmpty () {
-        Attributes emptyAttrs = new Attributes(new HashMap<String, String>());
-        Attributes filledAttrs = new Attributes(this.attrs);
-
-        assertTrue(emptyAttrs.isEmpty());
-        assertFalse(filledAttrs.isEmpty());
-    }
-
-    @Test
-    public void testContains () {
-        Attributes as = new Attributes(this.attrs);
-
-        for (String key : this.attrs.keySet()) {
-            assertTrue(as.contains(key));
-        }
-
-        assertFalse(as.contains(UNKNOWN_KEY));
-    }
-
-    @Test
-    public void testGet () {
-        Attributes as = new Attributes(this.attrs);
-
-        /* Basic get */
-        for (String key : this.attrs.keySet()) {
-            assertEquals(this.attrs.get(key), as.get(key));
-        }
-
-        /* Get with default string value */
-        assertNull(as.get(UNKNOWN_KEY));
-        assertEquals(DEFAULT_STR, as.get(UNKNOWN_KEY, DEFAULT_STR));
-
-        for (String key : this.attrs.keySet()) {
-            assertEquals(this.attrs.get(key), as.get(key, DEFAULT_STR));
-        }
-
-        /* Get with default int value */
-        assertEquals(123, as.get("int", DEFAULT_INT));
-        assertEquals(DEFAULT_INT, as.get(KNOWN_KEY, DEFAULT_INT));
-        assertEquals(DEFAULT_INT, as.get("float", DEFAULT_INT));
-        assertEquals(DEFAULT_INT, as.get(UNKNOWN_KEY, DEFAULT_INT));
-    }
-
-    @Test
-    public void testKeepOnlyKeys () {
-        Attributes as = new Attributes(this.attrs);
-
-        assertAttributesEquals(this.emptyAttrs, as.keepOnlyKeys(this.emptyAttrs.keySet()));
-        assertAttributesEquals(this.halfInterAttrs, as.keepOnlyKeys(this.halfInterAttrs.keySet()));
-        assertAttributesEquals(this.attrs, as.keepOnlyKeys(this.attrs.keySet()));
-
-        Attributes oas = as.keepOnlyKeys(this.overInterAttrs.keySet());
-        
-        assertNull(oas.get(UNKNOWN_KEY));
-        assertFalse(oas.contains(UNKNOWN_KEY));
-        assertAttributesPresent(this.attrs, oas);
-
-        Attributes eas = as.keepOnlyKeys(this.noInterAttrs.keySet());
-
-        assertNull(eas.get(UNKNOWN_KEY));
-        assertFalse(oas.contains(UNKNOWN_KEY));
-        for (String key : this.attrs.keySet()) {
-            assertFalse(eas.contains(key));
-        }
-    }
 }

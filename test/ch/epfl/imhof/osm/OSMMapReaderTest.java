@@ -1,85 +1,242 @@
 package ch.epfl.imhof.osm;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.zip.ZipException;
 
 import org.junit.Test;
-import org.xml.sax.SAXException;
-
-import com.sun.org.apache.xerces.internal.impl.io.MalformedByteSequenceException;
+import org.xml.sax.SAXParseException;
 
 public class OSMMapReaderTest {
 
-    // test FileNotFoundException lorsqu'on veut atteindre un fichier qui n'existe pas
-    @Test(expected=FileNotFoundException.class)
-    public void FNFE() throws IOException, SAXException {
-        OSMMapReader.readOSMFile("foo.osm", false);
-    }
-    
-    // test MalformedByteSequenceException lorsqu'un fichier compressé n'est pas décompressé avant le parsing
-    @Test(expected=MalformedByteSequenceException.class)
-    public void MBSE() throws IOException, SAXException {
-        OSMMapReader.readOSMFile("/lausanne.osm.gz", false);
-    }
-    
-    // test ZipException lorsqu'on tente de décompresser un xml qui n'est pas compressé
-    @Test(expected=ZipException.class)
-    public void ZE() throws IOException, SAXException {
-        OSMMapReader.readOSMFile("/lc.osm", true);
-    }
-    
-    // test SAXException lorsqu'on a un fichier XML non valide
-    @Test(expected=SAXException.class)
-    public void SAXE() throws IOException, SAXException {
-        OSMMapReader.readOSMFile("/nonvalidxml.osm", false);
-    }
-    
-    // test IllegalStateException
-    @Test(expected=IllegalStateException.class)
-    public void IllegalStateExTest() throws IOException, SAXException {
-        OSMMapReader.readOSMFile("/illegalStateException.osm", false);
-    }
-    
     @Test
-    public void testExistenceAndQuantity() throws IOException, SAXException {
-        OSMMap map = OSMMapReader.readOSMFile("/test1.osm", false);
-        
-        // On doit avoir 2 chemins seulement car le 3e ne possède qu'une reference
-        // vers un noeud qui n'existe pas donc on ne le construit pas.
-       assertEquals(2, map.ways().size());
-       
-       // On test que le chemin dont l'id est 111626833 contient bien 2 noeuds
-       OSMWay way = null;
-       if(map.ways().get(0).id()==111626833) {
-           way = map.ways().get(0);
-       } else {
-           way = map.ways().get(1);
-       }
-       assertEquals(2, way.nodesCount());
-       
-       // On controle qu'on ait tous les attributs pour le chemin 111626833
-       assertEquals(2, way.attributes().size());
-       assertEquals("1", way.attributeValue("layer"));
-       assertEquals("Plan EPFL", way.attributeValue("source"));
-       
-       
-       // Controles sur la relation
-       assertEquals(1, map.relations().size());
-       assertEquals(2, map.relations().get(0).members().size());
-       for(OSMRelation.Member m : map.relations().get(0).members()) {
-           assertEquals(OSMRelation.Member.Type.WAY.toString(), m.type().toString());
-           assertEquals("outer", m.role());
-       }
-
-
-       OSMRelation rel = map.relations().get(0);
-       assertEquals("yes", rel.attributeValue("building"));
-       assertEquals("0", rel.attributeValue("layer"));
-       assertEquals("Rolex Learning Center", rel.attributeValue("name"));
-       assertEquals("RLC", rel.attributeValue("ref"));
-       assertEquals("multipolygon", rel.attributeValue("type"));
+    public void simpleBuilding() {
+        OSMMap testMapReadResult = null;
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testSimpleBuilding.osm").getFile(), false);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly.");
+        }
+        assertEquals(1, testMapReadResult.ways().size());
+        assertEquals(0, testMapReadResult.relations().size());
+        assertTrue(testMapReadResult.ways().get(0).attributes().contains("building"));
+        assertEquals("yes", testMapReadResult.ways().get(0).attributes().get("building"));
     }
+
+    @Test
+    public void severalWalls() {
+        OSMMap testMapReadResult = null;
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testSeveralWalls.osm").getFile(), false);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly.");
+        }
+        assertEquals(13, testMapReadResult.ways().size());
+        assertEquals(1, testMapReadResult.relations().size());
+        assertTrue(testMapReadResult.relations().get(0).attributes().contains("type"));
+        assertEquals("multipolygon", testMapReadResult.relations().get(0).attributes().get("type"));
+    }
+
+    @Test
+    public void roadWhole() {
+        OSMMap testMapReadResult = null;
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testRoadWhole.osm").getFile(), false);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly.");
+        }
+        assertEquals(1, testMapReadResult.ways().size());
+        assertEquals(0, testMapReadResult.relations().size());
+        assertTrue(testMapReadResult.ways().get(0).attributes().contains("highway"));
+        assertEquals("road", testMapReadResult.ways().get(0).attributes().get("highway"));
+    }
+
+    @Test
+    public void joinedBuildings() {
+        OSMMap testMapReadResult = null;
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testJoinedBuildings.osm").getFile(), false);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly.");
+        }
+        assertEquals(3, testMapReadResult.ways().size());
+        assertEquals(2, testMapReadResult.relations().size());
+        for (int i = 0; i < 2; ++i){
+            assertTrue(testMapReadResult.relations().get(i).attributes().contains("type"));
+            assertEquals("multipolygon", testMapReadResult.relations().get(i).attributes().get("type"));
+        }
+    }
+
+    @Test
+    public void buildingOnALandUse() {
+        OSMMap testMapReadResult = null;
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testBuildingOnALandUse.osm").getFile(), false);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly.");
+        }
+        assertEquals(2, testMapReadResult.ways().size());
+        assertEquals(0, testMapReadResult.relations().size());
+        boolean buildingFound = false;
+        boolean landUseFound = false;
+        for(int i = 0; i < 2; ++i){
+            if (testMapReadResult.ways().get(i).attributes().contains("building")) {
+                assertEquals("yes", testMapReadResult.ways().get(i).attributes().get("building"));
+                buildingFound = true;
+            }
+            if (testMapReadResult.ways().get(i).attributes().contains("landuse")) {
+                assertEquals("residential", testMapReadResult.ways().get(i).attributes().get("landuse"));
+                landUseFound = true;
+            }
+        }
+        assert(buildingFound && landUseFound);
+    }
+
+    @Test
+    public void buildingOneInnerHole() {
+        OSMMap testMapReadResult = null;
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testBuildingOneInnerHole.osm").getFile(), false);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly.");
+        }
+        assertEquals(2, testMapReadResult.ways().size());
+        assertEquals(1, testMapReadResult.relations().size());
+        assertTrue(testMapReadResult.relations().get(0).attributes().contains("type"));
+        assertEquals("multipolygon", testMapReadResult.relations().get(0).attributes().get("type"));
+    }
+
+    @Test
+    public void buildingMultipleHoles() {
+        OSMMap testMapReadResult = null;
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testBuildingMultipleHoles.osm").getFile(), false);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly.");
+        }
+        assertEquals(4, testMapReadResult.ways().size());
+        assertEquals(1, testMapReadResult.relations().size());
+        assertTrue(testMapReadResult.relations().get(0).attributes().contains("type"));
+        assertEquals("multipolygon", testMapReadResult.relations().get(0).attributes().get("type"));
+    }
+
+    @Test
+    public void roads() {
+        OSMMap testMapReadResult = null;
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testRoads.osm").getFile(), false);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly.");
+        }
+        assertEquals(5, testMapReadResult.ways().size());
+        assertEquals(0, testMapReadResult.relations().size());
+        for (int i = 0; i < 5; ++i){
+            assertTrue(testMapReadResult.ways().get(i).attributes().contains("highway"));
+            assertEquals("primary", testMapReadResult.ways().get(i).attributes().get("highway"));
+            assertEquals(3, testMapReadResult.ways().get(i).nodes().size());
+        }
+    }
+
+    @Test
+    public void multipolygons() {
+        OSMMap testMapReadResult = null;
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testMultipolygons.osm").getFile(), false);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly.");
+        }
+        assertEquals(12, testMapReadResult.ways().size());
+        assertEquals(3, testMapReadResult.relations().size());
+        for (int i = 0; i < 3; ++i){
+            assertTrue(testMapReadResult.relations().get(i).attributes().contains("type"));
+            assertEquals("multipolygon", testMapReadResult.relations().get(i).attributes().get("type"));
+        }
+    }
+
+    @Test
+    public void DataCorrupted() {
+        OSMMap testMapReadResult = null;
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testDataCorrupted.osm").getFile(), false);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly.");
+        }
+        assertEquals(0, testMapReadResult.ways().size());
+        assertEquals(0, testMapReadResult.relations().size());
+    }
+
+    @Test
+    public void typeLessRelations() {
+        OSMMap testMapReadResult = null;
+        final String attr = "";
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testTypelessRelations.osm").getFile(), false);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly." + e);
+        }
+        assertEquals(12, testMapReadResult.ways().size());
+        assertEquals(3, testMapReadResult.relations().size());
+        for (int i = 0; i < 3; ++i){
+            assertTrue(testMapReadResult.relations().get(i).attributes().contains(attr));
+            assertEquals("multipolygon", testMapReadResult.relations().get(i).attributes().get(attr));
+        }
+    }
+
+    @Test
+    public void gzipIsRespected(){
+        OSMMap testMapReadResult = null;
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testGZip.osm.gz").getFile(), true);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly.");
+        }
+        assertEquals(5, testMapReadResult.ways().size());
+        assertEquals(0, testMapReadResult.relations().size());
+
+    }
+
+    @Test
+    public void onlyDefinedAttsUsed(){
+        OSMMap testMapReadResult = null;
+        try {
+            testMapReadResult = OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testUndefinedAtts.osm").getFile(), false);
+        } catch (Exception e) {
+            fail("Unable to recognise the file and/or read it properly.");
+        }
+        assertEquals(4, testMapReadResult.ways().size());
+        assertEquals(1, testMapReadResult.relations().size());
+        for(int i=0; i<4;i++){
+            assertTrue(testMapReadResult.ways().get(i).attributes().isEmpty());
+            for(int j=0;j<testMapReadResult.ways().get(i).nodesCount();j++){
+                assertTrue(testMapReadResult.ways().get(i).nodes().get(j).attributes().isEmpty());
+            }
+        }
+        assertFalse(testMapReadResult.relations().get(0).attributes().isEmpty());
+        assertEquals(null, testMapReadResult.relations().get(0).attributes().get("action"));
+        assertEquals(null, testMapReadResult.relations().get(0).attributes().get("visible"));
+
+    }
+
+    @Test
+    public void learningCenter() {
+    	try {
+			OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/lc.osm.gz").getFile(), true);
+		} catch (Exception e) {
+		    fail("Unable to recognise the file and/or read it properly.");
+		}
+    }
+
+    @Test (expected = FileNotFoundException.class)
+    public void errorNameFile() throws Exception{
+        OSMMapReader.readOSMFile("     ", true);
+    }
+
+    @Test (expected = SAXParseException.class)
+    public void errorInFile() throws Exception{
+        OSMMapReader.readOSMFile(getClass().getResource("/OSMtestFiles/testSimpleBuildingError.osm").getFile(), false);
+    }
+
 }

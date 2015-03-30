@@ -2,71 +2,63 @@ package ch.epfl.imhof;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.HashMap;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import ch.epfl.imhof.geometry.ClosedPolyLine;
-import ch.epfl.imhof.geometry.Point;
-import ch.epfl.imhof.geometry.Polygon;
+import ch.epfl.imhof.Attributed;
+import ch.epfl.imhof.Attributes;
 
-/**
- * Tests Pour la class Attributed
- * @author Dominique Roduit (234868)
- *
- */
 public class AttributedTest {
 
-    private Attributed<Polygon> ap;
-    
-    @Before
-    public void init() {
-        Attributes.Builder b = new Attributes.Builder();
-        b.put("natural", "water");
-        b.put("name", "Lac Léman");
-        b.put("ele", "372");
-        Attributes a = b.build();
+	private Attributes newSampleAttributes() {
+		HashMap<String, String> testData = new HashMap<>();
+		testData.put("testKey 1", "testValue 1");
+		testData.put("testKey 2", "testValue 2");
+		testData.put("testKey 3", "testValue 3");
+		testData.put("testKey 4", "23");
+		return new Attributes(testData);
+	}
 
-        List<Point> points = Arrays.asList(new Point(0,50), new Point(90,80), new Point(-5,-10));
-        
-        Polygon p = new Polygon(new ClosedPolyLine(points));
-        ap = new Attributed<>(p, a);
-    }
-    
-    @Test
-    public void testRightValues() {
-        assertEquals("Doit retourner 372", 372, ap.attributeValue("ele", 0));
-        attributeValueTest();
-        
-        // test hasAttributes
-        assertTrue(ap.hasAttribute("ele"));
-        assertFalse(ap.hasAttribute("test"));
-        assertFalse(ap.hasAttribute(null));
-    }
-    
-    // Test de la methode attribute value
-    public void attributeValueTest() {
-        assertEquals("Doit retourner 0", 0, ap.attributeValue("ele0", 0));
-        assertNull("Doit retourner null", ap.attributeValue("ele0"));
-        assertEquals("Doit retourner non", "non", ap.attributeValue("ele0", "non"));
-        assertEquals("Doit retourner 1", 1, ap.attributeValue("name", 1));
-    }
-    
-    @Test
-    public void testAttributes() {
-        assertFalse(ap.attributes().contains("foo"));
-        HashSet<String> hash = new HashSet<String>();
-        hash.add("foo");
-        hash.add("ele");
-        assertFalse(ap.attributes().keepOnlyKeys(hash).contains("foo"));
-        assertTrue("372", ap.attributes().keepOnlyKeys(hash).contains("ele"));
-    }
-    
-    @Test (expected=NullPointerException.class)
-    public void testCrash() {
-        ap = new Attributed<>(null, null);
-    }
+	@Test
+	public void constructorAndGetters() {
+		Attributes testAttributes = newSampleAttributes();
+		Attributed<Integer> testAttributed = new Attributed<>(5, testAttributes);
+		assertTrue(testAttributed.value() == 5);
+		assertSame(testAttributes, testAttributed.attributes());
+	}
+
+	@Test
+	public void hasAttributeAndAttributeValueVerification() {
+		Attributes testAttributes = newSampleAttributes();
+		Attributed<Integer> testAttributed = new Attributed<>(5, testAttributes);
+		assertTrue(testAttributed.hasAttribute("testKey 1")
+				&& testAttributed.hasAttribute("testKey 2")
+				&& testAttributed.hasAttribute("testKey 3")
+				&& !testAttributed.hasAttribute("testKey 5"));
+		assertEquals("testValue 1", testAttributed.attributeValue("testKey 1"));
+		assertEquals("testValue 2", testAttributed.attributeValue("testKey 2"));
+		assertEquals("testValue 3", testAttributed.attributeValue("testKey 3"));
+	}
+
+	@Test
+	public void getAttributeValueWithDefaultValue() {
+		Attributes testAttributes = newSampleAttributes();
+		Attributed<String> testAttributed = new Attributed<>("test",
+				testAttributes);
+		assertEquals("testValue 1",
+				testAttributed.attributeValue("testKey 1", "default"));
+		assertEquals("default",
+				testAttributed.attributeValue("testKey 6", "default"));
+	}
+
+	@Test
+	public void getAttributeValueWithDefaultInt() {
+		Attributes testAttributes = newSampleAttributes();
+		Attributed<Double> testAttributed = new Attributed<>(7.45,
+				testAttributes);
+		assertEquals(65, testAttributed.attributeValue("testKey 1", 65));
+		assertEquals(23, testAttributed.attributeValue("testKey 4", 65));
+		assertEquals(65, testAttributed.attributeValue("testKey 6", 65));
+	}
 }

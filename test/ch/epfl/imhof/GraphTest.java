@@ -1,87 +1,163 @@
 package ch.epfl.imhof;
 
-import java.util.Set;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
+
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-import ch.epfl.imhof.osm.OSMNode;
-import static ch.epfl.imhof.TestUtil.*;
-
 public class GraphTest {
-	private static final int NODES_COUNT = 5; 
 
     @Test
-    public void testGraph () {
-		Graph.Builder<OSMNode> graphBuilder = new Graph.Builder<OSMNode>();
+    public void constructorImmutability() {
 
-		OSMNode[] nodes = new OSMNode[NODES_COUNT];
-		for (int i = 0; i < NODES_COUNT; i++) {
-			nodes[i] = newOSMNode();
-			graphBuilder.addNode(nodes[i]);
-		}
+        HashMap<Integer, Set<Integer>> adjacencyList = createAdjacencyList();
+        Graph<Integer> graph = new Graph<>(adjacencyList);
+        int immutableCount = 0;
 
-		graphBuilder.addEdge(nodes[2], nodes[4]);
-		for (int i = 0; i < NODES_COUNT; i++) {
-			graphBuilder.addEdge(nodes[0], nodes[i]);
+        for (Map.Entry<Integer, Set<Integer>> mapping: adjacencyList.entrySet()) {
 
-			if (i % 2 == 1)
-				graphBuilder.addEdge(nodes[1], nodes[i]);
+            Set<Integer> valid = new HashSet<>(mapping.getValue());
+            mapping.getValue().clear();
 
-			if (i % 3 == 2)
-				graphBuilder.addEdge(nodes[2], nodes[i]);
+            assertEquals(valid, graph.neighborsOf(mapping.getKey()));
+            try {
+                graph.neighborsOf(mapping.getKey()).clear();
+            } catch(UnsupportedOperationException e) {
+                immutableCount += 1;
+            }
+        }
 
-			if (i % 4 == 3)
-				graphBuilder.addEdge(nodes[3], nodes[i]);
-		}
+        adjacencyList.clear();
+        assertNotEquals(graph.nodes().size(), 0);
 
-		Graph<OSMNode> graph = graphBuilder.build();
+        try {
+            graph.nodes().clear();
+        } catch(UnsupportedOperationException e) {
+            immutableCount += 1;
+        }
 
-		/* Checking nodes */
-		assertFalse(graph.nodes().contains(newOSMNode()));
-		for (OSMNode node : nodes)
-			assertTrue(graph.nodes().contains(node));
-
-		/* Checking edges */
-		ArrayList<Set<OSMNode>> edges = new ArrayList<Set<OSMNode>>(NODES_COUNT);
-
-		edges.add(new HashSet<OSMNode>());
-		edges.get(0).add(nodes[0]);
-		edges.get(0).add(nodes[1]);
-		edges.get(0).add(nodes[2]);
-		edges.get(0).add(nodes[3]);
-		edges.get(0).add(nodes[4]);
-
-		edges.add(new HashSet<OSMNode>());
-		edges.get(1).add(nodes[0]);
-		edges.get(1).add(nodes[1]);
-		edges.get(1).add(nodes[3]);
-
-		edges.add(new HashSet<OSMNode>());
-		edges.get(2).add(nodes[0]);
-		edges.get(2).add(nodes[2]);
-		edges.get(2).add(nodes[4]);
-
-		edges.add(new HashSet<OSMNode>());
-		edges.get(3).add(nodes[0]);
-		edges.get(3).add(nodes[1]);
-		edges.get(3).add(nodes[3]);
-
-		edges.add(new HashSet<OSMNode>());
-		edges.get(4).add(nodes[0]);
-		edges.get(4).add(nodes[2]);
-
-		for (int i = 0; i < NODES_COUNT; i++) {
-			assertEquals(edges.get(i), graph.neighborsOf(nodes[i]));
-		}
+        if (immutableCount != createAdjacencyList().size() + 1) {
+            fail("Constructor does not guarantee immutability.");
+        }
     }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void crashTest1() {
-        Graph.Builder<Integer> gb = new Graph.Builder<>();
-        gb.addNode(1);
-        gb.addEdge(2, 3);
+
+    @Test
+    public void nodesComplete() {
+
+        HashMap<Integer, Set<Integer>> adjacencyList = createAdjacencyList();
+        Graph<Integer> graph = new Graph<>(adjacencyList);
+
+        assertEquals(adjacencyList.keySet(), graph.nodes());
     }
+
+    @Test
+    public void correctNeighborsOf() {
+
+        HashMap<Integer, Set<Integer>> adjacencyList = createAdjacencyList();
+        Graph<Integer> graph = new Graph<>(adjacencyList);
+
+        for (Map.Entry<Integer, Set<Integer>> mapping: adjacencyList.entrySet()) {
+            assertEquals(mapping.getValue(), graph.neighborsOf(mapping.getKey()));
+        }
+    }
+
+    @Test
+    public void builderBuilt() {
+
+        HashMap<Integer, Set<Integer>> adjacencyList = createAdjacencyList();
+        Graph.Builder<Integer> graphBuilder = new Graph.Builder<>();
+
+        Set<Pair> edges = new HashSet<>();
+        for (Integer from: adjacencyList.keySet()) {
+            for (Integer to: adjacencyList.get(from)) {
+                edges.add(new Pair(from, to));
+            }
+        }
+
+        for (Integer node: adjacencyList.keySet()) {
+            graphBuilder.addNode(node);
+        }
+        for (Pair edge: edges) {
+            graphBuilder.addEdge(edge.start, edge.end);
+        }
+
+        Graph<Integer> graph = graphBuilder.build();
+        assertEquals(adjacencyList.keySet(), graph.nodes());
+
+        for (Map.Entry<Integer, Set<Integer>> mapping: adjacencyList.entrySet()) {
+            assertEquals(mapping.getValue(), graph.neighborsOf(mapping.getKey()));
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void neighborsOfThrowsExceptionWhenUnknownNode() {
+
+        new Graph<Integer>(Collections.emptyMap()).neighborsOf(1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void builderThrowsExceptionWhenUnknownNode1() {
+
+        Graph.Builder<Integer> graphBuilder = new Graph.Builder<>();
+        Integer node = 1;
+        graphBuilder.addNode(node);
+        graphBuilder.addEdge(node, 2);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void builderThrowsExceptionWhenUnknownNode2() {
+
+        Graph.Builder<Integer> graphBuilder = new Graph.Builder<>();
+        Integer node = 1;
+        graphBuilder.addNode(node);
+        graphBuilder.addEdge(2, node);
+    }
+
+    // undirected edge as an ordered pair
+    private final class Pair {
+        final Integer start, end;
+        Pair(Integer start, Integer end) {
+            if (start < end) {
+                this.start = start;
+                this.end = end;
+            } else {
+                this.start = end;
+                this.end = start;
+            }
+        }
+    }
+
+    private HashMap<Integer, Set<Integer>> createAdjacencyList() {
+
+        HashMap<Integer, Set<Integer>> adjacencyList = new HashMap<>();
+
+        adjacencyList.put(1,  createNodeSet(6));
+        adjacencyList.put(2,  createNodeSet(5));
+        adjacencyList.put(3,  createNodeSet(5,6,10));
+        adjacencyList.put(4,  createNodeSet());
+        adjacencyList.put(5,  createNodeSet(2,3,10));
+        adjacencyList.put(6,  createNodeSet(1,3));
+        adjacencyList.put(10, createNodeSet(3,5));
+
+        return adjacencyList;
+    }
+
+    private Set<Integer> createNodeSet(Integer... edges) {
+
+        Set<Integer> nodeSet = new HashSet<>();
+
+        for (Integer edge: edges) {
+            nodeSet.add(edge);
+        }
+
+        return nodeSet;
+    }
+
 }
