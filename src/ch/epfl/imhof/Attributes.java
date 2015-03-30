@@ -61,7 +61,7 @@ public final class Attributes {
      *            L'ensemble des attributs
      */
     public Attributes (Map<String, String> attributes) {
-        this.attr = Collections.unmodifiableMap(new HashMap<String, String>(attributes));
+        this.attr = Collections.unmodifiableMap(new HashMap<>(attributes));
     }
 
     /**

@@ -26,7 +26,7 @@ public abstract class PolyLine {
         if (!areValidPoints(points)) 
             throw new IllegalArgumentException("Invalid list of points");
 
-        this.points = Collections.unmodifiableList(new ArrayList<Point>(points));
+        this.points = Collections.unmodifiableList(new ArrayList<>(points));
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class PolyLine {
      */
     public static class Builder {
         /** La liste des points de la future PolyLine. */
-        private List<Point> points = new LinkedList<Point>();
+        private List<Point> points = new LinkedList<>();
 
         /**
          * Ajoute un point à la liste des points de la future PolyLine.

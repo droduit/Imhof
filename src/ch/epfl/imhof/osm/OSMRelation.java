@@ -91,7 +91,7 @@ public final class OSMRelation extends OSMEntity {
      *
      */
     public final static class Builder extends OSMEntity.Builder {
-        private List<Member> members = new LinkedList<Member>();
+        private List<Member> members = new LinkedList<>();
 
         /**
          * Construit un bâtisseur pour une relation ayant l'identifiant donné.
@@ -147,7 +147,7 @@ public final class OSMRelation extends OSMEntity {
     public OSMRelation (long id, List<Member> members, Attributes attributes) {
         super(id, attributes);
 
-        this.members = Collections.unmodifiableList(new ArrayList<Member>(members));
+        this.members = Collections.unmodifiableList(new ArrayList<>(members));
     }
 
     /**

@@ -31,7 +31,7 @@ public final class OSMMapReader {
             NODE, WAY, ND, RELATION, MEMBER, TAG, UNKNOWN
         }
         
-        private Deque<Entity> entities = new LinkedList<Entity>();
+        private Deque<Entity> entities = new LinkedList<>();
 
         private class Entity {
             private final Type type;

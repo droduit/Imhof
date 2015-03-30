@@ -31,17 +31,17 @@ public final class OSMToGeoTransformer {
     private final String TYPE_MULTIPOLYGON = "multipolygon";
 
     private final String AREA_KEY = "area";
-    private final Set<String> AREA_VALUES = new HashSet<String>(Arrays.asList("yes", "1", "true"));
+    private final Set<String> AREA_VALUES = new HashSet<>(Arrays.asList("yes", "1", "true"));
 
-    private final Set<String> AREA_ATTRS = new HashSet<String>(Arrays.asList("aeroway", "amenity",
+    private final Set<String> AREA_ATTRS = new HashSet<>(Arrays.asList("aeroway", "amenity",
             "building", "harbour", "historic", "landuse", "leisure", "man_made", "military",
             "natural", "office", "place", "power", "public_transport", "shop", "sport", "tourism",
             "water", "waterway", "wetland"));
 
-    private final Set<String> FILTER_POLYLINE_ATTRS = new HashSet<String>(Arrays.asList("bridge",
+    private final Set<String> FILTER_POLYLINE_ATTRS = new HashSet<>(Arrays.asList("bridge",
             "highway", "layer", "man_made", "railway", "tunnel", "waterway"));
 
-    private final Set<String> FILTER_POLYGONE_ATTRS = new HashSet<String>(Arrays.asList("building",
+    private final Set<String> FILTER_POLYGONE_ATTRS = new HashSet<>(Arrays.asList("building",
             "landuse", "layer", "leisure", "natural", "waterway"));
 
     private Map.Builder mapBuilder;
@@ -170,7 +170,7 @@ public final class OSMToGeoTransformer {
         /* On contrôle le nombre de voisins */
         for (OSMNode node : graph.nodes()) {
             if (graph.neighborsOf(node).size() != 2)
-                return new Graph<OSMNode>(new HashMap<OSMNode, Set<OSMNode>>());
+                return new Graph<>(new HashMap<>()); // Un graph vide
         }
 
         return graph;
@@ -215,9 +215,9 @@ public final class OSMToGeoTransformer {
         Graph<OSMNode> graph = buildGraphForRole(relation, role);
 
         Set<OSMNode> nodesSet = graph.nodes();
-        Set<OSMNode> visitedNodes = new HashSet<OSMNode>();
+        Set<OSMNode> visitedNodes = new HashSet<>();
 
-        List<ClosedPolyLine> rings = new LinkedList<ClosedPolyLine>();
+        List<ClosedPolyLine> rings = new LinkedList<>();
 
         OSMNode current = null;
         while ((current = this.pickUnvisitedNode(nodesSet, visitedNodes)) != null) {
@@ -268,9 +268,9 @@ public final class OSMToGeoTransformer {
         List<ClosedPolyLine> inners = this.ringsForRole(relation, "inner");
         List<ClosedPolyLine> outers = this.ringsForRole(relation, "outer");
 
-        java.util.Map<ClosedPolyLine, List<ClosedPolyLine>> rawPolygons = new HashMap<ClosedPolyLine, List<ClosedPolyLine>>();
+        java.util.Map<ClosedPolyLine, List<ClosedPolyLine>> rawPolygons = new HashMap<>();
         for (ClosedPolyLine outer : outers)
-            rawPolygons.put(outer, new LinkedList<ClosedPolyLine>());
+            rawPolygons.put(outer, new LinkedList<>());
 
         Collections.sort(outers, (o1, o2) -> (int)Math.signum(o1.area() - o2.area()) );
 
@@ -288,7 +288,7 @@ public final class OSMToGeoTransformer {
                 rawPolygons.get(container).add(inner);
         }
 
-        List<Attributed<Polygon>> polygons = new ArrayList<Attributed<Polygon>>();
+        List<Attributed<Polygon>> polygons = new ArrayList<>();
         Attributes attr = attributes.keepOnlyKeys(FILTER_POLYGONE_ATTRS);
 
         if (attr.size() > 0) {
