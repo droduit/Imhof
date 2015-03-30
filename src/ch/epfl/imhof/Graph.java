@@ -26,10 +26,10 @@ public final class Graph<N> {
      *            comme valeurs
      */
     public Graph (Map<N, Set<N>> neighbors) {
-        HashMap<N, Set<N>> nbs = new HashMap<N, Set<N>>();
+        Map<N, Set<N>> nbs = new HashMap<>();
 
         for (N node : neighbors.keySet())
-            nbs.put(node, Collections.unmodifiableSet(new HashSet<N>(neighbors.get(node))));
+            nbs.put(node, Collections.unmodifiableSet(new HashSet<>(neighbors.get(node))));
 
         this.neighbors = Collections.unmodifiableMap(nbs);
     }

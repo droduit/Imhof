@@ -137,7 +137,7 @@ public final class Attributes {
      *
      */
     public final static class Builder {
-        private Map<String, String> attr = new HashMap<String, String>();
+        private Map<String, String> attr = new HashMap<>();
 
         /**
          * Ajoute l'association (clef, valeur) donnée à l'ensemble d'attributs

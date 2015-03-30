@@ -97,7 +97,7 @@ public final class OSMRelation extends OSMEntity {
     public OSMRelation (long id, List<Member> members, Attributes attributes) {
         super(id, attributes);
 
-        this.members = Collections.unmodifiableList(new ArrayList<Member>(members));
+        this.members = Collections.unmodifiableList(new ArrayList<>(members));
     }
 
     /**
