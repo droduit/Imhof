@@ -119,13 +119,13 @@ public final class OSMToGeoTransformer {
             Polygon polygon = new Polygon(builder.buildClosed());
             Attributes attr = way.attributes().keepOnlyKeys(FILTER_POLYGONE_ATTRS);
 
-            if (attr.isEmpty() == false)
+            if (!attr.isEmpty())
                 this.mapBuilder.addPolygon(new Attributed<Polygon>(polygon, attr));
         } else {
             PolyLine poly = (way.isClosed()) ? builder.buildClosed() : builder.buildOpen();
             Attributes attr = way.attributes().keepOnlyKeys(FILTER_POLYLINE_ATTRS);
 
-            if (attr.isEmpty() == false)
+            if (!attr.isEmpty())
                 this.mapBuilder.addPolyLine(new Attributed<PolyLine>(poly, attr));
         }
     }
@@ -148,7 +148,7 @@ public final class OSMToGeoTransformer {
         for (OSMRelation.Member member : relation.members()) {
             if (member.type() != OSMRelation.Member.Type.WAY)
                 continue;
-            if (member.role().equals(role) == false)
+            if (!member.role().equals(role))
                 continue;
 
             OSMWay way = (OSMWay) member.member();
@@ -188,7 +188,7 @@ public final class OSMToGeoTransformer {
      */
     private OSMNode pickUnvisitedNode (Set<OSMNode> nodes, Set<OSMNode> visited) {
         for (OSMNode node : nodes) {
-            if (visited.contains(node) == false) {
+            if (!visited.contains(node)) {
                 visited.add(node);
 
                 return node;
@@ -246,7 +246,7 @@ public final class OSMToGeoTransformer {
      */
     private boolean isInside (ClosedPolyLine inner, ClosedPolyLine outer) {
         for (Point p : inner.points()) {
-            if (outer.containsPoint(p) == false)
+            if (!outer.containsPoint(p))
                 return false;
         }
 
@@ -300,23 +300,5 @@ public final class OSMToGeoTransformer {
         }
 
         return polygons;
-    }
-
-    public static void main (String args[]) {
-        try {
-            OSMMap osmMap = OSMMapReader.readOSMFile("/interlaken.osm.gz", true);
-
-            System.out.format("On a lu %d ways\n", osmMap.ways().size());
-            System.out.format("On a lu %d relations\n", osmMap.relations().size());
-
-            OSMToGeoTransformer optimus = new OSMToGeoTransformer(new CH1903Projection());
-
-            Map map = optimus.transform(osmMap);
-
-            System.out.format("On a %d polylines et %d polygones!\n", map.polyLines().size(), map
-                    .polygons().size());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

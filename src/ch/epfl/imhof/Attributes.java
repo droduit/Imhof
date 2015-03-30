@@ -18,42 +18,6 @@ public final class Attributes {
     private final Map<String, String> attr;
 
     /**
-     * Le builder associé à la classe Attributes
-     * @author Thierry Treyer (235116)
-     * @author Dominique Roduit (234868)
-     *
-     */
-    public final static class Builder {
-        private Map<String, String> attr = new HashMap<String, String>();
-
-        /**
-         * Ajoute l'association (clef, valeur) donnée à l'ensemble d'attributs
-         * en cours de construction. Si un attribut de même nom avait déjà été
-         * ajouté précédemment à l'ensemble, sa valeur est remplacée par celle
-         * donnée.
-         *
-         * @param key
-         *            La clef de l'association
-         * @param value
-         *            La valeur de l'association
-         */
-        public Builder put (String key, String value) {
-            this.attr.put(key, value);
-            return this;
-        }
-
-        /**
-         * Construit un ensemble d'attributs contenant les associations
-         * clef/valeur ajoutées jusqu'à présent
-         *
-         * @return L'ensemble d'attributs associé
-         */
-        public Attributes build () {
-            return new Attributes(this.attr);
-        }
-    }
-
-    /**
      * Construit un ensemble immuable d'attributs avec les paires clef/valeur
      * présentes dans la table associative donnée.
      *
@@ -163,5 +127,42 @@ public final class Attributes {
         }
 
         return attrBuilder.build();
+    }
+    
+    
+    /**
+     * Bâtisseur associé à la classe Attributes
+     * @author Thierry Treyer (235116)
+     * @author Dominique Roduit (234868)
+     *
+     */
+    public final static class Builder {
+        private Map<String, String> attr = new HashMap<String, String>();
+
+        /**
+         * Ajoute l'association (clef, valeur) donnée à l'ensemble d'attributs
+         * en cours de construction. Si un attribut de même nom avait déjà été
+         * ajouté précédemment à l'ensemble, sa valeur est remplacée par celle
+         * donnée.
+         *
+         * @param key
+         *            La clef de l'association
+         * @param value
+         *            La valeur de l'association
+         */
+        public Builder put (String key, String value) {
+            this.attr.put(key, value);
+            return this;
+        }
+
+        /**
+         * Construit un ensemble d'attributs contenant les associations
+         * clef/valeur ajoutées jusqu'à présent
+         *
+         * @return L'ensemble d'attributs associé
+         */
+        public Attributes build () {
+            return new Attributes(this.attr);
+        }
     }
 }
