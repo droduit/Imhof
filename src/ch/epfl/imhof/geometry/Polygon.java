@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * Une forme composée d'un contour et de trous.
+ * Une forme géométrique composée d'une enveloppe et de trous.
  *
  * @author Thierry Treyer (235116)
  * @author Dominique Roduit (234868)
@@ -13,7 +13,6 @@ import java.util.Collections;
 public final class Polygon {
     /** Le contour du Polygon */
     private ClosedPolyLine shell;
-
     /** Les trous du Polygon */
     private List<ClosedPolyLine> holes;
 

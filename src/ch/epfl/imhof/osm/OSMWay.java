@@ -50,10 +50,10 @@ public final class OSMWay extends OSMEntity {
         }
 
         /**
-         * permet de déterminer si la construction du chemin est incomplète ou
+         * Permet de déterminer si la construction du chemin est incomplète ou
          * non.
          * 
-         * @return true : si le nombre de noeud formant le chemin <2
+         * @return true : si le nombre de noeud formant le chemin est inférieur à 2 ou s'il est marqué comme étant incomplet
          */
         public boolean isIncomplete () {
             return super.isIncomplete() || this.nodes.size() < 2;

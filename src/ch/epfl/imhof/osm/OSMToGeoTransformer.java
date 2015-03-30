@@ -3,7 +3,6 @@ package ch.epfl.imhof.osm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Set;
@@ -46,13 +45,6 @@ public final class OSMToGeoTransformer {
             "landuse", "layer", "leisure", "natural", "waterway"));
 
     private Map.Builder mapBuilder;
-
-    private Comparator<ClosedPolyLine> areaComparator = new Comparator<ClosedPolyLine>() {
-        @Override
-        public int compare (ClosedPolyLine o1, ClosedPolyLine o2) {
-            return (int) Math.signum(o1.area() - o2.area());
-        }
-    };
 
     /**
      * Construit un convertisseur OSM en géométrie qui utilise la projection
@@ -280,7 +272,7 @@ public final class OSMToGeoTransformer {
         for (ClosedPolyLine outer : outers)
             rawPolygons.put(outer, new LinkedList<ClosedPolyLine>());
 
-        Collections.sort(outers, areaComparator);
+        Collections.sort(outers, (o1, o2) -> (int)Math.signum(o1.area() - o2.area()) );
 
         for (ClosedPolyLine inner : inners) {
             ClosedPolyLine container = null;

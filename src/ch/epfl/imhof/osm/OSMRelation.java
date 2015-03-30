@@ -20,6 +20,9 @@ public final class OSMRelation extends OSMEntity {
 
     /**
      * Représente une entité appartenant à une relation.
+     * 
+     * @author Thierry Treyer (235116)
+     * @author Dominique Roduit (234868)
      */
     public final static class Member {
         /**

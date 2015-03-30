@@ -18,6 +18,7 @@ public abstract class OSMEntity {
     /**
      * Sert de classe mère à toutes les classes de bâtisseurs d'entités OSM.
      * 
+     * @author Thierry Treyer (235116)
      * @author Dominique Roduit (234868)
      *
      */

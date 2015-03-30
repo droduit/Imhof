@@ -16,9 +16,10 @@ public abstract class PolyLine {
     final private List<Point> points;
 
     /**
-     * Un Constructeur pour la class immuable PolyLine.
+     * Un bâtisseur pour la class immuable PolyLine.
      *
      * @author Thierry Treyer (235116)
+     * @author Dominique Roduit (234868)
      */
     public static class Builder {
         /** La liste des points de la future PolyLine. */
@@ -101,7 +102,7 @@ public abstract class PolyLine {
     /**
      * Permet de déterminer si la PolyLine est fermée ou ouverte.
      *
-     * @return True, si la PolyLine est fermée
+     * @return true : si la PolyLine est fermée
      */
     public abstract boolean isClosed ();
 }

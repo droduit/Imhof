@@ -4,10 +4,8 @@ import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.util.Deque;
 import java.util.LinkedList;
-
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
-
 import ch.epfl.imhof.*;
 
 /**
@@ -33,28 +31,42 @@ public final class OSMMapReader {
         public static enum Type {
             NODE, WAY, ND, RELATION, MEMBER, TAG, UNKNOWN
         }
+        
+        /** Le stack des entités parcourus lors du parse */
+        private Deque<Entity> entities = new LinkedList<Entity>();
 
-        /** Une entité du document XML */
+        /** Une entité du document XML caractérisée par son Type (@see {@link OSMMapReader.OSMMapReaderHandler.Type}) ainsi que son bâtisseur */
         private class Entity {
             private final Type type;
             private final OSMEntity.Builder builder;
 
-            public Type type () {
-                return this.type;
-            }
-
-            public OSMEntity.Builder builder () {
-                return this.builder;
-            }
-
+            /**
+             * Construit une entitée avec son type et son bâtisseur
+             * @param type Type de l'entité (@see {@link OSMMapReader.OSMMapReaderHandler.Type})
+             * @param builder Bâtisseur de l'entité
+             */
             public Entity (Type type, OSMEntity.Builder builder) {
                 this.type = type;
                 this.builder = builder;
             }
-        }
+            
+            /**
+             * Retourne le type de l'entité OSM
+             * @return Type de l'entité
+             */
+            public Type type () {
+                return this.type;
+            }
 
-        /** Le stack des entités parcourus lors du parse */
-        Deque<Entity> entities = new LinkedList<Entity>();
+            /**
+             * Retourne le builder de l'entitée OSM
+             * @return Builder de l'entitée
+             */
+            public OSMEntity.Builder builder () {
+                return this.builder;
+            }
+        
+        }
 
         /**
          * Callback lorsqu'une balise ouvrante est rencontrée
@@ -87,7 +99,7 @@ public final class OSMMapReader {
         }
 
         /**
-         * Lorsqu'une balise fermante est rencontrée
+         * Callback lorsqu'une balise fermante est rencontrée
          */
         public void endElement (String uri, String lName, String qName) throws SAXException {
             Entity entity = this.entities.removeLast();
@@ -151,6 +163,8 @@ public final class OSMMapReader {
          *
          * @param attr
          *            Attributs attachés à la référence du nœud
+         * @throws IllegalStateException
+         *            Si le bâtisseur parent n'est pas du type WAY
          */
         private void addNodeRef (org.xml.sax.Attributes attr) {
             long ref = Long.parseLong(attr.getValue("ref"));
@@ -207,6 +221,8 @@ public final class OSMMapReader {
          *
          * @param attr
          *            Attributs attachés au membre
+         * @throws IllegalStateException
+         *            Si le bâtisseur parent n'est pas du type RELATION
          */
         private void addRelationMember (org.xml.sax.Attributes attr) {
             long ref = Long.parseLong(attr.getValue("ref"));

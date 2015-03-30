@@ -7,10 +7,8 @@ package ch.epfl.imhof.geometry;
  * @author Dominique Roduit (234868)
  */
 public final class Point {
-    /** L'abscisse du point */
-    private final double x;
 
-    /** L'ordonnée du point */
+    private final double x;
     private final double y;
 
     /**
