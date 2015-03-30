@@ -12,14 +12,17 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class OSMRelationTest extends OSMEntityTest{
+public class OSMRelationTest extends OSMEntityTest {
 
-    private static final OSMNode TEST_NODE_1 = new OSMNode(78, new PointGeo(0.125621, 0.803253), EMPTY_ATTRIBUTES);
-    private static final OSMNode TEST_NODE_2 = new OSMNode(91, new PointGeo(0.136710, 0.814253), EMPTY_ATTRIBUTES);
+    private static final OSMNode TEST_NODE_1 = new OSMNode(78, new PointGeo(0.125621, 0.803253),
+            EMPTY_ATTRIBUTES);
+    private static final OSMNode TEST_NODE_2 = new OSMNode(91, new PointGeo(0.136710, 0.814253),
+            EMPTY_ATTRIBUTES);
 
     @Override
-    OSMEntity newEntity(long id, Attributes entityAttributes) {
-        OSMRelation.Member testMember1  = new OSMRelation.Member(OSMRelation.Member.Type.NODE,"testPoint1", TEST_NODE_1);
+    OSMEntity newEntity (long id, Attributes entityAttributes) {
+        OSMRelation.Member testMember1 = new OSMRelation.Member(OSMRelation.Member.Type.NODE,
+                "testPoint1", TEST_NODE_1);
 
         List<OSMRelation.Member> testMemberList = new ArrayList<>();
         testMemberList.add(testMember1);
@@ -27,21 +30,25 @@ public class OSMRelationTest extends OSMEntityTest{
     }
 
     @Override
-    Builder newEntityBuilder() {
+    Builder newEntityBuilder () {
         return new OSMRelation.Builder(1);
     }
 
     @Test
-    public void constructorWithNodeWayRelation() {
-        OSMRelation.Member testMember1 = new OSMRelation.Member(OSMRelation.Member.Type.NODE, "testPoint1", TEST_NODE_1);
-        OSMRelation.Member testMember2 = new OSMRelation.Member(OSMRelation.Member.Type.NODE, "testPoint2", TEST_NODE_2);
+    public void constructorWithNodeWayRelation () {
+        OSMRelation.Member testMember1 = new OSMRelation.Member(OSMRelation.Member.Type.NODE,
+                "testPoint1", TEST_NODE_1);
+        OSMRelation.Member testMember2 = new OSMRelation.Member(OSMRelation.Member.Type.NODE,
+                "testPoint2", TEST_NODE_2);
 
         List<OSMNode> nodes = Arrays.asList(TEST_NODE_1, TEST_NODE_2);
         OSMWay way = new OSMWay(45, nodes, EMPTY_ATTRIBUTES);
-        OSMRelation.Member testMember3 = new OSMRelation.Member(OSMRelation.Member.Type.WAY, "testWay", way);
+        OSMRelation.Member testMember3 = new OSMRelation.Member(OSMRelation.Member.Type.WAY,
+                "testWay", way);
 
         OSMRelation relation = new OSMRelation(67, Collections.emptyList(), EMPTY_ATTRIBUTES);
-        OSMRelation.Member testMember4 = new OSMRelation.Member(OSMRelation.Member.Type.RELATION, "testRelation", relation);
+        OSMRelation.Member testMember4 = new OSMRelation.Member(OSMRelation.Member.Type.RELATION,
+                "testRelation", relation);
 
         List<OSMRelation.Member> testMemberList = new ArrayList<>();
         testMemberList.add(testMember1);
@@ -50,11 +57,12 @@ public class OSMRelationTest extends OSMEntityTest{
         testMemberList.add(testMember4);
 
         OSMRelation testEndRelation = new OSMRelation(5, testMemberList, EMPTY_ATTRIBUTES);
-        assertTrue(ch.epfl.imhof.testUtilities.ListNonMutableTestUtility.nonMutableFieldListTest(testMemberList, testEndRelation.members()));
+        assertTrue(ch.epfl.imhof.testUtilities.ListNonMutableTestUtility.nonMutableFieldListTest(
+                testMemberList, testEndRelation.members()));
     }
 
     @Test
-    public void builderBuiltStepByStep() {
+    public void builderBuiltStepByStep () {
         List<OSMNode> testWayPointsList = new ArrayList<>();
         testWayPointsList.add(TEST_NODE_1);
         testWayPointsList.add(TEST_NODE_2);
@@ -70,20 +78,23 @@ public class OSMRelationTest extends OSMEntityTest{
     }
 
     @Test
-    public void memberConstructorAndGetType() {
-        OSMRelation.Member testMember = new OSMRelation.Member(OSMRelation.Member.Type.NODE, "test", TEST_NODE_1);
+    public void memberConstructorAndGetType () {
+        OSMRelation.Member testMember = new OSMRelation.Member(OSMRelation.Member.Type.NODE,
+                "test", TEST_NODE_1);
         assertSame(testMember.type(), OSMRelation.Member.Type.NODE);
     }
 
     @Test
-    public void memberConstructorAndGetRole() {
-        OSMRelation.Member testMember = new OSMRelation.Member(OSMRelation.Member.Type.NODE, "test", TEST_NODE_1);
+    public void memberConstructorAndGetRole () {
+        OSMRelation.Member testMember = new OSMRelation.Member(OSMRelation.Member.Type.NODE,
+                "test", TEST_NODE_1);
         assertEquals(testMember.role(), "test");
     }
 
     @Test
-    public void memberConstructorAndGetMemberReferenceCheck() {
-        OSMRelation.Member testMember = new OSMRelation.Member(OSMRelation.Member.Type.NODE, "test", TEST_NODE_1);
+    public void memberConstructorAndGetMemberReferenceCheck () {
+        OSMRelation.Member testMember = new OSMRelation.Member(OSMRelation.Member.Type.NODE,
+                "test", TEST_NODE_1);
         assertSame(testMember.member(), TEST_NODE_1);
     }
 

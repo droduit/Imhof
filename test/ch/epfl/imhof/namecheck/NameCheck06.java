@@ -16,7 +16,7 @@ import ch.epfl.imhof.projection.Projection;
 public class NameCheck06 {
     @Test
     @Ignore
-    public void useAllStage06Names() {
+    public void useAllStage06Names () {
         // OSMToGeoTransformer
         OSMMap om = null;
         Projection p = null;

@@ -4,11 +4,9 @@ import ch.epfl.imhof.geometry.Point;
 import ch.epfl.imhof.PointGeo;
 
 /**
- * Implémentation de la projection équirectangulaire.
- * Cette projection utilise la longitude et la latitude comme
- * coordonnées cartésiennes.
- * Cependant, cette projection produit de fortes déformations et
- * est à éviter.
+ * Implémentation de la projection équirectangulaire. Cette projection utilise
+ * la longitude et la latitude comme coordonnées cartésiennes. Cependant, cette
+ * projection produit de fortes déformations et est à éviter.
  *
  * @author Thierry Treyer (235116)
  * @author Dominique Roduit (234868)

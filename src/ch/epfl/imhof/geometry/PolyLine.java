@@ -14,7 +14,7 @@ import java.util.Collections;
 public abstract class PolyLine {
     /** La liste des points composants la PolyLine. */
     final private List<Point> points;
-    
+
     /**
      * Un Constructeur pour la class immuable PolyLine.
      *
@@ -27,7 +27,8 @@ public abstract class PolyLine {
         /**
          * Ajoute un point à la liste des points de la future PolyLine.
          *
-         * @param point     Le point à ajouter à la liste
+         * @param point
+         *            Le point à ajouter à la liste
          */
         public void addPoint (Point p) {
             this.points.add(p);
@@ -51,14 +52,14 @@ public abstract class PolyLine {
             return new ClosedPolyLine(this.points);
         }
     }
-    
+
     /**
      * Construit une PolyLine avec les points donnés.
      *
      * @param points
-     *    La liste des points composants la PolyLine
+     *            La liste des points composants la PolyLine
      * @throws IllegalArgumentException
-     *    Si la liste de points est vide
+     *             Si la liste de points est vide
      */
     public PolyLine (List<Point> points) {
         if (areValidPoints(points) == false) {
@@ -73,21 +74,23 @@ public abstract class PolyLine {
      *
      * @return Les points de la PolyLine
      */
-    public List<Point> points () { return this.points; }
+    public List<Point> points () {
+        return this.points;
+    }
 
     /**
      * Retourne le premier point de la PolyLine
      *
      * @return Le premier point de la PolyLine
      */
-    public Point firstPoint () { return this.points.get(0); }
+    public Point firstPoint () {
+        return this.points.get(0);
+    }
 
     /**
-     * Vérifie que la liste de points passée en paramètre correspond
-     * aux critères nécessaires à une PolyLine.
-     * C.a.d. :
-     *   1. La liste n'est pas null
-     *   2. La liste contient au moins un élément
+     * Vérifie que la liste de points passée en paramètre correspond aux
+     * critères nécessaires à une PolyLine. C.a.d. : 1. La liste n'est pas null
+     * 2. La liste contient au moins un élément
      *
      * @return True si la liste correspond aux critères
      */

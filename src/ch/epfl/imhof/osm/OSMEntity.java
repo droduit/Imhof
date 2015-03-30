@@ -33,7 +33,7 @@ public abstract class OSMEntity {
          * @param id
          *            L'identifiant unique associé à l'entité
          */
-        public Builder(long id) {
+        public Builder (long id) {
             this.id = id;
         }
 
@@ -49,14 +49,14 @@ public abstract class OSMEntity {
          * @param value
          *            Valeur associée à l'attribut donné par "key"
          */
-        public void setAttribute(String key, String value) {
+        public void setAttribute (String key, String value) {
             attrBuilder.put(key, value);
         }
 
         /**
          * Déclare que l'entité en cours de construction est incomplète.
          */
-        public void setIncomplete() {
+        public void setIncomplete () {
             this.isIncomplete = true;
         }
 
@@ -67,7 +67,7 @@ public abstract class OSMEntity {
          * 
          * @return true : si l'entité en cours de construction est incomplète
          */
-        public boolean isIncomplete() {
+        public boolean isIncomplete () {
             return this.isIncomplete;
         }
 
@@ -76,7 +76,7 @@ public abstract class OSMEntity {
          * 
          * @return Identifiant unique de l'entité
          */
-        public long id() {
+        public long id () {
             return this.id;
         }
 
@@ -85,7 +85,7 @@ public abstract class OSMEntity {
          * 
          * @return Attributs de l'entité
          */
-        public Attributes attributes() {
+        public Attributes attributes () {
             return this.attrBuilder.build();
         }
 
@@ -102,8 +102,8 @@ public abstract class OSMEntity {
      * @throws NullPointerException
      *             Lorsque l'objet contenant les attribut est null
      */
-    public OSMEntity(long id, Attributes attributes) {
-        this.attr = Objects.requireNonNull(attributes,"L'objet attributes ne doit pas être null");
+    public OSMEntity (long id, Attributes attributes) {
+        this.attr = Objects.requireNonNull(attributes, "L'objet attributes ne doit pas être null");
         this.id = id;
     }
 
@@ -112,7 +112,7 @@ public abstract class OSMEntity {
      * 
      * @return Identifiant unique de l'entité
      */
-    public long id() {
+    public long id () {
         return this.id;
     }
 
@@ -121,7 +121,7 @@ public abstract class OSMEntity {
      * 
      * @return Attributs de l'entité
      */
-    public Attributes attributes() {
+    public Attributes attributes () {
         return this.attr;
     }
 
@@ -132,7 +132,7 @@ public abstract class OSMEntity {
      *            Clé correspondant a l'attribut
      * @return true : si l'entité possède l'attribut
      */
-    public boolean hasAttribute(String key) {
+    public boolean hasAttribute (String key) {
         return attr.contains(key);
     }
 
@@ -143,7 +143,7 @@ public abstract class OSMEntity {
      *            Clé de l'attribut dont on veut la valeur
      * @return Valeur de l'attribut
      */
-    public String attributeValue(String key) {
+    public String attributeValue (String key) {
         return this.attr.get(key);
     }
 

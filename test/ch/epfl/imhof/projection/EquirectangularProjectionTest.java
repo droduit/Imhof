@@ -11,7 +11,7 @@ public class EquirectangularProjectionTest {
     private static final double DELTA = 0.000001;
 
     @Test
-    public void projectProducesTheRightValues() {
+    public void projectProducesTheRightValues () {
         Projection p = new EquirectangularProjection();
         for (double lon = -3.0; lon <= 3.0; lon += 0.2) {
             for (double lat = -1.5; lat <= 1.5; lat += 0.1) {
@@ -23,7 +23,7 @@ public class EquirectangularProjectionTest {
     }
 
     @Test
-    public void inverseProducesTheRightValues() {
+    public void inverseProducesTheRightValues () {
         Projection p = new EquirectangularProjection();
         for (double x = -3.0; x <= 3.0; x += 0.2) {
             for (double y = -1.5; y <= 1.5; y += 0.1) {

@@ -16,32 +16,32 @@ import ch.epfl.imhof.osm.OSMWay;
 public class NameCheck04 {
     @Test
     @Ignore
-    public void useAllStage04Names() {
+    public void useAllStage04Names () {
         // OSMEntity and OSMEntity.Builder
-        OSMEntity e = Collections.<OSMEntity>emptyList().get(0);
+        OSMEntity e = Collections.<OSMEntity> emptyList().get(0);
         long l = e.id();
         Attributes as = e.attributes();
         boolean b = e.hasAttribute("");
         String s = e.attributeValue("");
 
-        OSMEntity.Builder eb = Collections.<OSMEntity.Builder>emptyList().get(0);
+        OSMEntity.Builder eb = Collections.<OSMEntity.Builder> emptyList().get(0);
         eb.setAttribute(s, s);
         eb.setIncomplete();
         b = eb.isIncomplete();
 
         // OSMNode and OSMNode.Builder
-        PointGeo pg = new PointGeo(0,0);
+        PointGeo pg = new PointGeo(0, 0);
         e = new OSMNode(l, pg, as);
-        OSMNode n = (OSMNode)e;
+        OSMNode n = (OSMNode) e;
         pg = n.position();
 
         eb = new OSMNode.Builder(l, pg);
-        OSMNode.Builder nb = (OSMNode.Builder)eb;
+        OSMNode.Builder nb = (OSMNode.Builder) eb;
         n = nb.build();
 
         // OSMWay and OSMWay.Builder
         e = new OSMWay(l, Collections.singletonList(n), as);
-        OSMWay w = (OSMWay)e;
+        OSMWay w = (OSMWay) e;
         int i = w.nodesCount();
         List<OSMNode> ln = w.nodes();
         ln = w.nonRepeatingNodes();
@@ -50,7 +50,7 @@ public class NameCheck04 {
         b = w.isClosed();
 
         eb = new OSMWay.Builder(l);
-        OSMWay.Builder wb = (OSMWay.Builder)eb;
+        OSMWay.Builder wb = (OSMWay.Builder) eb;
         wb.addNode(n);
         w = wb.build();
 
@@ -62,11 +62,11 @@ public class NameCheck04 {
 
         // OSMRelation and OSMRelation.Builder
         e = new OSMRelation(l, Collections.singletonList(m), as);
-        OSMRelation r = (OSMRelation)e;
+        OSMRelation r = (OSMRelation) e;
         List<OSMRelation.Member> lm = r.members();
 
         eb = new OSMRelation.Builder(l);
-        OSMRelation.Builder rb = (OSMRelation.Builder)eb;
+        OSMRelation.Builder rb = (OSMRelation.Builder) eb;
         rb.addMember(t, s, r);
         r = rb.build();
 

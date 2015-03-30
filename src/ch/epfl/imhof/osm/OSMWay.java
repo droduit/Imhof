@@ -34,7 +34,7 @@ public final class OSMWay extends OSMEntity {
          * @param id
          *            Identifiant unique du chemin en construction
          */
-        public Builder(long id) {
+        public Builder (long id) {
             super(id);
         }
 
@@ -45,7 +45,7 @@ public final class OSMWay extends OSMEntity {
          * @param newNode
          *            Nouveau noeud a ajouter a la liste pour le chemin
          */
-        public void addNode(OSMNode newNode) {
+        public void addNode (OSMNode newNode) {
             this.nodes.add(newNode);
         }
 
@@ -55,7 +55,7 @@ public final class OSMWay extends OSMEntity {
          * 
          * @return true : si le nombre de noeud formant le chemin <2
          */
-        public boolean isIncomplete() {
+        public boolean isIncomplete () {
             return super.isIncomplete() || this.nodes.size() < 2;
         }
 
@@ -68,7 +68,7 @@ public final class OSMWay extends OSMEntity {
          * @throws IllegalStateException
          *             Si le chemin en cours de construction est incomplet
          */
-        public OSMWay build() {
+        public OSMWay build () {
             if (isIncomplete())
                 throw new IllegalStateException(
                         "La liste des noeuds doit etre >= 2 sinon ce n'est pas un chemin !");
@@ -92,7 +92,7 @@ public final class OSMWay extends OSMEntity {
      *             Si la liste des noeuds composants le chemin contient moins de
      *             2 noeuds
      */
-    public OSMWay(long id, List<OSMNode> nodes, Attributes attributes) {
+    public OSMWay (long id, List<OSMNode> nodes, Attributes attributes) {
         super(id, attributes);
 
         if (nodes.size() < 2)
@@ -108,7 +108,7 @@ public final class OSMWay extends OSMEntity {
      * 
      * @return Nombre de nœuds du chemin
      */
-    public int nodesCount() {
+    public int nodesCount () {
         return this.nodes.size();
     }
 
@@ -117,7 +117,7 @@ public final class OSMWay extends OSMEntity {
      * 
      * @return Les nœuds du chemin
      */
-    public List<OSMNode> nodes() {
+    public List<OSMNode> nodes () {
         return this.nodes;
     }
 
@@ -128,7 +128,7 @@ public final class OSMWay extends OSMEntity {
      * @return Liste des noeuds du chemin sans le dernier si celui-ci est
      *         identique au premier
      */
-    public List<OSMNode> nonRepeatingNodes() {
+    public List<OSMNode> nonRepeatingNodes () {
         List<OSMNode> n = new ArrayList<>(this.nodes);
         if (isClosed()) {
             n.remove(nodesCount() - 1);
@@ -141,7 +141,7 @@ public final class OSMWay extends OSMEntity {
      * 
      * @return Le premier nœud du chemin
      */
-    public OSMNode firstNode() {
+    public OSMNode firstNode () {
         return this.nodes.get(0);
     }
 
@@ -150,7 +150,7 @@ public final class OSMWay extends OSMEntity {
      * 
      * @return Dernier nœud du chemin
      */
-    public OSMNode lastNode() {
+    public OSMNode lastNode () {
         return this.nodes.get(nodesCount() - 1);
     }
 
@@ -160,7 +160,7 @@ public final class OSMWay extends OSMEntity {
      * 
      * @return true : si le premier noeud du chemin est identique au dernier
      */
-    public boolean isClosed() {
+    public boolean isClosed () {
         return (nodes.get(0).equals(nodes.get(nodesCount() - 1)));
     }
 
