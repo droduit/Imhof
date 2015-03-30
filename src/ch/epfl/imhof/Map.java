@@ -54,11 +54,16 @@ public final class Map {
 
     /**
      * Bâtisseur de la classe Map
+     * @author Thierry Treyer (235116)
+     * @author Dominique Roduit (234868)
      */
     public static class Builder {
         private final List<Attributed<PolyLine>> polylines;
         private final List<Attributed<Polygon>> polygons;
 
+        /**
+         * Constructeur du bâtisseur
+         */
         public Builder () {
             polylines = new ArrayList<>();
             polygons = new ArrayList<>();

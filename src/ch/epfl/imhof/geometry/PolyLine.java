@@ -6,53 +6,14 @@ import java.util.LinkedList;
 import java.util.Collections;
 
 /**
- * Une ligne immuable, formée par une liste de points.
+ * Une polyligne immuable, formée par une liste de points.
  *
  * @author Thierry Treyer (235116)
  * @author Dominique Roduit (234868)
  */
 public abstract class PolyLine {
-    /** La liste des points composants la PolyLine. */
-    final private List<Point> points;
-
-    /**
-     * Un bâtisseur pour la class immuable PolyLine.
-     *
-     * @author Thierry Treyer (235116)
-     * @author Dominique Roduit (234868)
-     */
-    public static class Builder {
-        /** La liste des points de la future PolyLine. */
-        private List<Point> points = new LinkedList<Point>();
-
-        /**
-         * Ajoute un point à la liste des points de la future PolyLine.
-         *
-         * @param point
-         *            Le point à ajouter à la liste
-         */
-        public void addPoint (Point p) {
-            this.points.add(p);
-        }
-
-        /**
-         * Finalise la construction de la PolyLine en type ouverte.
-         *
-         * @return Un objet OpenPolyLine initialisé avec les points ajoutés
-         */
-        public OpenPolyLine buildOpen () {
-            return new OpenPolyLine(this.points);
-        }
-
-        /**
-         * Finalise la construction de la PolyLine en type fermée.
-         *
-         * @return Un objet ClosedPolyLine initialisé avec les points ajoutés
-         */
-        public ClosedPolyLine buildClosed () {
-            return new ClosedPolyLine(this.points);
-        }
-    }
+    /** La liste des points composant la PolyLine. */
+    private final List<Point> points;
 
     /**
      * Construit une PolyLine avec les points donnés.
@@ -63,9 +24,8 @@ public abstract class PolyLine {
      *             Si la liste de points est vide
      */
     public PolyLine (List<Point> points) {
-        if (areValidPoints(points) == false) {
+        if (!areValidPoints(points)) 
             throw new IllegalArgumentException("Invalid list of points");
-        }
 
         this.points = Collections.unmodifiableList(new ArrayList<Point>(points));
     }
@@ -105,4 +65,44 @@ public abstract class PolyLine {
      * @return true : si la PolyLine est fermée
      */
     public abstract boolean isClosed ();
+    
+    
+    /**
+     * Sert de bâtisseur aux deux sous-classes de PolyLine et permet de construire une polyligne en plusieurs étapes
+     *
+     * @author Thierry Treyer (235116)
+     * @author Dominique Roduit (234868)
+     */
+    public static class Builder {
+        /** La liste des points de la future PolyLine. */
+        private List<Point> points = new LinkedList<Point>();
+
+        /**
+         * Ajoute un point à la liste des points de la future PolyLine.
+         *
+         * @param point
+         *            Le point à ajouter à la liste
+         */
+        public void addPoint (Point p) {
+            this.points.add(p);
+        }
+
+        /**
+         * Finalise la construction de la PolyLine en type ouverte.
+         *
+         * @return Un objet OpenPolyLine initialisé avec les points ajoutés
+         */
+        public OpenPolyLine buildOpen () {
+            return new OpenPolyLine(this.points);
+        }
+
+        /**
+         * Finalise la construction de la PolyLine en type fermée.
+         *
+         * @return Un objet ClosedPolyLine initialisé avec les points ajoutés
+         */
+        public ClosedPolyLine buildClosed () {
+            return new ClosedPolyLine(this.points);
+        }
+    }
 }

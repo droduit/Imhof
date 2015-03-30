@@ -17,20 +17,25 @@ public final class Graph<N> {
     public Map<N, Set<N>> neighbors;
 
     /**
-     * Le constructeur de la class Graph.
+     * Bâtisseur générique de la classe Graph
+     * 
+     * @author Thierry Treyer (235116)
+     * @author Dominique Roduit (234868)
+     *
+     * @param <N>
      */
     public static final class Builder<N> {
         /** La liste des voisins en construction */
         public Map<N, Set<N>> neighbors = new HashMap<N, Set<N>>();
 
         /**
-         * Ajoute un nœud au graph.
+         * Ajoute le nœud donné au graphe en cours de construction, s'il n'en faisait pas déjà partie.
          *
          * @param node
-         *            Le nœud à ajouter au graph
+         *            Le nœud à ajouter au graphe
          */
         public void addNode (N node) {
-            if (this.neighbors.containsKey(node) == false)
+            if (!this.neighbors.containsKey(node))
                 this.neighbors.put(node, new HashSet<N>());
         }
 
@@ -46,10 +51,10 @@ public final class Graph<N> {
          *             Si n1 ou n2 n'existent pas dans le graph
          */
         public void addEdge (N n1, N n2) {
-            if (this.neighbors.containsKey(n1) == false)
+            if (!this.neighbors.containsKey(n1))
                 throw new IllegalArgumentException("Le nœud n1 est inconnu");
 
-            if (this.neighbors.containsKey(n2) == false)
+            if (!this.neighbors.containsKey(n2))
                 throw new IllegalArgumentException("Le nœud n2 est inconnu");
 
             this.neighbors.get(n1).add(n2);
@@ -99,10 +104,10 @@ public final class Graph<N> {
      * @throws IllegalArgumentException
      *             Si le nœud demandé n'existe pas dans le graph
      *
-     * @return La list des voisins du nœud demandé
+     * @return La liste des voisins du nœud demandé
      */
     public Set<N> neighborsOf (N node) {
-        if (this.neighbors.containsKey(node) == false)
+        if (!this.neighbors.containsKey(node))
             throw new IllegalArgumentException("Le nœud demandé est inconnu");
 
         return this.neighbors.get(node);

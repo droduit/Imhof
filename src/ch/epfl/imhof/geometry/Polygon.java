@@ -28,6 +28,16 @@ public final class Polygon {
         this.shell = shell;
         this.holes = Collections.unmodifiableList(new ArrayList<>(holes));
     }
+    
+    /**
+     * Construit un Polygon sans trou à partir d'un contour.
+     *
+     * @param shell
+     *            Le contour du Polygon
+     */
+    public Polygon (ClosedPolyLine shell) {
+        this(shell, Collections.emptyList());
+    }
 
     /**
      * Retourne le contour du Polygon.
@@ -47,13 +57,4 @@ public final class Polygon {
         return this.holes;
     }
 
-    /**
-     * Construit un Polygon sans trou à partir d'un contour.
-     *
-     * @param shell
-     *            Le contour du Polygon
-     */
-    public Polygon (ClosedPolyLine shell) {
-        this(shell, Collections.emptyList());
-    }
 }
