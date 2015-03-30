@@ -71,7 +71,7 @@ public final class OSMMap {
          *            Nouveau noeud à ajouter au bâtisseur
          */
         public void addNode (OSMNode newNode) {
-            nodes.put(newNode.id(), Objects.requireNonNull(newNode));
+            nodes.put(newNode.id(), Objects.requireNonNull(newNode, "node ne peut être null"));
         }
 
         /**
@@ -93,7 +93,7 @@ public final class OSMMap {
          *            Nouveau chemin à ajouter à la Map
          */
         public void addWay (OSMWay newWay) {
-            ways.put(newWay.id(), Objects.requireNonNull(newWay));
+            ways.put(newWay.id(), Objects.requireNonNull(newWay, "way ne peut être null"));
         }
 
         /**
@@ -115,7 +115,7 @@ public final class OSMMap {
          *            Nouvelle relation à ajouter à la carte
          */
         public void addRelation (OSMRelation newRelation) {
-            relations.put(newRelation.id(), Objects.requireNonNull(newRelation));
+            relations.put(newRelation.id(), Objects.requireNonNull(newRelation, "relation ne peut être null"));
         }
 
         /**

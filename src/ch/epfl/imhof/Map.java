@@ -76,7 +76,7 @@ public final class Map {
          *            Polyligne à ajouter à la carte
          */
         public void addPolyLine (Attributed<PolyLine> newPolyLine) {
-            polylines.add(Objects.requireNonNull(newPolyLine));
+            polylines.add(Objects.requireNonNull(newPolyLine, "polyline ne peut être null"));
         }
 
         /**
@@ -86,7 +86,7 @@ public final class Map {
          *            Polygone à ajouter à la carte
          */
         public void addPolygon (Attributed<Polygon> newPolygon) {
-            polygons.add(Objects.requireNonNull(newPolygon));
+            polygons.add(Objects.requireNonNull(newPolygon, "polygon ne peut être null"));
         }
 
         /**
