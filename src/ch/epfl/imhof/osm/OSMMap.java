@@ -21,6 +21,37 @@ public final class OSMMap {
     private final List<OSMRelation> relations;
 
     /**
+     * Construit une carte OSM avec les chemins et les relations donnés.
+     * 
+     * @param ways
+     *            Chemins
+     * @param relations
+     *            Relations
+     */
+    public OSMMap (Collection<OSMWay> ways, Collection<OSMRelation> relations) {
+        this.ways = Collections.unmodifiableList(new ArrayList<OSMWay>(ways));
+        this.relations = Collections.unmodifiableList(new ArrayList<OSMRelation>(relations));
+    }
+
+    /**
+     * Retourne la liste des chemins de la carte.
+     * 
+     * @return Liste des chemins de la carte
+     */
+    public List<OSMWay> ways () {
+        return this.ways;
+    }
+
+    /**
+     * Retourne la liste des relations de la carte.
+     * 
+     * @return Liste des relations de la carte
+     */
+    public List<OSMRelation> relations () {
+        return this.relations;
+    }
+
+    /**
      * Bâtisseur de la classe OSMMap. Stocke les entitées et permet de les
      * récupérer
      * 
@@ -111,36 +142,4 @@ public final class OSMMap {
             return new OSMMap(ways.values(), relations.values());
         }
     }
-
-    /**
-     * Construit une carte OSM avec les chemins et les relations donnés.
-     * 
-     * @param ways
-     *            Chemins
-     * @param relations
-     *            Relations
-     */
-    public OSMMap (Collection<OSMWay> ways, Collection<OSMRelation> relations) {
-        this.ways = Collections.unmodifiableList(new ArrayList<OSMWay>(ways));
-        this.relations = Collections.unmodifiableList(new ArrayList<OSMRelation>(relations));
-    }
-
-    /**
-     * Retourne la liste des chemins de la carte.
-     * 
-     * @return Liste des chemins de la carte
-     */
-    public List<OSMWay> ways () {
-        return this.ways;
-    }
-
-    /**
-     * Retourne la liste des relations de la carte.
-     * 
-     * @return Liste des relations de la carte
-     */
-    public List<OSMRelation> relations () {
-        return this.relations;
-    }
-
 }
