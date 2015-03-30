@@ -94,13 +94,11 @@ public final class ClosedPolyLine extends PolyLine {
             Point p2 = ps.get(generalizeIndex(i + 1));
 
             if (p1.y() <= p.y()) {
-                if (p2.y() > p.y() && isLeftFromLine(p1, p2, p)) {
+                if(p2.y() > p.y() && isLeftFromLine(p1, p2, p)) 
                     index += 1;
-                }
             } else {
-                if (p2.y() <= p.y() && isLeftFromLine(p2, p1, p)) {
+                if(p2.y() <= p.y() && isLeftFromLine(p2, p1, p))
                     index -= 1;
-                }
             }
         }
 

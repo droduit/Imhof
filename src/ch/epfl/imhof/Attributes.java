@@ -9,7 +9,7 @@ import java.util.Set;
  * Représente un ensemble d'attributs et la valeur qui leur est associée. Les
  * attributs et leur valeur sont des chaînes de caractères. Cette classe n'est
  * donc rien d'autre qu'une table associative immuable dont les clefs et les
- * valeurs sont des chaînes de caractères
+ * valeurs sont des chaînes de caractères.
  *
  * @author Thierry Treyer (235116)
  * @author Dominique Roduit (234868)
@@ -17,6 +17,12 @@ import java.util.Set;
 public final class Attributes {
     private final Map<String, String> attr;
 
+    /**
+     * Le builder associé à la classe Attributes
+     * @author Thierry Treyer (235116)
+     * @author Dominique Roduit (234868)
+     *
+     */
     public final static class Builder {
         private Map<String, String> attr = new HashMap<String, String>();
 
@@ -33,7 +39,6 @@ public final class Attributes {
          */
         public Builder put (String key, String value) {
             this.attr.put(key, value);
-
             return this;
         }
 
@@ -127,7 +132,8 @@ public final class Attributes {
      *            La clef dont on veut récupérer la valeur
      * @param defaultValue
      *            La valeur à retourner si la clef n'existe pas
-     *
+     * @throws NumberFormatException
+     *            Si la valeur de l'attribut n'est pas un entier
      * @return La valeur associée à la clef ou la valeur par défaut si la clef
      *         est absente
      */
@@ -151,8 +157,8 @@ public final class Attributes {
     public Attributes keepOnlyKeys (Set<String> keysToKeep) {
         Builder attrBuilder = new Builder();
 
-        for (String key : keysToKeep) {
-            if (this.contains(key))
+        for(String key : keysToKeep) {
+            if(this.contains(key))
                 attrBuilder.put(key, this.attr.get(key));
         }
 

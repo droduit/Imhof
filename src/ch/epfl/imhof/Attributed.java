@@ -69,8 +69,6 @@ public final class Attributed<T> {
      * Retourne la valeur associée à l'attribut donné, ou null si celui-ci
      * n'existe pas.
      * 
-     * Correspond à l'une des méthode get de la classe Attributes.
-     * 
      * @param attributeName
      *            Nom de l'attribut à récupérer
      * @return Valeur correspondant au nom de l'attribut passé en argument
@@ -82,8 +80,6 @@ public final class Attributed<T> {
     /**
      * Retourne la valeur associée à l'attribut donné, ou la valeur par défaut
      * donnée si celui-ci n'existe pas.
-     * 
-     * Correspond à l'une des méthodes get de la classe Attributes.
      * 
      * @param attributeName
      *            Nom de l'attribut à récupérer
@@ -100,8 +96,6 @@ public final class Attributed<T> {
      * Retourne la valeur entière associée à l'attribut donné, ou la valeur par
      * défaut si celui-ci n'existe pas ou si la valeur qui lui est associée
      * n'est pas un entier valide.
-     * 
-     * Correspond à l'une des méthodes get de la classe Attributes.
      * 
      * @param attributeName
      *            Nom de l'attribut à récupérer
