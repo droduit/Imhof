@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Collections;
-
 import ch.epfl.imhof.Attributes;
 
 /**
@@ -17,6 +16,31 @@ import ch.epfl.imhof.Attributes;
  */
 public final class OSMRelation extends OSMEntity {
     private final List<Member> members;
+
+    /**
+     * Construit une relation étant donnés son identifiant unique, ses membres
+     * et ses attributs
+     * 
+     * @param id
+     *            Identifiant unique relatif à la relation
+     * @param members
+     *            Membres de la relation
+     * @param attributes
+     *            Attributs attachés à la relation
+     */
+    public OSMRelation (long id, List<Member> members, Attributes attributes) {
+        super(id, attributes);
+        this.members = Collections.unmodifiableList(new ArrayList<>(members));
+    }
+
+    /**
+     * Retourne la liste des membres de la relation.
+     * 
+     * @return La liste des membres de la relation
+     */
+    public List<Member> members () {
+        return this.members;
+    }
 
     /**
      * Représente une entité appartenant à une relation.
@@ -81,34 +105,6 @@ public final class OSMRelation extends OSMEntity {
             return this.member;
         }
     }
-
-
-    /**
-     * Construit une relation étant donnés son identifiant unique, ses membres
-     * et ses attributs
-     * 
-     * @param id
-     *            Identifiant unique relatif à la relation
-     * @param members
-     *            Membres de la relation
-     * @param attributes
-     *            Attributs attachés à la relation
-     */
-    public OSMRelation (long id, List<Member> members, Attributes attributes) {
-        super(id, attributes);
-
-        this.members = Collections.unmodifiableList(new ArrayList<>(members));
-    }
-
-    /**
-     * Retourne la liste des membres de la relation.
-     * 
-     * @return La liste des membres de la relation
-     */
-    public List<Member> members () {
-        return this.members;
-    }
-
     
     /**
      * Sert de bâtisseur à la classe OSMRelation et permet de construire une
