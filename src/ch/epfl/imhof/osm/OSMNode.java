@@ -53,7 +53,7 @@ public final class OSMNode extends OSMEntity {
          */
         public OSMNode build () {
             if (this.isIncomplete())
-                throw new IllegalStateException("noeud incomplet");
+                throw new IllegalStateException("Nœud incomplet");
 
             return new OSMNode(this.id(), this.position, this.attributes());
         }

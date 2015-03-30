@@ -40,8 +40,7 @@ public final class OSMMap {
          *            Nouveau noeud à ajouter au bâtisseur
          */
         public void addNode (OSMNode newNode) {
-            if (newNode != null)
-                nodes.put(newNode.id(), newNode);
+            nodes.put(newNode.id(), Objects.requireNonNull(newNode));
         }
 
         /**

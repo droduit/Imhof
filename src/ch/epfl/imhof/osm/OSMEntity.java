@@ -23,8 +23,8 @@ public abstract class OSMEntity {
      *
      */
     public static abstract class Builder {
-        private boolean isIncomplete = false;
         private long id;
+        private boolean isIncomplete = false;
         private Attributes.Builder attrBuilder = new Attributes.Builder();
 
         /**

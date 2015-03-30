@@ -69,7 +69,7 @@ public final class OSMWay extends OSMEntity {
          *             Si le chemin en cours de construction est incomplet
          */
         public OSMWay build () {
-            if (isIncomplete())
+            if (this.isIncomplete())
                 throw new IllegalStateException(
                         "La liste des noeuds doit etre >= 2 sinon ce n'est pas un chemin !");
 
@@ -130,9 +130,10 @@ public final class OSMWay extends OSMEntity {
      */
     public List<OSMNode> nonRepeatingNodes () {
         List<OSMNode> n = new ArrayList<>(this.nodes);
-        if (isClosed()) {
+
+        if (this.isClosed())
             n.remove(nodesCount() - 1);
-        }
+
         return Collections.unmodifiableList(n);
     }
 
@@ -161,7 +162,7 @@ public final class OSMWay extends OSMEntity {
      * @return true : si le premier noeud du chemin est identique au dernier
      */
     public boolean isClosed () {
-        return (nodes.get(0).equals(nodes.get(nodesCount() - 1)));
+        return this.firstNode().equals(this.lastNode());
     }
 
 }
