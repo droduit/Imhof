@@ -1,5 +1,7 @@
 package ch.epfl.imhof;
 
+import java.util.Objects;
+
 /**
  * Représente une entité de type T dotée d'attributs.
  * 
@@ -24,12 +26,8 @@ public final class Attributed<T> {
      *            Attributs attachés à l'objet value
      */
     public Attributed (T value, Attributes attributes) {
-        if (value == null || attributes == null)
-            throw new NullPointerException(
-                    "Les objets passés en paramètres ne doivent pas être null");
-
-        this.value = value;
-        this.attributes = attributes;
+        this.value = Objects.requireNonNull(value, "value ne peut pas être null");
+        this.attributes = Objects.requireNonNull(attributes, "attributes ne peut pas être null");
     }
 
     /**

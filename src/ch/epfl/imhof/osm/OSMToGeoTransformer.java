@@ -46,8 +46,7 @@ public final class OSMToGeoTransformer {
     private Map.Builder mapBuilder;
 
     /**
-     * Construit un convertisseur OSM en géométrie qui utilise la projection
-     * donnée
+     * Construit un convertisseur d'entités OSM en entités géométriques utilisant la projection donnée.
      * 
      * @param projection
      *            Type de la projection à utiliser
@@ -97,16 +96,14 @@ public final class OSMToGeoTransformer {
      */
     private boolean isArea (OSMWay way) {
         return way.isClosed()
-                && (AREA_VALUES.contains(way.attributeValue(AREA_KEY)) || !way.attributes()
-                        .keepOnlyKeys(AREA_ATTRS).isEmpty());
+                && (AREA_VALUES.contains(way.attributeValue(AREA_KEY))
+                    || !way.attributes().keepOnlyKeys(AREA_ATTRS).isEmpty());
     }
 
     /**
-     * Construit soit les polygones soit les polylignes a partir des chemins de
-     * la map en y attachant les attribus filtrés
+     * Construit le PolyLine ou Polygone associé au chemin donné et y attache les attributs fitrés.
      * 
-     * @param ways
-     *            Liste des chemins de la map
+     * @param way Le chemin OSM à transformer en entité géométrique
      */
     private void buildWay (OSMWay way) {
         PolyLine.Builder builder = new PolyLine.Builder();
@@ -131,7 +128,7 @@ public final class OSMToGeoTransformer {
 
     /**
      * Construction du graphe pour les membres d'une relation ayant le rôle
-     * donné
+     * donné.
      * 
      * @param relation
      *            Relation contenant les membres avec lesquels on veut
@@ -144,6 +141,7 @@ public final class OSMToGeoTransformer {
     private Graph<OSMNode> buildGraphForRole (OSMRelation relation, String role) {
         Graph.Builder<OSMNode> graphBuilder = new Graph.Builder<OSMNode>();
 
+        /* Construction du graph */
         for (OSMRelation.Member member : relation.members()) {
             if (member.type() != OSMRelation.Member.Type.WAY)
                 continue;
@@ -166,7 +164,7 @@ public final class OSMToGeoTransformer {
 
         Graph<OSMNode> graph = graphBuilder.build();
 
-        /* On contrôle le nombre de voisins */
+        /* Contrôle du nombre de voisins */
         for (OSMNode node : graph.nodes()) {
             if (graph.neighborsOf(node).size() != 2)
                 return new Graph<>(new HashMap<>()); // Un graph vide
@@ -177,13 +175,14 @@ public final class OSMToGeoTransformer {
 
     /**
      * Sélectionne un noeud encore non visité parmi l'ensemble des noeuds
+     * et le marque comme visité.
      * 
      * @param nodes
      *            Ensemble des noeuds
      * @param visited
      *            Noeuds déjà visités
      * @return Noeud encore non visité qui se trouve dans l'ensemble node privé
-     *         de l'ensemble visited
+     *         de l'ensemble visited ou null si aucun noeud n'a pas déjà été visité.
      */
     private OSMNode pickUnvisitedNode (Set<OSMNode> nodes, Set<OSMNode> visited) {
         for (OSMNode node : nodes) {
@@ -220,11 +219,14 @@ public final class OSMToGeoTransformer {
 
         OSMNode current = null;
         while ((current = this.pickUnvisitedNode(nodesSet, visitedNodes)) != null) {
+            /* ^ On débute un anneau en sélectionnant un noeud non visité... */
             PolyLine.Builder builder = new PolyLine.Builder();
 
             do {
                 builder.addPoint(this.projection.project(current.position()));
             } while ((current = this.pickUnvisitedNode(graph.neighborsOf(current), visitedNodes)) != null);
+            /* ^ On parcours successivement les noeuds de l'anneau en sélectionnant un voisin non-visité
+             *   du noeud courant */
 
             rings.add(builder.buildClosed());
         }
@@ -278,6 +280,13 @@ public final class OSMToGeoTransformer {
         for (ClosedPolyLine outer : outers)
             rawPolygons.put(outer, new LinkedList<>());
 
+        /* Tris des outers par taille croissante.
+         * L'utilisation du Math.signum permet de s'assurer que le comparaison de l'aire
+         * reste correcte même lorsque les deux aires ont des valeurs proches.
+         * Exemple: o1.area() = 10.0 et o2.area() = 10.1
+         *     => (int)(o1.area() - o2.area()) = 0                -> FAUX
+         *     => (int)Math.signum(o1.area() - o2.area()) = -1    -> CORRECT
+         */
         Collections.sort(outers, (o1, o2) -> (int)Math.signum(o1.area() - o2.area()) );
 
         for (ClosedPolyLine inner : inners) {
@@ -301,31 +310,5 @@ public final class OSMToGeoTransformer {
         }
 
         return polygons;
-    }
-
-    public static void main (String args[]) {
-        try {
-            long start = System.currentTimeMillis();
-            OSMMap osmMap = OSMMapReader.readOSMFile(OSMMapReader.class.getResource("/berne.osm.gz").getFile(), true);
-
-            System.out.format("On a lu %d ways\n", osmMap.ways().size());
-            System.out.format("On a lu %d relations\n", osmMap.relations().size());
-
-            long step = System.currentTimeMillis();
-
-            OSMToGeoTransformer optimus = new OSMToGeoTransformer(new CH1903Projection());
-
-            Map map = optimus.transform(osmMap);
-
-            long end = System.currentTimeMillis();
-            System.out.format("On a %d polylines et %d polygones!\n", map.polyLines().size(), map
-                    .polygons().size());
-
-            System.out.format("Lecture en %.4fs\n", (step - start) / 1000.0);
-            System.out.format("Transformation en %.4fs\n", (end - step) / 1000.0);
-            System.out.format("Totale en %.4fs\n", (end - start) / 1000.0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

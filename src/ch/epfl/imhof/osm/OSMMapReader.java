@@ -20,15 +20,27 @@ public final class OSMMapReader {
     private static OSMMap.Builder mapBuilder;
 
     /**
-     * Gestionnaire de contenu pour interpéter le contenu du fichier XML et
+     * Gestionnaire de contenu pour interpréter le contenu du fichier XML et
      * instancier les différentes entités.
-     * 
+     *
      * @author Thierry Treyer (235116)
      * @author Dominique Roduit (234868)
      */
     public static final class OSMMapReaderHandler extends DefaultHandler {
         private Deque<Entity> entities = new ArrayDeque<>(16);
+        /* ^ Le Handler utilise une pile pour stocker les balises ouvertes au fur
+         *   et à mesure de la lecture du fichier XML.
+         *   Les balises sont retirées de la pile à leur fermeture.
+         */
 
+        /**
+         * Représente une balise rencontrée par le parseur XML.
+         * Il contient le type de la balise, ainsi que le bâtisseur
+         * associé à ce type de balises.
+         *
+         * @author Thierry Treyer (235116)
+         * @author Dominique Roduit (234868)
+         */
         private static class Entity {
             public static enum Type {
                 NODE, WAY, ND, RELATION, MEMBER, TAG, UNKNOWN
@@ -39,6 +51,7 @@ public final class OSMMapReader {
 
             /**
              * Construit une entitée avec son type et son bâtisseur
+             *
              * @param type Type de l'entité (@see {@link OSMMapReader.OSMMapReaderHandler.Type})
              * @param builder Bâtisseur de l'entité
              */
@@ -66,7 +79,9 @@ public final class OSMMapReader {
         }
 
         /**
-         * Callback lorsqu'une balise ouvrante est rencontrée
+         * Callback lorsqu'une balise ouvrante est rencontrée.
+         *
+         * Ajoute l'Entity associé à la balise sur la pile.
          */
         public void startElement (String uri, String lName, String qName,
                 org.xml.sax.Attributes attr) throws SAXException {
@@ -96,7 +111,10 @@ public final class OSMMapReader {
         }
 
         /**
-         * Callback lorsqu'une balise fermante est rencontrée
+         * Callback lorsqu'une balise fermante est rencontrée.
+         *
+         * Finalise la construction de la balise au sommet de la pile,
+         * puis retire l'Entity de la pile.
          */
         public void endElement (String uri, String lName, String qName) throws SAXException {
             Entity entity = this.entities.removeLast();
@@ -126,7 +144,7 @@ public final class OSMMapReader {
         }
 
         /**
-         * Ajout d'un nœud dans le deque.
+         * Ajout d'un nœud dans la pile.
          *
          * @param attr
          *            Attributs attachés au nœud
@@ -142,7 +160,7 @@ public final class OSMMapReader {
         }
 
         /**
-         * Ajout d'un chemin dans le deque.
+         * Ajout d'un chemin dans la pile.
          *
          * @param attr
          *            Attributs attachés au chemin
@@ -156,7 +174,7 @@ public final class OSMMapReader {
         }
 
         /**
-         * Ajout d'un noeud au bâtisseur du dernier chemin dans le deque.
+         * Ajout d'un noeud au bâtisseur du dernier chemin dans la pile.
          *
          * @param attr
          *            Attributs attachés à la référence du nœud
@@ -185,7 +203,7 @@ public final class OSMMapReader {
         }
 
         /**
-         * Ajout d'un attribut à la dernière entité dans le deque.
+         * Ajout d'un attribut à la dernière entité dans la pile.
          *
          * @param attr
          *            Attributs attachés à l'élément
@@ -200,7 +218,7 @@ public final class OSMMapReader {
         }
 
         /**
-         * Ajout d'une relation dans le deque.
+         * Ajout d'une relation dans la pile.
          *
          * @param attr
          *            Attributs attachés à la relation
@@ -214,7 +232,7 @@ public final class OSMMapReader {
         }
 
         /**
-         * Ajout d'un membre à la dernière relation dans le deque.
+         * Ajout d'un membre à la dernière relation dans la pile.
          *
          * @param attr
          *            Attributs attachés au membre
@@ -288,10 +306,10 @@ public final class OSMMapReader {
         mapBuilder = new OSMMap.Builder();
 
         try (InputStream file = new BufferedInputStream(new FileInputStream(fileName))) {
-            InputStream input = (unGZip == false) ? file : new GZIPInputStream(file);
+            InputStream input = (!unGZip) ? file : new GZIPInputStream(file);
 
             XMLReader reader = XMLReaderFactory.createXMLReader();
-            reader.setErrorHandler(null); // On gère nous même les exceptions
+            reader.setErrorHandler(null); // On gère nous-même les exceptions
             reader.setContentHandler(new OSMMapReaderHandler());
             reader.parse(new InputSource(input));
         }
