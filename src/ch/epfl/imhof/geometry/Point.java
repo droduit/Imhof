@@ -19,7 +19,7 @@ public final class Point {
      * @param y
      *            L'ordonnée du point
      */
-    public Point (double x, double y) {
+    public Point(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -29,7 +29,7 @@ public final class Point {
      *
      * @return La coordonnées x de l'abscisse
      */
-    public double x () {
+    public double x() {
         return this.x;
     }
 
@@ -38,7 +38,7 @@ public final class Point {
      *
      * @return La coordonnées y de l'ordonnée
      */
-    public double y () {
+    public double y() {
         return this.y;
     }
 

@@ -20,7 +20,7 @@ public interface Projection {
      *
      * @return Le point projetté en coordonnées cartésiennes
      */
-    public Point project (PointGeo point);
+    public Point project(PointGeo point);
 
     /**
      * Projection d'un point en coordonnées cartésiennes vers un point en
@@ -31,5 +31,5 @@ public interface Projection {
      *
      * @return Le point projetté en coordonnées géographiques
      */
-    public PointGeo inverse (Point point);
+    public PointGeo inverse(Point point);
 }

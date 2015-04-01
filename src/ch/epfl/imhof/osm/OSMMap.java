@@ -28,9 +28,10 @@ public final class OSMMap {
      * @param relations
      *            Relations
      */
-    public OSMMap (Collection<OSMWay> ways, Collection<OSMRelation> relations) {
+    public OSMMap(Collection<OSMWay> ways, Collection<OSMRelation> relations) {
         this.ways = Collections.unmodifiableList(new ArrayList<>(ways));
-        this.relations = Collections.unmodifiableList(new ArrayList<>(relations));
+        this.relations = Collections
+                .unmodifiableList(new ArrayList<>(relations));
     }
 
     /**
@@ -38,7 +39,7 @@ public final class OSMMap {
      * 
      * @return Liste des chemins de la carte
      */
-    public List<OSMWay> ways () {
+    public List<OSMWay> ways() {
         return this.ways;
     }
 
@@ -47,7 +48,7 @@ public final class OSMMap {
      * 
      * @return Liste des relations de la carte
      */
-    public List<OSMRelation> relations () {
+    public List<OSMRelation> relations() {
         return this.relations;
     }
 
@@ -70,8 +71,9 @@ public final class OSMMap {
          * @param newNode
          *            Nouveau noeud à ajouter au bâtisseur
          */
-        public void addNode (OSMNode newNode) {
-            nodes.put(newNode.id(), Objects.requireNonNull(newNode, "node ne peut être null"));
+        public void addNode(OSMNode newNode) {
+            nodes.put(newNode.id(),
+                    Objects.requireNonNull(newNode, "node ne peut être null"));
         }
 
         /**
@@ -82,7 +84,7 @@ public final class OSMMap {
          *            Identifiant unique du noeud
          * @return le noeud correspondant à l'identifiant passé
          */
-        public OSMNode nodeForId (long id) {
+        public OSMNode nodeForId(long id) {
             return nodes.get(id);
         }
 
@@ -92,8 +94,9 @@ public final class OSMMap {
          * @param newWay
          *            Nouveau chemin à ajouter à la Map
          */
-        public void addWay (OSMWay newWay) {
-            ways.put(newWay.id(), Objects.requireNonNull(newWay, "way ne peut être null"));
+        public void addWay(OSMWay newWay) {
+            ways.put(newWay.id(),
+                    Objects.requireNonNull(newWay, "way ne peut être null"));
         }
 
         /**
@@ -104,7 +107,7 @@ public final class OSMMap {
          *            Identifiant unique du chemin que l'on veut recupérer
          * @return Chemin correspondant à l'identifiant passé en paramètre
          */
-        public OSMWay wayForId (long id) {
+        public OSMWay wayForId(long id) {
             return ways.get(id);
         }
 
@@ -114,8 +117,9 @@ public final class OSMMap {
          * @param newRelation
          *            Nouvelle relation à ajouter à la carte
          */
-        public void addRelation (OSMRelation newRelation) {
-            relations.put(newRelation.id(), Objects.requireNonNull(newRelation, "relation ne peut être null"));
+        public void addRelation(OSMRelation newRelation) {
+            relations.put(newRelation.id(), Objects.requireNonNull(newRelation,
+                    "relation ne peut être null"));
         }
 
         /**
@@ -127,7 +131,7 @@ public final class OSMMap {
          *            Identifiant unique de la relation à récupérer
          * @return La relation correspondant à l'identifiant passé en paramètre
          */
-        public OSMRelation relationForId (long id) {
+        public OSMRelation relationForId(long id) {
             return relations.get(id);
         }
 
@@ -138,7 +142,7 @@ public final class OSMMap {
          * @return Carte OSM construite sur la base des chemins et relations
          *         ajoutés jusqu'à présent
          */
-        public OSMMap build () {
+        public OSMMap build() {
             return new OSMMap(ways.values(), relations.values());
         }
     }

@@ -24,7 +24,7 @@ public final class Attributes {
      * @param attributes
      *            L'ensemble des attributs
      */
-    public Attributes (Map<String, String> attributes) {
+    public Attributes(Map<String, String> attributes) {
         this.attr = Collections.unmodifiableMap(new HashMap<>(attributes));
     }
 
@@ -33,7 +33,7 @@ public final class Attributes {
      *
      * @return Le nombre de pair clef/valeur
      */
-    public int size () {
+    public int size() {
         return this.attr.keySet().size();
     }
 
@@ -42,7 +42,7 @@ public final class Attributes {
      *
      * @return Vrai, si l'ensemble des attributs est vide
      */
-    public boolean isEmpty () {
+    public boolean isEmpty() {
         return this.attr.isEmpty();
     }
 
@@ -54,7 +54,7 @@ public final class Attributes {
      *
      * @return Vrai, si l'ensemble d'attributs contient la clef
      */
-    public boolean contains (String key) {
+    public boolean contains(String key) {
         return this.attr.containsKey(key);
     }
 
@@ -67,7 +67,7 @@ public final class Attributes {
      *
      * @return La valeur associée à la clef ou null si la clef n'existe pas
      */
-    public String get (String key) {
+    public String get(String key) {
         return this.attr.get(key);
     }
 
@@ -83,7 +83,7 @@ public final class Attributes {
      * @return La valeur associée à la clef ou la valeur par défaut si la clef
      *         est absente
      */
-    public String get (String key, String defaultValue) {
+    public String get(String key, String defaultValue) {
         return this.attr.getOrDefault(key, defaultValue);
     }
 
@@ -97,11 +97,11 @@ public final class Attributes {
      * @param defaultValue
      *            La valeur à retourner si la clef n'existe pas
      * @throws NumberFormatException
-     *            Si la valeur de l'attribut n'est pas un entier
+     *             Si la valeur de l'attribut n'est pas un entier
      * @return La valeur associée à la clef ou la valeur par défaut si la clef
      *         est absente
      */
-    public int get (String key, int defaultValue) {
+    public int get(String key, int defaultValue) {
         try {
             return Integer.parseInt(this.attr.get(key));
         } catch (NumberFormatException e) {
@@ -118,20 +118,20 @@ public final class Attributes {
      *
      * @return Un nouvel ensemble Attributes contenant les clef demandées
      */
-    public Attributes keepOnlyKeys (Set<String> keysToKeep) {
+    public Attributes keepOnlyKeys(Set<String> keysToKeep) {
         Builder attrBuilder = new Builder();
 
-        for(String key : keysToKeep) {
-            if(this.contains(key))
+        for (String key : keysToKeep) {
+            if (this.contains(key))
                 attrBuilder.put(key, this.attr.get(key));
         }
 
         return attrBuilder.build();
     }
-    
-    
+
     /**
      * Bâtisseur associé à la classe Attributes
+     *
      * @author Thierry Treyer (235116)
      * @author Dominique Roduit (234868)
      *
@@ -150,7 +150,7 @@ public final class Attributes {
          * @param value
          *            La valeur de l'association
          */
-        public Builder put (String key, String value) {
+        public Builder put(String key, String value) {
             this.attr.put(key, value);
             return this;
         }
@@ -161,7 +161,7 @@ public final class Attributes {
          *
          * @return L'ensemble d'attributs associé
          */
-        public Attributes build () {
+        public Attributes build() {
             return new Attributes(this.attr);
         }
     }

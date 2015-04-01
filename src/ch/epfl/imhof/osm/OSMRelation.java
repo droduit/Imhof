@@ -28,7 +28,7 @@ public final class OSMRelation extends OSMEntity {
      * @param attributes
      *            Attributs attachés à la relation
      */
-    public OSMRelation (long id, List<Member> members, Attributes attributes) {
+    public OSMRelation(long id, List<Member> members, Attributes attributes) {
         super(id, attributes);
         this.members = Collections.unmodifiableList(new ArrayList<>(members));
     }
@@ -38,7 +38,7 @@ public final class OSMRelation extends OSMEntity {
      * 
      * @return La liste des membres de la relation
      */
-    public List<Member> members () {
+    public List<Member> members() {
         return this.members;
     }
 
@@ -72,10 +72,13 @@ public final class OSMRelation extends OSMEntity {
          * @param member
          *            Entité
          */
-        public Member (Type type, String role, OSMEntity member) {
-            this.type = Objects.requireNonNull(type, "type ne peut pas être null");
-            this.role = Objects.requireNonNull(role, "role ne peut pas être null");
-            this.member = Objects.requireNonNull(member, "member ne peut pas être null");
+        public Member(Type type, String role, OSMEntity member) {
+            this.type = Objects.requireNonNull(type,
+                    "type ne peut pas être null");
+            this.role = Objects.requireNonNull(role,
+                    "role ne peut pas être null");
+            this.member = Objects.requireNonNull(member,
+                    "member ne peut pas être null");
         }
 
         /**
@@ -83,7 +86,7 @@ public final class OSMRelation extends OSMEntity {
          * 
          * @return Type du membre
          */
-        public Type type () {
+        public Type type() {
             return this.type;
         }
 
@@ -92,7 +95,7 @@ public final class OSMRelation extends OSMEntity {
          * 
          * @return Rôle du membre
          */
-        public String role () {
+        public String role() {
             return this.role;
         }
 
@@ -101,11 +104,11 @@ public final class OSMRelation extends OSMEntity {
          * 
          * @return Le membre lui-meme
          */
-        public OSMEntity member () {
+        public OSMEntity member() {
             return this.member;
         }
     }
-    
+
     /**
      * Sert de bâtisseur à la classe OSMRelation et permet de construire une
      * relation en plusieurs étapes.
@@ -123,7 +126,7 @@ public final class OSMRelation extends OSMEntity {
          * @param id
          *            Identifiant unique pour une relation
          */
-        public Builder (long id) {
+        public Builder(long id) {
             super(id);
         }
 
@@ -137,7 +140,7 @@ public final class OSMRelation extends OSMEntity {
          * @param newMember
          *            Nouveau membre que l'on ajoute a la relation
          */
-        public void addMember (Member.Type type, String role, OSMEntity newMember) {
+        public void addMember(Member.Type type, String role, OSMEntity newMember) {
             this.members.add(new Member(type, role, newMember));
         }
 
@@ -147,11 +150,11 @@ public final class OSMRelation extends OSMEntity {
          * présent au bâtisseur
          * 
          * @throws IllegalStateException
-         *          Si la relation est incomplète
+         *             Si la relation est incomplète
          * @return La relation construite sur la base de tout ce qui a été donné
          *         jusqu'ici
          */
-        public OSMRelation build () {
+        public OSMRelation build() {
             if (this.isIncomplete())
                 throw new IllegalStateException("Relation incomplète");
 

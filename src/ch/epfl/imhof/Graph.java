@@ -12,24 +12,27 @@ import java.util.Collections;
  * @author Thierry Treyer (235116)
  * @author Dominique Roduit (234868)
  * 
- * @param <N> Type des noeuds du graphe
+ * @param <N>
+ *            Type des noeuds du graphe
  */
 
 public final class Graph<N> {
     public Map<N, Set<N>> neighbors;
 
     /**
-     * Construit un graphe non orienté immuable à partir de la table d'adjacence donnée
+     * Construit un graphe non orienté immuable à partir de la table d'adjacence
+     * donnée
      *
      * @param neighbors
      *            Un map contenant les nœuds du graphe comme clés et les voisins
      *            comme valeurs
      */
-    public Graph (Map<N, Set<N>> neighbors) {
+    public Graph(Map<N, Set<N>> neighbors) {
         Map<N, Set<N>> nbs = new HashMap<>();
 
         for (N node : neighbors.keySet())
-            nbs.put(node, Collections.unmodifiableSet(new HashSet<>(neighbors.get(node))));
+            nbs.put(node, Collections.unmodifiableSet(new HashSet<>(neighbors
+                    .get(node))));
 
         this.neighbors = Collections.unmodifiableMap(nbs);
     }
@@ -39,7 +42,7 @@ public final class Graph<N> {
      *
      * @return Les nœuds du graphe
      */
-    public Set<N> nodes () {
+    public Set<N> nodes() {
         return this.neighbors.keySet();
     }
 
@@ -53,37 +56,40 @@ public final class Graph<N> {
      *
      * @return La liste des voisins du nœud demandé
      */
-    public Set<N> neighborsOf (N node) {
+    public Set<N> neighborsOf(N node) {
         if (!this.neighbors.containsKey(node))
             throw new IllegalArgumentException("Le nœud demandé est inconnu");
 
         return this.neighbors.get(node);
     }
-    
+
     /**
      * Bâtisseur générique de la classe Graph
      * 
      * @author Thierry Treyer (235116)
      * @author Dominique Roduit (234868)
      *
-     * @param <N> Type des noeuds du bâtisseur
+     * @param <N>
+     *            Type des noeuds du bâtisseur
      */
     public static final class Builder<N> {
         public Map<N, Set<N>> neighbors = new HashMap<>();
 
         /**
-         * Ajoute le nœud donné au graphe en cours de construction, s'il n'en faisait pas déjà partie.
+         * Ajoute le nœud donné au graphe en cours de construction, s'il n'en
+         * faisait pas déjà partie.
          *
          * @param node
          *            Le nœud à ajouter au graphe
          */
-        public void addNode (N node) {
+        public void addNode(N node) {
             if (!this.neighbors.containsKey(node))
                 this.neighbors.put(node, new HashSet<>());
         }
 
         /**
-         * Ajoute une arête entre les deux noeuds donnés au graphe en cours de construction.
+         * Ajoute une arête entre les deux noeuds donnés au graphe en cours de
+         * construction.
          *
          * @param n1
          *            Le premier nœud du lien
@@ -93,7 +99,7 @@ public final class Graph<N> {
          * @throws IllegalArgumentException
          *             Si n1 ou n2 n'existent pas dans le graph
          */
-        public void addEdge (N n1, N n2) {
+        public void addEdge(N n1, N n2) {
             if (!this.neighbors.containsKey(n1))
                 throw new IllegalArgumentException("Le nœud n1 est inconnu");
 
@@ -105,11 +111,12 @@ public final class Graph<N> {
         }
 
         /**
-         * Construit le graphe composé des noeuds et arêtes ajoutés jusqu'à présent au bâtisseur
+         * Construit le graphe composé des noeuds et arêtes ajoutés jusqu'à
+         * présent au bâtisseur
          *
          * @return Le graphe construit avec les données reçues
          */
-        public Graph<N> build () {
+        public Graph<N> build() {
             return new Graph<N>(this.neighbors);
         }
     }

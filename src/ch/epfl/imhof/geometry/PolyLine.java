@@ -22,8 +22,8 @@ public abstract class PolyLine {
      * @throws IllegalArgumentException
      *             Si la liste de points est vide
      */
-    public PolyLine (List<Point> points) {
-        if (!areValidPoints(points)) 
+    public PolyLine(List<Point> points) {
+        if (!areValidPoints(points))
             throw new IllegalArgumentException("Invalid list of points");
 
         this.points = Collections.unmodifiableList(new ArrayList<>(points));
@@ -34,7 +34,7 @@ public abstract class PolyLine {
      *
      * @return Les points de la PolyLine
      */
-    public List<Point> points () {
+    public List<Point> points() {
         return this.points;
     }
 
@@ -43,7 +43,7 @@ public abstract class PolyLine {
      *
      * @return Le premier point de la PolyLine
      */
-    public Point firstPoint () {
+    public Point firstPoint() {
         return this.points.get(0);
     }
 
@@ -54,7 +54,7 @@ public abstract class PolyLine {
      *
      * @return True si la liste correspond aux critères
      */
-    private boolean areValidPoints (List<Point> points) {
+    private boolean areValidPoints(List<Point> points) {
         return (points != null && points.size() > 0);
     }
 
@@ -63,11 +63,11 @@ public abstract class PolyLine {
      *
      * @return true : si la PolyLine est fermée
      */
-    public abstract boolean isClosed ();
-    
-    
+    public abstract boolean isClosed();
+
     /**
-     * Sert de bâtisseur aux deux sous-classes de PolyLine et permet de construire une polyligne en plusieurs étapes
+     * Sert de bâtisseur aux deux sous-classes de PolyLine et permet de
+     * construire une polyligne en plusieurs étapes
      *
      * @author Thierry Treyer (235116)
      * @author Dominique Roduit (234868)
@@ -82,7 +82,7 @@ public abstract class PolyLine {
          * @param point
          *            Le point à ajouter à la liste
          */
-        public void addPoint (Point p) {
+        public void addPoint(Point p) {
             this.points.add(p);
         }
 
@@ -91,7 +91,7 @@ public abstract class PolyLine {
          *
          * @return Un objet OpenPolyLine initialisé avec les points ajoutés
          */
-        public OpenPolyLine buildOpen () {
+        public OpenPolyLine buildOpen() {
             return new OpenPolyLine(this.points);
         }
 
@@ -100,7 +100,7 @@ public abstract class PolyLine {
          *
          * @return Un objet ClosedPolyLine initialisé avec les points ajoutés
          */
-        public ClosedPolyLine buildClosed () {
+        public ClosedPolyLine buildClosed() {
             return new ClosedPolyLine(this.points);
         }
     }

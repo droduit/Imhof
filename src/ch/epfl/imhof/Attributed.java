@@ -25,9 +25,11 @@ public final class Attributed<T> {
      * @param attributes
      *            Attributs attachés à l'objet value
      */
-    public Attributed (T value, Attributes attributes) {
-        this.value = Objects.requireNonNull(value, "value ne peut pas être null");
-        this.attributes = Objects.requireNonNull(attributes, "attributes ne peut pas être null");
+    public Attributed(T value, Attributes attributes) {
+        this.value = Objects.requireNonNull(value,
+                "value ne peut pas être null");
+        this.attributes = Objects.requireNonNull(attributes,
+                "attributes ne peut pas être null");
     }
 
     /**
@@ -35,7 +37,7 @@ public final class Attributed<T> {
      * 
      * @return Objet auquel les attributs sont attachés
      */
-    public T value () {
+    public T value() {
         return value;
     }
 
@@ -44,7 +46,7 @@ public final class Attributed<T> {
      * 
      * @return Attributs attachés à l'objet value
      */
-    public Attributes attributes () {
+    public Attributes attributes() {
         return attributes;
     }
 
@@ -59,7 +61,7 @@ public final class Attributed<T> {
      *            liste des attributs.
      * @return true si la liste des attributs contient celui passé en argument
      */
-    public boolean hasAttribute (String attributeName) {
+    public boolean hasAttribute(String attributeName) {
         return attributes.contains(attributeName);
     }
 
@@ -71,7 +73,7 @@ public final class Attributed<T> {
      *            Nom de l'attribut à récupérer
      * @return Valeur correspondant au nom de l'attribut passé en argument
      */
-    public String attributeValue (String attributeName) {
+    public String attributeValue(String attributeName) {
         return attributes.get(attributeName);
     }
 
@@ -86,7 +88,7 @@ public final class Attributed<T> {
      *            associée
      * @return Valeur correspondant au nom de l'attribut passé en argument
      */
-    public String attributeValue (String attributeName, String defaultValue) {
+    public String attributeValue(String attributeName, String defaultValue) {
         return attributes.get(attributeName, defaultValue);
     }
 
@@ -102,7 +104,7 @@ public final class Attributed<T> {
      *            associée ou si la valeur n'est pas un entier valide
      * @return Valeur correspondant au nom de l'attribut passé en argument
      */
-    public int attributeValue (String attributeName, int defaultValue) {
+    public int attributeValue(String attributeName, int defaultValue) {
         return attributes.get(attributeName, defaultValue);
     }
 }

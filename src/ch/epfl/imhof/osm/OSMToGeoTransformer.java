@@ -30,35 +30,41 @@ public final class OSMToGeoTransformer {
     private final String TYPE_MULTIPOLYGON = "multipolygon";
 
     private final String AREA_KEY = "area";
-    private final Set<String> AREA_VALUES = new HashSet<>(Arrays.asList("yes", "1", "true"));
+    private final Set<String> AREA_VALUES = new HashSet<>(Arrays.asList("yes",
+            "1", "true"));
 
-    private final Set<String> AREA_ATTRS = new HashSet<>(Arrays.asList("aeroway", "amenity",
-            "building", "harbour", "historic", "landuse", "leisure", "man_made", "military",
-            "natural", "office", "place", "power", "public_transport", "shop", "sport", "tourism",
-            "water", "waterway", "wetland"));
+    private final Set<String> AREA_ATTRS = new HashSet<>(Arrays.asList(
+            "aeroway", "amenity", "building", "harbour", "historic", "landuse",
+            "leisure", "man_made", "military", "natural", "office", "place",
+            "power", "public_transport", "shop", "sport", "tourism", "water",
+            "waterway", "wetland"));
 
-    private final Set<String> FILTER_POLYLINE_ATTRS = new HashSet<>(Arrays.asList("bridge",
-            "highway", "layer", "man_made", "railway", "tunnel", "waterway"));
+    private final Set<String> FILTER_POLYLINE_ATTRS = new HashSet<>(
+            Arrays.asList("bridge", "highway", "layer", "man_made", "railway",
+                    "tunnel", "waterway"));
 
-    private final Set<String> FILTER_POLYGONE_ATTRS = new HashSet<>(Arrays.asList("building",
-            "landuse", "layer", "leisure", "natural", "waterway"));
+    private final Set<String> FILTER_POLYGONE_ATTRS = new HashSet<>(
+            Arrays.asList("building", "landuse", "layer", "leisure", "natural",
+                    "waterway"));
 
     private Map.Builder mapBuilder;
 
     /**
-     * Construit un convertisseur d'entités OSM en entités géométriques utilisant la projection donnée.
+     * Construit un convertisseur d'entités OSM en entités géométriques
+     * utilisant la projection donnée.
      * 
      * @param projection
      *            Type de la projection à utiliser
      */
-    public OSMToGeoTransformer (Projection projection) {
+    public OSMToGeoTransformer(Projection projection) {
         this.projection = projection;
     }
 
-    private boolean isMultipolygon (OSMRelation relation) {
+    private boolean isMultipolygon(OSMRelation relation) {
         return relation.attributeValue(TYPE_KEY) != null
                 && relation.attributeValue(TYPE_KEY).equals(TYPE_MULTIPOLYGON)
-                && !relation.attributes().keepOnlyKeys(FILTER_POLYGONE_ATTRS).isEmpty();
+                && !relation.attributes().keepOnlyKeys(FILTER_POLYGONE_ATTRS)
+                        .isEmpty();
     }
 
     /**
@@ -68,7 +74,7 @@ public final class OSMToGeoTransformer {
      *            Carte OSM à convertur en carte géométrique projetée
      * @return Carte géométrique projetée
      */
-    public Map transform (OSMMap map) {
+    public Map transform(OSMMap map) {
         this.mapBuilder = new Map.Builder();
 
         for (OSMWay way : map.ways())
@@ -76,8 +82,8 @@ public final class OSMToGeoTransformer {
 
         for (OSMRelation relation : map.relations()) {
             if (isMultipolygon(relation)) {
-                List<Attributed<Polygon>> polygons = this.assemblePolygon(relation,
-                        relation.attributes());
+                List<Attributed<Polygon>> polygons = this.assemblePolygon(
+                        relation, relation.attributes());
 
                 for (Attributed<Polygon> polygon : polygons)
                     this.mapBuilder.addPolygon(polygon);
@@ -94,18 +100,20 @@ public final class OSMToGeoTransformer {
      *            Le chemin dont on veut savoir s'il est de type area
      * @return true si le chemin est de type area
      */
-    private boolean isArea (OSMWay way) {
+    private boolean isArea(OSMWay way) {
         return way.isClosed()
-                && (AREA_VALUES.contains(way.attributeValue(AREA_KEY))
-                    || !way.attributes().keepOnlyKeys(AREA_ATTRS).isEmpty());
+                && (AREA_VALUES.contains(way.attributeValue(AREA_KEY)) || !way
+                        .attributes().keepOnlyKeys(AREA_ATTRS).isEmpty());
     }
 
     /**
-     * Construit le PolyLine ou Polygone associé au chemin donné et y attache les attributs fitrés.
+     * Construit le PolyLine ou Polygone associé au chemin donné et y attache
+     * les attributs fitrés.
      * 
-     * @param way Le chemin OSM à transformer en entité géométrique
+     * @param way
+     *            Le chemin OSM à transformer en entité géométrique
      */
-    private void buildWay (OSMWay way) {
+    private void buildWay(OSMWay way) {
         PolyLine.Builder builder = new PolyLine.Builder();
 
         for (OSMNode node : way.nonRepeatingNodes())
@@ -113,16 +121,21 @@ public final class OSMToGeoTransformer {
 
         if (this.isArea(way)) {
             Polygon polygon = new Polygon(builder.buildClosed());
-            Attributes attr = way.attributes().keepOnlyKeys(FILTER_POLYGONE_ATTRS);
+            Attributes attr = way.attributes().keepOnlyKeys(
+                    FILTER_POLYGONE_ATTRS);
 
             if (!attr.isEmpty())
-                this.mapBuilder.addPolygon(new Attributed<Polygon>(polygon, attr));
+                this.mapBuilder.addPolygon(new Attributed<Polygon>(polygon,
+                        attr));
         } else {
-            PolyLine poly = (way.isClosed()) ? builder.buildClosed() : builder.buildOpen();
-            Attributes attr = way.attributes().keepOnlyKeys(FILTER_POLYLINE_ATTRS);
+            PolyLine poly = (way.isClosed()) ? builder.buildClosed() : builder
+                    .buildOpen();
+            Attributes attr = way.attributes().keepOnlyKeys(
+                    FILTER_POLYLINE_ATTRS);
 
             if (!attr.isEmpty())
-                this.mapBuilder.addPolyLine(new Attributed<PolyLine>(poly, attr));
+                this.mapBuilder
+                        .addPolyLine(new Attributed<PolyLine>(poly, attr));
         }
     }
 
@@ -138,7 +151,7 @@ public final class OSMToGeoTransformer {
      *            graphe
      * @return Le graphe pour les membres de la relation ayant le rôle donné
      */
-    private Graph<OSMNode> buildGraphForRole (OSMRelation relation, String role) {
+    private Graph<OSMNode> buildGraphForRole(OSMRelation relation, String role) {
         Graph.Builder<OSMNode> graphBuilder = new Graph.Builder<OSMNode>();
 
         /* Construction du graph */
@@ -174,17 +187,18 @@ public final class OSMToGeoTransformer {
     }
 
     /**
-     * Sélectionne un noeud encore non visité parmi l'ensemble des noeuds
-     * et le marque comme visité.
+     * Sélectionne un noeud encore non visité parmi l'ensemble des noeuds et le
+     * marque comme visité.
      * 
      * @param nodes
      *            Ensemble des noeuds
      * @param visited
      *            Noeuds déjà visités
      * @return Noeud encore non visité qui se trouve dans l'ensemble node privé
-     *         de l'ensemble visited ou null si aucun noeud n'a pas déjà été visité.
+     *         de l'ensemble visited ou null si aucun noeud n'a pas déjà été
+     *         visité.
      */
-    private OSMNode pickUnvisitedNode (Set<OSMNode> nodes, Set<OSMNode> visited) {
+    private OSMNode pickUnvisitedNode(Set<OSMNode> nodes, Set<OSMNode> visited) {
         for (OSMNode node : nodes) {
             if (!visited.contains(node)) {
                 visited.add(node);
@@ -209,7 +223,7 @@ public final class OSMToGeoTransformer {
      * @return Liste des anneaux de la relation ayant le role spécifié ou liste
      *         vide si le calcul des anneaux échoue
      */
-    private List<ClosedPolyLine> ringsForRole (OSMRelation relation, String role) {
+    private List<ClosedPolyLine> ringsForRole(OSMRelation relation, String role) {
         Graph<OSMNode> graph = buildGraphForRole(relation, role);
 
         Set<OSMNode> nodesSet = graph.nodes();
@@ -224,9 +238,11 @@ public final class OSMToGeoTransformer {
 
             do {
                 builder.addPoint(this.projection.project(current.position()));
-            } while ((current = this.pickUnvisitedNode(graph.neighborsOf(current), visitedNodes)) != null);
-            /* ^ On parcours successivement les noeuds de l'anneau en sélectionnant un voisin non-visité
-             *   du noeud courant */
+            } while ((current = this.pickUnvisitedNode(
+                    graph.neighborsOf(current), visitedNodes)) != null);
+            /* ^ On parcours successivement les noeuds de l'anneau en
+             * sélectionnant un voisin non-visité du noeud courant
+             */
 
             rings.add(builder.buildClosed());
         }
@@ -245,7 +261,7 @@ public final class OSMToGeoTransformer {
      *            Polyligne dont on veut contrôler si elle contient inner
      * @return true si la polyligne inner est contenue dans la polyligne outer
      */
-    private boolean isInside (ClosedPolyLine inner, ClosedPolyLine outer) {
+    private boolean isInside(ClosedPolyLine inner, ClosedPolyLine outer) {
         for (Point p : inner.points()) {
             if (!outer.containsPoint(p))
                 return false;
@@ -265,7 +281,8 @@ public final class OSMToGeoTransformer {
      *            Attributs à attacher aux polygones de la relation
      * @return Liste des polygones attribués de la relation
      */
-    private List<Attributed<Polygon>> assemblePolygon (OSMRelation relation, Attributes attributes) {
+    private List<Attributed<Polygon>> assemblePolygon(OSMRelation relation,
+            Attributes attributes) {
         List<Attributed<Polygon>> polygons = new LinkedList<>();
         Attributes attr = attributes.keepOnlyKeys(FILTER_POLYGONE_ATTRS);
 
@@ -280,14 +297,15 @@ public final class OSMToGeoTransformer {
         for (ClosedPolyLine outer : outers)
             rawPolygons.put(outer, new LinkedList<>());
 
-        /* Tris des outers par taille croissante.
-         * L'utilisation du Math.signum permet de s'assurer que le comparaison de l'aire
-         * reste correcte même lorsque les deux aires ont des valeurs proches.
-         * Exemple: o1.area() = 10.0 et o2.area() = 10.1
-         *     => (int)(o1.area() - o2.area()) = 0                -> FAUX
-         *     => (int)Math.signum(o1.area() - o2.area()) = -1    -> CORRECT
+        /*
+         * Tris des outers par taille croissante. L'utilisation du Math.signum
+         * permet de s'assurer que le comparaison de l'aire reste correcte même
+         * lorsque les deux aires ont des valeurs proches. Exemple: o1.area() =
+         * 10.0 et o2.area() = 10.1 => (int)(o1.area() - o2.area()) = 0 -> FAUX
+         * => (int)Math.signum(o1.area() - o2.area()) = -1 -> CORRECT
          */
-        Collections.sort(outers, (o1, o2) -> (int)Math.signum(o1.area() - o2.area()) );
+        Collections.sort(outers,
+                (o1, o2) -> (int) Math.signum(o1.area() - o2.area()));
 
         for (ClosedPolyLine inner : inners) {
             ClosedPolyLine container = null;
@@ -303,7 +321,8 @@ public final class OSMToGeoTransformer {
                 rawPolygons.get(container).add(inner);
         }
 
-        for (java.util.Map.Entry<ClosedPolyLine, List<ClosedPolyLine>> rawPoly : rawPolygons.entrySet()) {
+        for (java.util.Map.Entry<ClosedPolyLine, List<ClosedPolyLine>> rawPoly : rawPolygons
+                .entrySet()) {
             Polygon poly = new Polygon(rawPoly.getKey(), rawPoly.getValue());
 
             polygons.add(new Attributed<Polygon>(poly, attr));

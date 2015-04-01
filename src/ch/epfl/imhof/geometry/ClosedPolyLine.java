@@ -16,11 +16,11 @@ public final class ClosedPolyLine extends PolyLine {
      * @param points
      *            Points définissant la polyligne fermée
      */
-    public ClosedPolyLine (List<Point> points) {
+    public ClosedPolyLine(List<Point> points) {
         super(points);
     }
 
-    public boolean isClosed () {
+    public boolean isClosed() {
         return true;
     }
 
@@ -33,7 +33,7 @@ public final class ClosedPolyLine extends PolyLine {
      *
      * @return L'index normalisé dans l'interval [0;points.size()[
      */
-    private int generalizeIndex (int index) {
+    private int generalizeIndex(int index) {
         return Math.floorMod(index, this.points().size());
     }
 
@@ -50,7 +50,7 @@ public final class ClosedPolyLine extends PolyLine {
      *
      * @return True, si le point p est à gauche de la droite
      */
-    private boolean isLeftFromLine (Point l1, Point l2, Point p) {
+    private boolean isLeftFromLine(Point l1, Point l2, Point p) {
         double px1 = l1.x() - p.x(), py1 = l1.y() - p.y();
         double px2 = l2.x() - p.x(), py2 = l2.y() - p.y();
 
@@ -62,7 +62,7 @@ public final class ClosedPolyLine extends PolyLine {
      *
      * @return L'aire de la PolyLine fermée
      */
-    public double area () {
+    public double area() {
         double area = 0.0;
         List<Point> ps = this.points();
 
@@ -85,7 +85,7 @@ public final class ClosedPolyLine extends PolyLine {
      *
      * @return True, si le point p est contenu dans la PolyLine
      */
-    public boolean containsPoint (Point p) {
+    public boolean containsPoint(Point p) {
         int index = 0;
         List<Point> ps = this.points();
 
@@ -94,10 +94,10 @@ public final class ClosedPolyLine extends PolyLine {
             Point p2 = ps.get(generalizeIndex(i + 1));
 
             if (p1.y() <= p.y()) {
-                if(p2.y() > p.y() && isLeftFromLine(p1, p2, p)) 
+                if (p2.y() > p.y() && isLeftFromLine(p1, p2, p))
                     index += 1;
             } else {
-                if(p2.y() <= p.y() && isLeftFromLine(p2, p1, p))
+                if (p2.y() <= p.y() && isLeftFromLine(p2, p1, p))
                     index -= 1;
             }
         }

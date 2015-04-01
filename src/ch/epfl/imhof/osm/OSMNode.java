@@ -26,9 +26,10 @@ public final class OSMNode extends OSMEntity {
      * @param attributes
      *            Attributs attachés au noeud
      */
-    public OSMNode (long id, PointGeo position, Attributes attributes) {
+    public OSMNode(long id, PointGeo position, Attributes attributes) {
         super(id, attributes);
-        this.position = Objects.requireNonNull(position, "position ne doit pas être null");
+        this.position = Objects.requireNonNull(position,
+                "position ne doit pas être null");
     }
 
     /**
@@ -36,7 +37,7 @@ public final class OSMNode extends OSMEntity {
      * 
      * @return Position du nœud
      */
-    public PointGeo position () {
+    public PointGeo position() {
         return this.position;
     }
 
@@ -59,9 +60,10 @@ public final class OSMNode extends OSMEntity {
          * @param position
          *            Position géographique du noeud
          */
-        public Builder (long id, PointGeo position) {
+        public Builder(long id, PointGeo position) {
             super(id);
-            this.position = Objects.requireNonNull(position, "position ne doit pas être null");
+            this.position = Objects.requireNonNull(position,
+                    "position ne doit pas être null");
         }
 
         /**
@@ -74,7 +76,7 @@ public final class OSMNode extends OSMEntity {
          * @throws IllegalStateException
          *             Lorsque le noeud est encore incomplet
          */
-        public OSMNode build () {
+        public OSMNode build() {
             if (this.isIncomplete())
                 throw new IllegalStateException("Nœud incomplet");
 

@@ -28,15 +28,15 @@ public final class OSMMapReader {
      */
     public static final class OSMMapReaderHandler extends DefaultHandler {
         private Deque<Entity> entities = new ArrayDeque<>(16);
-        /* ^ Le Handler utilise une pile pour stocker les balises ouvertes au fur
-         *   et à mesure de la lecture du fichier XML.
-         *   Les balises sont retirées de la pile à leur fermeture.
+        /* ^ Le Handler utilise une pile pour stocker les balises ouvertes au
+         * fur et à mesure de la lecture du fichier XML. Les balises sont
+         * retirées de la pile à leur fermeture.
          */
 
         /**
-         * Représente une balise rencontrée par le parseur XML.
-         * Il contient le type de la balise, ainsi que le bâtisseur
-         * associé à ce type de balises.
+         * Représente une balise rencontrée par le parseur XML. Il contient le
+         * type de la balise, ainsi que le bâtisseur associé à ce type de
+         * balises.
          *
          * @author Thierry Treyer (235116)
          * @author Dominique Roduit (234868)
@@ -52,30 +52,35 @@ public final class OSMMapReader {
             /**
              * Construit une entitée avec son type et son bâtisseur
              *
-             * @param type Type de l'entité (@see {@link OSMMapReader.OSMMapReaderHandler.Type})
-             * @param builder Bâtisseur de l'entité
+             * @param type
+             *            Type de l'entité (@see
+             *            {@link OSMMapReader.OSMMapReaderHandler.Type})
+             * @param builder
+             *            Bâtisseur de l'entité
              */
-            public Entity (Type type, OSMEntity.Builder builder) {
+            public Entity(Type type, OSMEntity.Builder builder) {
                 this.type = type;
                 this.builder = builder;
             }
-            
+
             /**
              * Retourne le type de l'entité OSM
+             * 
              * @return Type de l'entité
              */
-            public Type type () {
+            public Type type() {
                 return this.type;
             }
 
             /**
              * Retourne le builder de l'entitée OSM
+             * 
              * @return Builder de l'entitée
              */
-            public OSMEntity.Builder builder () {
+            public OSMEntity.Builder builder() {
                 return this.builder;
             }
-        
+
         }
 
         /**
@@ -83,40 +88,41 @@ public final class OSMMapReader {
          *
          * Ajoute l'Entity associé à la balise sur la pile.
          */
-        public void startElement (String uri, String lName, String qName,
+        public void startElement(String uri, String lName, String qName,
                 org.xml.sax.Attributes attr) throws SAXException {
             switch (lName) {
-                case "node":
-                    this.addNode(attr);
-                    break;
-                case "way":
-                    this.addWay(attr);
-                    break;
-                case "nd":
-                    this.addNodeRef(attr);
-                    break;
-                case "tag":
-                    this.addTag(attr);
-                    break;
-                case "relation":
-                    this.addRelation(attr);
-                    break;
-                case "member":
-                    this.addRelationMember(attr);
-                    break;
-                default:
-                    this.entities.addLast(new Entity(Entity.Type.UNKNOWN, null));
-                    break;
+            case "node":
+                this.addNode(attr);
+                break;
+            case "way":
+                this.addWay(attr);
+                break;
+            case "nd":
+                this.addNodeRef(attr);
+                break;
+            case "tag":
+                this.addTag(attr);
+                break;
+            case "relation":
+                this.addRelation(attr);
+                break;
+            case "member":
+                this.addRelationMember(attr);
+                break;
+            default:
+                this.entities.addLast(new Entity(Entity.Type.UNKNOWN, null));
+                break;
             }
         }
 
         /**
          * Callback lorsqu'une balise fermante est rencontrée.
          *
-         * Finalise la construction de la balise au sommet de la pile,
-         * puis retire l'Entity de la pile.
+         * Finalise la construction de la balise au sommet de la pile, puis
+         * retire l'Entity de la pile.
          */
-        public void endElement (String uri, String lName, String qName) throws SAXException {
+        public void endElement(String uri, String lName, String qName)
+                throws SAXException {
             Entity entity = this.entities.removeLast();
 
             OSMEntity.Builder builder = entity.builder();
@@ -126,20 +132,20 @@ public final class OSMMapReader {
                 return;
 
             switch (entity.type()) {
-                case NODE:
-                    mapBuilder.addNode(((OSMNode.Builder) builder).build());
-                    break;
-                case WAY:
-                    mapBuilder.addWay(((OSMWay.Builder) builder).build());
-                    break;
-                case RELATION:
-                    mapBuilder.addRelation(((OSMRelation.Builder) builder).build());
-                    break;
-                case ND:
-                case MEMBER:
-                case TAG:
-                default:
-                    break;
+            case NODE:
+                mapBuilder.addNode(((OSMNode.Builder) builder).build());
+                break;
+            case WAY:
+                mapBuilder.addWay(((OSMWay.Builder) builder).build());
+                break;
+            case RELATION:
+                mapBuilder.addRelation(((OSMRelation.Builder) builder).build());
+                break;
+            case ND:
+            case MEMBER:
+            case TAG:
+            default:
+                break;
             }
         }
 
@@ -149,10 +155,12 @@ public final class OSMMapReader {
          * @param attr
          *            Attributs attachés au nœud
          */
-        private void addNode (org.xml.sax.Attributes attr) {
+        private void addNode(org.xml.sax.Attributes attr) {
             long id = Long.parseLong(attr.getValue("id"));
-            double lon = Math.toRadians(Double.parseDouble(attr.getValue("lon")));
-            double lat = Math.toRadians(Double.parseDouble(attr.getValue("lat")));
+            double lon = Math
+                    .toRadians(Double.parseDouble(attr.getValue("lon")));
+            double lat = Math
+                    .toRadians(Double.parseDouble(attr.getValue("lat")));
 
             OSMNode.Builder nb = new OSMNode.Builder(id, new PointGeo(lon, lat));
 
@@ -165,7 +173,7 @@ public final class OSMMapReader {
          * @param attr
          *            Attributs attachés au chemin
          */
-        private void addWay (org.xml.sax.Attributes attr) {
+        private void addWay(org.xml.sax.Attributes attr) {
             long id = Long.parseLong(attr.getValue("id"));
 
             OSMWay.Builder wb = new OSMWay.Builder(id);
@@ -179,9 +187,9 @@ public final class OSMMapReader {
          * @param attr
          *            Attributs attachés à la référence du nœud
          * @throws IllegalStateException
-         *            Si le bâtisseur parent n'est pas du type WAY
+         *             Si le bâtisseur parent n'est pas du type WAY
          */
-        private void addNodeRef (org.xml.sax.Attributes attr) {
+        private void addNodeRef(org.xml.sax.Attributes attr) {
             long ref = Long.parseLong(attr.getValue("ref"));
 
             OSMNode node = mapBuilder.nodeForId(ref);
@@ -190,7 +198,8 @@ public final class OSMMapReader {
             /* Contrôle du type du bâtisseur parent */
             if (parent.type() != Entity.Type.WAY)
                 throw new IllegalStateException(
-                        "Le bâtisseur parent doit être du type WAY, et non " + parent.type());
+                        "Le bâtisseur parent doit être du type WAY, et non "
+                                + parent.type());
 
             OSMWay.Builder builder = (OSMWay.Builder) parent.builder();
 
@@ -208,7 +217,7 @@ public final class OSMMapReader {
          * @param attr
          *            Attributs attachés à l'élément
          */
-        private void addTag (org.xml.sax.Attributes attr) {
+        private void addTag(org.xml.sax.Attributes attr) {
             String key = attr.getValue("k");
             String value = attr.getValue("v");
 
@@ -223,7 +232,7 @@ public final class OSMMapReader {
          * @param attr
          *            Attributs attachés à la relation
          */
-        private void addRelation (org.xml.sax.Attributes attr) {
+        private void addRelation(org.xml.sax.Attributes attr) {
             long id = Long.parseLong(attr.getValue("id"));
 
             OSMRelation.Builder rel = new OSMRelation.Builder(id);
@@ -237,27 +246,27 @@ public final class OSMMapReader {
          * @param attr
          *            Attributs attachés au membre
          * @throws IllegalStateException
-         *            Si le bâtisseur parent n'est pas du type RELATION
+         *             Si le bâtisseur parent n'est pas du type RELATION
          */
-        private void addRelationMember (org.xml.sax.Attributes attr) {
+        private void addRelationMember(org.xml.sax.Attributes attr) {
             long ref = Long.parseLong(attr.getValue("ref"));
-            OSMRelation.Member.Type type = OSMRelation.Member.Type.valueOf(attr.getValue("type")
-                    .toUpperCase());
+            OSMRelation.Member.Type type = OSMRelation.Member.Type.valueOf(attr
+                    .getValue("type").toUpperCase());
             String role = attr.getValue("role");
 
             OSMEntity member = null;
             switch (type) {
-                case NODE:
-                    member = mapBuilder.nodeForId(ref);
-                    break;
-                case WAY:
-                    member = mapBuilder.wayForId(ref);
-                    break;
-                case RELATION:
-                    member = mapBuilder.relationForId(ref);
-                    break;
-                default:
-                    break;
+            case NODE:
+                member = mapBuilder.nodeForId(ref);
+                break;
+            case WAY:
+                member = mapBuilder.wayForId(ref);
+                break;
+            case RELATION:
+                member = mapBuilder.relationForId(ref);
+                break;
+            default:
+                break;
             }
 
             Entity parent = this.entities.getLast();
@@ -265,9 +274,11 @@ public final class OSMMapReader {
             /* Contrôle du type du bâtisseur parent */
             if (parent.type() != Entity.Type.RELATION)
                 throw new IllegalStateException(
-                        "Le bâtisseur parent doit être du type RELATION, et non " + parent.type());
+                        "Le bâtisseur parent doit être du type RELATION, et non "
+                                + parent.type());
 
-            OSMRelation.Builder builder = (OSMRelation.Builder) this.entities.getLast().builder();
+            OSMRelation.Builder builder = (OSMRelation.Builder) this.entities
+                    .getLast().builder();
 
             if (member == null)
                 builder.setIncomplete();
@@ -281,7 +292,7 @@ public final class OSMMapReader {
     /**
      * Constructeur vide non-instanciable
      */
-    private OSMMapReader () {
+    private OSMMapReader() {
     }
 
     /**
@@ -301,11 +312,12 @@ public final class OSMMapReader {
      *             En cas d'erreur dans le format du fichier XML contenant la
      *             carte
      */
-    public static OSMMap readOSMFile (String fileName, boolean unGZip) throws IOException,
-            SAXException {
+    public static OSMMap readOSMFile(String fileName, boolean unGZip)
+            throws IOException, SAXException {
         mapBuilder = new OSMMap.Builder();
 
-        try (InputStream file = new BufferedInputStream(new FileInputStream(fileName))) {
+        try (InputStream file = new BufferedInputStream(new FileInputStream(
+                fileName))) {
             InputStream input = (!unGZip) ? file : new GZIPInputStream(file);
 
             XMLReader reader = XMLReaderFactory.createXMLReader();

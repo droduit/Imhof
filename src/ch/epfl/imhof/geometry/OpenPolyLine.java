@@ -16,11 +16,11 @@ public final class OpenPolyLine extends PolyLine {
      * @param points
      *            Sommets de la polyligne ouverte
      */
-    public OpenPolyLine (List<Point> points) {
+    public OpenPolyLine(List<Point> points) {
         super(points);
     }
 
-    public boolean isClosed () {
+    public boolean isClosed() {
         return false;
     }
 }

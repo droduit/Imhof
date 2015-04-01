@@ -15,14 +15,14 @@ public final class EquirectangularProjection implements Projection {
     /**
      * Projection equirectangulaire d'un point géographique
      */
-    public Point project (PointGeo pg) {
+    public Point project(PointGeo pg) {
         return new Point(pg.longitude(), pg.latitude());
     }
 
     /**
      * Dé-projection équirectangulaire d'un Point geographique
      */
-    public PointGeo inverse (Point p) {
+    public PointGeo inverse(Point p) {
         return new PointGeo(p.x(), p.y());
     }
 }

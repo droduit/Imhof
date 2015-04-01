@@ -22,13 +22,15 @@ public final class PointGeo {
      * @throws IllegalArgumentException
      *             Si la latitude est hors de l'intervalle valide [-π/2;+π/2]
      */
-    public PointGeo (double longitude, double latitude) {
-        if (!isValidLongitude(longitude)) 
-            throw new IllegalArgumentException(String.format("Longitude %.4f out of bound [-π;+π]", longitude));
-        
-        if (!isValidLatitude(latitude)) 
-            throw new IllegalArgumentException(String.format("Latitude %.4f out of bound [-π/2;+π/2]", latitude));
-      
+    public PointGeo(double longitude, double latitude) {
+        if (!isValidLongitude(longitude))
+            throw new IllegalArgumentException(String.format(
+                    "Longitude %.4f out of bound [-π;+π]", longitude));
+
+        if (!isValidLatitude(latitude))
+            throw new IllegalArgumentException(String.format(
+                    "Latitude %.4f out of bound [-π/2;+π/2]", latitude));
+
         this.longitude = longitude;
         this.latitude = latitude;
     }
@@ -38,7 +40,7 @@ public final class PointGeo {
      *
      * @return La longitude du point
      */
-    public double longitude () {
+    public double longitude() {
         return this.longitude;
     }
 
@@ -47,7 +49,7 @@ public final class PointGeo {
      *
      * @return La latitude du point
      */
-    public double latitude () {
+    public double latitude() {
         return this.latitude;
     }
 
@@ -59,7 +61,7 @@ public final class PointGeo {
      *
      * @return true : si la longitude est dans l'intervalle valide [-π;+π]
      */
-    private static boolean isValidLongitude (final double longitude) {
+    private static boolean isValidLongitude(final double longitude) {
         return (longitude >= -Math.PI && longitude <= Math.PI);
     }
 
@@ -71,7 +73,7 @@ public final class PointGeo {
      *
      * @return true : si la latitude est dans l'intervalle valide [-π/2;+π/2]
      */
-    private static boolean isValidLatitude (final double latitude) {
+    private static boolean isValidLatitude(final double latitude) {
         return (latitude >= -(Math.PI / 2) && latitude <= (Math.PI / 2));
     }
 }

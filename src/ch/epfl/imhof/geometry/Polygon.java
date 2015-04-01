@@ -22,18 +22,18 @@ public final class Polygon {
      * @param holes
      *            Les trous dans le Polygon
      */
-    public Polygon (ClosedPolyLine shell, List<ClosedPolyLine> holes) {
+    public Polygon(ClosedPolyLine shell, List<ClosedPolyLine> holes) {
         this.shell = shell;
         this.holes = Collections.unmodifiableList(new ArrayList<>(holes));
     }
-    
+
     /**
      * Construit un Polygon sans trou à partir d'un contour.
      *
      * @param shell
      *            Le contour du Polygon
      */
-    public Polygon (ClosedPolyLine shell) {
+    public Polygon(ClosedPolyLine shell) {
         this(shell, Collections.emptyList());
     }
 
@@ -42,7 +42,7 @@ public final class Polygon {
      *
      * @return Le contour de Polygon
      */
-    public ClosedPolyLine shell () {
+    public ClosedPolyLine shell() {
         return this.shell;
     }
 
@@ -51,7 +51,7 @@ public final class Polygon {
      *
      * @return La liste de trous du Polygon
      */
-    public List<ClosedPolyLine> holes () {
+    public List<ClosedPolyLine> holes() {
         return this.holes;
     }
 
