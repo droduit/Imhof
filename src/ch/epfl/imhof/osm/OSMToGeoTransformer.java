@@ -300,9 +300,10 @@ public final class OSMToGeoTransformer {
         /*
          * Tris des outers par taille croissante. L'utilisation du Math.signum
          * permet de s'assurer que le comparaison de l'aire reste correcte même
-         * lorsque les deux aires ont des valeurs proches. Exemple: o1.area() =
-         * 10.0 et o2.area() = 10.1 => (int)(o1.area() - o2.area()) = 0 -> FAUX
-         * => (int)Math.signum(o1.area() - o2.area()) = -1 -> CORRECT
+         * lorsque les deux aires ont des valeurs proches.
+         * Exemple: o1.area() = 10.0 et o2.area() = 10.1
+         *   => (int)(o1.area() - o2.area()) = 0               -> FAUX
+         *   => (int)Math.signum(o1.area() - o2.area()) = -1   -> CORRECT
          */
         Collections.sort(outers,
                 (o1, o2) -> (int) Math.signum(o1.area() - o2.area()));
