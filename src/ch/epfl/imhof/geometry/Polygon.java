@@ -11,8 +11,8 @@ import java.util.Collections;
  * @author Dominique Roduit (234868)
  */
 public final class Polygon {
-    private ClosedPolyLine shell;
-    private List<ClosedPolyLine> holes;
+    private final ClosedPolyLine shell;
+    private final List<ClosedPolyLine> holes;
 
     /**
      * Construit un Polygon à partir d'un contour et d'une liste de trous.
