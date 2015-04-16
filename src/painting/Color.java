@@ -74,9 +74,9 @@ public final class Color {
     }
     
     /**
-     * 
-     * @param rgb
-     * @return
+     * Construit une couleur sur la base de la valeur rgb passée
+     * @param rgb Composantes "empaquetées" contenant les 3 composantes indifiduelles
+     * @return Couleur correspondant au paramètre rgb reçu
      */
     public static Color rgb(int rgb) {
         double r = ((rgb & 0xFF0000) >> 16)/255d;
@@ -130,15 +130,7 @@ public final class Color {
      * @return La couleur AWT correspondant à la couleur réceptrice.
      */
     public java.awt.Color toAWTColor() {
-        return new java.awt.Color(gammaEncode(r), gammaEncode(g), gammaEncode(b));
-    }
-    
-    // Gamma-encodage sRGB (voir p.ex. https://en.wikipedia.org/wiki/Srgb)
-    private static float gammaEncode(double x) {
-        if (x <= 0.0031308)
-            return (float)(12.92 * x);
-        else
-            return (float)((1 + 0.055) * Math.pow(x, 1.0 / 2.4) - 0.055);
+        return new java.awt.Color((float)r, (float)g, (float)b);
     }
     
 }
