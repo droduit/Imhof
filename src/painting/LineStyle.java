@@ -1,5 +1,8 @@
 package painting;
 
+import java.awt.Stroke;
+import java.awt.BasicStroke;
+
 /**
  * Regroupe tous les paramètres de style utiles au dessin d'une ligne.
  * 
@@ -12,13 +15,27 @@ public final class LineStyle {
      * Types de terminaisons des polylignes
      */
     public static enum LINE_CAP {
-        BUTT, ROUND, SQUARE
+        BUTT(BasicStroke.CAP_BUTT),
+        ROUND(BasicStroke.CAP_ROUND),
+        SQUARE(BasicStroke.CAP_SQUARE);
+
+        private final int awtCap;
+        private LINE_CAP (int awtCap) { this.awtCap = awtCap; }
+
+        public int toAWTCap () { return this.awtCap; }
     }
     /**
      * Types de jointures des segments
      */
     public static enum LINE_JOIN {
-        BEVEL, MITER, ROUND
+        BEVEL(BasicStroke.JOIN_BEVEL),
+        MITER(BasicStroke.JOIN_MITER),
+        ROUND(BasicStroke.JOIN_ROUND);
+
+        private final int awtJoin;
+        private LINE_JOIN (int awtJoin) { this.awtJoin = awtJoin; }
+
+        public int toAWTJoin () { return this.awtJoin; }
     }
    
     /** Type de terminaison de la ligne **/
@@ -141,5 +158,9 @@ public final class LineStyle {
      */
     public LineStyle withDashingPattern(float[] dashingPattern) {
         return new LineStyle(this.lineCap, this.lineJoin, this.color, this.width, dashingPattern);
+    }
+
+    public Stroke toAWTStroke () {
+        return new BasicStroke(this.width, this.lineCap.toAWTCap(), this.lineJoin.toAWTJoin(), 1f, this.dashingPattern, 0f);
     }
 }
