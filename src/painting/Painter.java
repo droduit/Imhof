@@ -1,6 +1,7 @@
 package painting;
 
 import java.util.function.Predicate;
+import java.util.stream.IntStream;
 import painting.LineStyle.LINE_CAP;
 import painting.LineStyle.LINE_JOIN;
 import ch.epfl.imhof.Attributed;
@@ -121,13 +122,19 @@ public interface Painter {
     
     public default Painter above(Painter p) {
         return (map, canvas) -> {
-            
+            p.drawMap(map, canvas);
+            this.drawMap(map, canvas);
         };
     }
     
     
     public default Painter layered() {
         return (map, canvas) -> {
+            IntStream.iterate(5, i -> i - 1)
+                .limit(11)
+                .mapToObj( layer -> this.when(Filters.onLayer(layer)) )
+                .reduce( (la, lb) -> la.above(lb) )
+                .ifPresent( painter -> painter.drawMap(map, canvas) );
         };
     }
     
