@@ -22,9 +22,9 @@ public final class LineStyle {
     }
    
     /** Type de terminaison de la ligne **/
-    private final LINE_CAP line_cap;
+    private final LINE_CAP lineCap;
     /** Type de jointure **/
-    private final LINE_JOIN line_join;
+    private final LINE_JOIN lineJoin;
     /** Couleur du trait **/
     private final Color color;
     /** Epaisseur du trait */
@@ -33,7 +33,7 @@ public final class LineStyle {
      * Séquence d'alternance des sections opaques et transparentes,
      * pour le dessin en traitillés des segments
      */
-    private final float[] dashing_pattern;
+    private final float[] dashingPattern;
     
     /**
      * Construit un style de trait sur la base des arguments fournis.
@@ -53,11 +53,11 @@ public final class LineStyle {
                 throw new IllegalArgumentException("L'un des éléments de la séquence d'alternance des segments est négatif ou nul");
         }
         
-        this.line_cap = lc;
-        this.line_join = lj;
+        this.lineCap = lc;
+        this.lineJoin = lj;
         this.color = c;
         this.width = thickness;
-        this.dashing_pattern = dashing;
+        this.dashingPattern = dashing;
     }
     
     /**
@@ -78,11 +78,11 @@ public final class LineStyle {
     /**
      * @return Type de terminaison du style défini
      */
-    public LINE_CAP getLineCap() { return line_cap; }
+    public LINE_CAP getLineCap() { return lineCap; }
     /**
      * @return Type de jointure des segments du style défini
      */
-    public LINE_JOIN getLineJoin() { return line_join; }
+    public LINE_JOIN getLineJoin() { return lineJoin; }
     /**
      * @return Couleur des traits du style défini
      */
@@ -94,7 +94,7 @@ public final class LineStyle {
     /**
      * @return Séquence d'alternance pour le dessin en traitillés
      */
-    public float[] getDashingPattern() { return dashing_pattern; }
+    public float[] getDashingPattern() { return dashingPattern; }
 
     /** ====== METHODES PERMETTANT D'OBTENIR UN STYLE DERIVE DE CELUI-CI ======= */
     
@@ -104,7 +104,7 @@ public final class LineStyle {
      * @return Style dérivé dont seul la largeur du trait change
      */
     public LineStyle withWidth(float width) {
-        return new LineStyle(getLineCap(), getLineJoin(), getColor(), width, getDashingPattern());
+        return new LineStyle(this.lineCap, this.lineJoin, this.color, width, this.dashingPattern);
     }
     
     /**
@@ -112,8 +112,8 @@ public final class LineStyle {
      * @param lc Type de terminaison
      * @return Style dérivé dont seul le type de terminaison change
      */
-    public LineStyle withLineCap(LINE_CAP lc) {
-        return new LineStyle(lc, getLineJoin(), getColor(), getWidth(), getDashingPattern());
+    public LineStyle withLineCap(LINE_CAP lineCap) {
+        return new LineStyle(lineCap, this.lineJoin, this.color, this.width, this.dashingPattern);
     }
     
     /**
@@ -121,8 +121,8 @@ public final class LineStyle {
      * @param lj Type de jointure
      * @return Style dérivé dont seul le type de jointure change
      */
-    public LineStyle withLineJoin(LINE_JOIN lj) {
-        return new LineStyle(getLineCap(), lj, getColor(), getWidth(), getDashingPattern());
+    public LineStyle withLineJoin(LINE_JOIN lineJoin) {
+        return new LineStyle(this.lineCap, lineJoin, this.color, this.width, this.dashingPattern);
     }
     
     /**
@@ -130,8 +130,8 @@ public final class LineStyle {
      * @param c Couleur du trait
      * @return Style dérivé dont seul la couleur change
      */
-    public LineStyle withColor(Color c) {
-        return new LineStyle(getLineCap(), getLineJoin(), c, getWidth(), getDashingPattern());
+    public LineStyle withColor(Color color) {
+        return new LineStyle(this.lineCap, this.lineJoin, color, this.width, this.dashingPattern);
     }
     
     /**
@@ -139,7 +139,7 @@ public final class LineStyle {
      * @param pattern Séquence d'alternance pour le dessin en traitillé
      * @return Style dérivé dont seul la séquence d'alternance pour le dessin en traitillé change
      */
-    public LineStyle withDashingPattern(float[] pattern) {
-        return new LineStyle(getLineCap(), getLineJoin(), getColor(), getWidth(), pattern);
+    public LineStyle withDashingPattern(float[] dashingPattern) {
+        return new LineStyle(this.lineCap, this.lineJoin, this.color, this.width, dashingPattern);
     }
 }

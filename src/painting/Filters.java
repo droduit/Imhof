@@ -1,6 +1,9 @@
 package painting;
 
+import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -29,8 +32,7 @@ public final class Filters {
      * @return Prédicat (cf. description de méthode)
      */
     public static Predicate<Attributed<?>> tagged(String attr) {
-        Predicate<Attributed<?>> hasAttribute = x -> x.hasAttribute(attr);
-        return hasAttribute;
+        return (x) -> x.hasAttribute(attr);
     }
     
     /**
@@ -42,13 +44,10 @@ public final class Filters {
      * @param val Valeurs à tester si l'une est associée à l'attribut attr de l'entité.
      * @return Prédicat (cf. description de méthode)
      */
-    public static Predicate<Attributed<?>> tagged(String attr, String ... val) {
-        List<String> values = new ArrayList<>();
-        for(String v : val)
-            values.add(v);
+    public static Predicate<Attributed<?>> tagged(String attr, String... values) {
+        Set<String> vals = new HashSet<>(Arrays.asList(values));
             
-        Predicate<Attributed<?>> p = x -> x.hasAttribute(attr) && values.contains(x.attributeValue(attr));
-        return p;
+        return (x) -> x.hasAttribute(attr) && vals.contains(x.attributeValue(attr));
     }
     
     /**
@@ -58,14 +57,6 @@ public final class Filters {
      * @return Prédicat (cf. description de méthode)
      */
     public static Predicate<Attributed<?>> onLayer(int layer) {
-        Predicate<Attributed<?>> isOnLayer = x -> {
-            double val = Double.parseDouble(x.attributeValue("layer", "0"));
-            
-            if(!x.hasAttribute("layer") || val != (int)val)
-                return (0==layer);
-            
-            return x.attributeValue("layer", 0)==layer;
-        };
-        return isOnLayer;
+        return (x) -> x.attributeValue("layer", 0) == layer;
     }
 }
