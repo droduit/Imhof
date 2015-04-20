@@ -110,7 +110,12 @@ public interface Painter {
 
     public default Painter when(Predicate<Attributed<?>> p) {
         return (map, canvas) -> {
-            
+            Map.Builder mb = new Map.Builder();
+
+            map.polyLines().stream().filter(p).forEach(mb::addPolyLine);
+            map.polygons().stream().filter(p).forEach(mb::addPolygon);
+
+            this.drawMap(mb.build(), canvas);
         };
     }
     
@@ -123,7 +128,6 @@ public interface Painter {
     
     public default Painter layered() {
         return (map, canvas) -> {
-            
         };
     }
     
