@@ -1,6 +1,5 @@
 package painting;
 
-import java.util.List;
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -63,41 +62,34 @@ public final class Java2DCanvas implements Canvas {
         ctx.setColor(style.getColor().toAWTColor());
         ctx.setStroke(style.toAWTStroke());
         
-        Path2D path = getPath(p);
-        ctx.fill(path);
+        ctx.draw(getPath(p));
     }
 
     @Override
     public void drawPolygon(Polygon p, Color c) {
         ctx.setColor(c.toAWTColor());
         
-        Path2D shell = getPath(p.shell());
-        
-        Area polygon = new Area(shell);
-        
-        for(ClosedPolyLine hole : p.holes()) {
+        Area polygon = new Area(getPath(p.shell()));
+        for(ClosedPolyLine hole : p.holes())
             polygon.subtract(new Area(getPath(hole)));
-        }
+
+        ctx.fill(polygon);
     }
     
     private Path2D getPath(PolyLine p) {
         Path2D path = new Path2D.Double();
+        Iterator<Point> it = p.points().iterator();
         
-        List<Point> points = p.points();
-        Iterator<Point> it = points.iterator();
+        /* Un PolyLine a toujours au moins un point */
+        Point point = this.transform.apply(it.next());
         
-        Point firstPoint = null;
-        if(it.hasNext()) 
-            firstPoint = it.next();
-        
-        path.moveTo(firstPoint.x(), firstPoint.y());
-       
-        while(it.hasNext()) {
-            Point point = it.next();
+        path.moveTo(point.x(), point.y());
+        while (it.hasNext()) {
+            point = this.transform.apply(it.next());
             path.lineTo(point.x(), point.y());
         }
         
-        if(p.isClosed())
+        if (p.isClosed())
             path.closePath();
         
         return path;
