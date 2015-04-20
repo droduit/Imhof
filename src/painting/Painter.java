@@ -1,8 +1,6 @@
 package painting;
 
 import java.util.function.Predicate;
-
-import javafx.scene.shape.Polyline;
 import painting.LineStyle.LINE_CAP;
 import painting.LineStyle.LINE_JOIN;
 import ch.epfl.imhof.Attributed;
@@ -95,8 +93,7 @@ public interface Painter {
      * @return Peintre de base (cf. description de la méthode)
      */
     public static Painter outline(LINE_CAP lc, LINE_JOIN lj, Color color, float width, float[] dashed) {
-        LineStyle style = new LineStyle(lc, lj, color, width, dashed);
-        return outline(style);
+        return outline(new LineStyle(lc, lj, color, width, dashed));
     }
     
     /**
@@ -107,8 +104,7 @@ public interface Painter {
      * @return Peintre de base (cf. description de la méthode)
      */
     public static Painter outline(float width, Color color) {
-        LineStyle style = new LineStyle(width, color);
-        return outline(style);
+        return outline(new LineStyle(width, color));
     }
     
 
