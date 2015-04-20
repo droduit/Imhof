@@ -1,12 +1,17 @@
 package painting;
 
+import java.util.List;
+import java.util.Iterator;
 import java.util.function.Function;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import static java.awt.RenderingHints.KEY_ANTIALIASING;
 import static java.awt.RenderingHints.VALUE_ANTIALIAS_ON;
 
+import ch.epfl.imhof.geometry.ClosedPolyLine;
 import ch.epfl.imhof.geometry.Point;
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;
@@ -55,13 +60,47 @@ public final class Java2DCanvas implements Canvas {
     
     @Override
     public void drawPolyline(PolyLine p, LineStyle style) {
+        ctx.setColor(style.getColor().toAWTColor());
+        ctx.setStroke(style.toAWTStroke());
         
+        Path2D path = getPath(p);
+        ctx.fill(path);
     }
 
     @Override
     public void drawPolygon(Polygon p, Color c) {
         ctx.setColor(c.toAWTColor());
         
+        Path2D shell = getPath(p.shell());
+        
+        Area polygon = new Area(shell);
+        
+        for(ClosedPolyLine hole : p.holes()) {
+            polygon.subtract(new Area(getPath(hole)));
+        }
+    }
+    
+    private Path2D getPath(PolyLine p) {
+        Path2D path = new Path2D.Double();
+        
+        List<Point> points = p.points();
+        Iterator<Point> it = points.iterator();
+        
+        Point firstPoint = null;
+        if(it.hasNext()) 
+            firstPoint = it.next();
+        
+        path.moveTo(firstPoint.x(), firstPoint.y());
+       
+        while(it.hasNext()) {
+            Point point = it.next();
+            path.lineTo(point.x(), point.y());
+        }
+        
+        if(p.isClosed())
+            path.closePath();
+        
+        return path;
     }
     
     /**
