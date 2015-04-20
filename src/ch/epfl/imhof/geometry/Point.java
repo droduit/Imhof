@@ -52,17 +52,19 @@ public final class Point {
      * @param p2b Point 2 dans le repère b
      * @return Changement de repère correspondant
      */
-    public static Function<Point, Point> alignedCoordinateChange(Point p1a, Point p2a, Point p1b, Point p2b) {
+    public static Function<Point, Point> alignedCoordinateChange(Point p1a, Point p1b, Point p2a, Point p2b) {
         if(p1a.x() == p1b.x() || p1a.y() == p1b.y())
             throw new IllegalArgumentException("Le point 1 est aligné dans les 2 repères. Il est donc impossible de définir un changement de repère");
         if(p2a.x() == p2b.x() || p2a.y() == p2b.y())
             throw new IllegalArgumentException("Le point 2 est aligné dans les 2 repères. Il est donc impossible de définir un changement de repère");
         
-        Function<Point, Point> chRepere = p -> {
-            double newX = p.x(); // TODO Formule pour le changement de repère
-            double newY = p.y();
-            return new Point(newX, newY);
-        };
-        return chRepere;
+        double ax = (p1b.x-p2b.x)/(p1a.x-p2a.x);
+        double bx = (p1a.x*p2b.x-p2a.x*p1b.x)/(p1a.x-p2a.x);
+        
+        double ay = (p1b.y-p2b.y)/(p1a.y-p2a.y);
+        double by = (p1a.y*p2b.y-p2a.y*p1b.y)/(p1a.y-p2a.y);
+        
+        return (p) -> new Point(ax*p.x+bx, ay*p.y+by);
     }
+    
 }
