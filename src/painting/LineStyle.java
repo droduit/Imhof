@@ -161,6 +161,6 @@ public final class LineStyle {
     }
 
     public Stroke toAWTStroke () {
-        return new BasicStroke(this.width, this.lineCap.toAWTCap(), this.lineJoin.toAWTJoin(), 1f, this.dashingPattern, 0f);
+        return new BasicStroke(this.width, this.lineCap.toAWTCap(), this.lineJoin.toAWTJoin(), 10f, this.dashingPattern, 0f);
     }
 }
