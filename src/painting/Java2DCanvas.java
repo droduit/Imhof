@@ -39,10 +39,10 @@ public final class Java2DCanvas implements Canvas {
      * @param bg Couleur de fond de la toile
      */
     public Java2DCanvas(Point bottomLeft, Point topRight, int width, int height, int dpi, Color bgColor) {
-        double pica = dpi / 72.0;
+        double pica = 72.0 / dpi;
 
-        Point canvasBottomLeft = new Point(-pica, -pica);
-        Point canvasTopRight   = new Point( pica,  pica);
+        Point canvasBottomLeft = new Point(0, height);
+        Point canvasTopRight   = new Point(width, 0);
         this.transform = Point.alignedCoordinateChange(bottomLeft, canvasBottomLeft, topRight, canvasTopRight);
         
         this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -53,8 +53,7 @@ public final class Java2DCanvas implements Canvas {
         ctx.setColor(bgColor.toAWTColor());
         ctx.fillRect(0, 0, width, height);
 
-        ctx.scale(width / pica, height / pica);
-        ctx.translate(0.5, 0.5);
+        ctx.scale(pica, pica);
     }
     
     @Override

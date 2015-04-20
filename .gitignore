@@ -42,3 +42,5 @@ tags
 
 # Data dir
 data/
+
+*.png
