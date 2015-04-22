@@ -1,14 +1,15 @@
-package painting;
+package ch.epfl.imhof.painting;
 
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
-import painting.LineStyle.LINE_CAP;
-import painting.LineStyle.LINE_JOIN;
+
 import ch.epfl.imhof.Attributed;
 import ch.epfl.imhof.Map;
 import ch.epfl.imhof.geometry.ClosedPolyLine;
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;
+import ch.epfl.imhof.painting.LineStyle.LINE_CAP;
+import ch.epfl.imhof.painting.LineStyle.LINE_JOIN;
 
 
 /**
@@ -23,7 +24,7 @@ public interface Painter {
      * @param map Carte
      * @param canvas Toile
      */
-    public void drawMap(Map map, Java2DCanvas canvas);
+    public void drawMap(Map map, Canvas canvas);
     
     /**
      * Retourne un peintre dessinant l'intérieur de tous les polygones de la carte qu'il reçoit avec la couleur spécifiée
@@ -60,9 +61,10 @@ public interface Painter {
      * @return Peintre de base (cf. description de la méthode)
      */
     public static Painter line(float width, Color color) {
+        LineStyle style = new LineStyle(width, color);
         return (map, canvas) -> {
           for(Attributed<PolyLine> p : map.polyLines()) 
-              canvas.drawPolyline(p.value(), new LineStyle(width, color));
+              canvas.drawPolyline(p.value(), style);
         };
     }
     

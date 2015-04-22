@@ -1,4 +1,4 @@
-package painting;
+package ch.epfl.imhof.painting;
 
 /**
  * 
@@ -51,6 +51,10 @@ public final class Color {
         this.r = r;
         this.g = g;
         this.b = b;
+    }
+
+    public static Color random () {
+        return new Color(Math.random(), Math.random(), Math.random());
     }
     
     /**
@@ -133,4 +137,11 @@ public final class Color {
         return new java.awt.Color((float)r, (float)g, (float)b);
     }
     
+    public String toHex () {
+        return String.format("#%02X%02X%02X", (int)(this.r * 255), (int)(this.g * 255), (int)(this.b * 255));
+    }
+
+    public String toCSS () {
+        return String.format(".c%d { fill: %s; }\n", this.hashCode(), this.toHex());
+    }
 }

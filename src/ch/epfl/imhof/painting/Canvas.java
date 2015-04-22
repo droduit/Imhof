@@ -1,4 +1,4 @@
-package painting;
+package ch.epfl.imhof.painting;
 
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;

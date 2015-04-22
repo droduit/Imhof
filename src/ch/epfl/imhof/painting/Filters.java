@@ -1,4 +1,4 @@
-package painting;
+package ch.epfl.imhof.painting;
 
 import java.util.Arrays;
 import java.util.Set;

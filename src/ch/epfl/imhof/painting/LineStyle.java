@@ -1,4 +1,4 @@
-package painting;
+package ch.epfl.imhof.painting;
 
 import java.awt.Stroke;
 import java.awt.BasicStroke;
@@ -15,27 +15,37 @@ public final class LineStyle {
      * Types de terminaisons des polylignes
      */
     public static enum LINE_CAP {
-        BUTT(BasicStroke.CAP_BUTT),
-        ROUND(BasicStroke.CAP_ROUND),
-        SQUARE(BasicStroke.CAP_SQUARE);
+        BUTT(BasicStroke.CAP_BUTT, "butt"),
+        ROUND(BasicStroke.CAP_ROUND, "round"),
+        SQUARE(BasicStroke.CAP_SQUARE, "square");
 
         private final int awtCap;
-        private LINE_CAP (int awtCap) { this.awtCap = awtCap; }
+        private final String svgCap;
+        private LINE_CAP (int awtCap, String svgCap) {
+            this.awtCap = awtCap;
+            this.svgCap = svgCap;
+        }
 
         public int toAWTCap () { return this.awtCap; }
+        public String toSVGCap () { return this.svgCap; }
     }
     /**
      * Types de jointures des segments
      */
     public static enum LINE_JOIN {
-        BEVEL(BasicStroke.JOIN_BEVEL),
-        MITER(BasicStroke.JOIN_MITER),
-        ROUND(BasicStroke.JOIN_ROUND);
+        BEVEL(BasicStroke.JOIN_BEVEL, "bevel"),
+        MITER(BasicStroke.JOIN_MITER, "miter"),
+        ROUND(BasicStroke.JOIN_ROUND, "round");
 
         private final int awtJoin;
-        private LINE_JOIN (int awtJoin) { this.awtJoin = awtJoin; }
+        private final String svgJoin;
+        private LINE_JOIN (int awtJoin, String svgJoin) {
+            this.awtJoin = awtJoin;
+            this.svgJoin = svgJoin;
+        }
 
         public int toAWTJoin () { return this.awtJoin; }
+        public String toSVGJoin () { return this.svgJoin; }
     }
    
     /** Type de terminaison de la ligne **/
@@ -46,6 +56,7 @@ public final class LineStyle {
     private final Color color;
     /** Epaisseur du trait */
     private final float width;
+
     /**
      * Séquence d'alternance des sections opaques et transparentes,
      * pour le dessin en traitillés des segments
@@ -63,11 +74,14 @@ public final class LineStyle {
      * si l'un des éléments de la séquence d'alernance des segments est négatif ou nul
      */
     public LineStyle(LINE_CAP lc, LINE_JOIN lj, Color c, float thickness, float[] dashing) {
-        if(thickness<0)
+        if (thickness < 0)
             throw new IllegalArgumentException("La largeur du trait ne doit pas être négative");
-        for(int i=0; i<dashing.length; ++i) {
-            if(dashing[i]<=0)
-                throw new IllegalArgumentException("L'un des éléments de la séquence d'alternance des segments est négatif ou nul");
+
+        if (dashing != null) {
+            for (int i = 0; i < dashing.length; ++i) {
+                if (dashing[i] <= 0)
+                    throw new IllegalArgumentException("L'un des éléments de la séquence d'alternance des segments est négatif ou nul");
+            }
         }
         
         this.lineCap = lc;
@@ -87,7 +101,7 @@ public final class LineStyle {
      * @param c Couleur du trait
      */
     public LineStyle(float thickness, Color c) {
-        this(LINE_CAP.BUTT, LINE_JOIN.MITER, c, thickness, new float[0]);
+        this(LINE_CAP.BUTT, LINE_JOIN.MITER, c, thickness, null);
     }
     
     /** ====== ACCESSEURS ======= */
@@ -162,5 +176,23 @@ public final class LineStyle {
 
     public Stroke toAWTStroke () {
         return new BasicStroke(this.width, this.lineCap.toAWTCap(), this.lineJoin.toAWTJoin(), 10f, this.dashingPattern, 0f);
+    }
+
+    public String toCSS () {
+        return String.format(
+            new StringBuilder()
+                .append(".c%d { ")
+                .append("fill: none; ")
+                .append("stroke: %s; ")
+                .append("stroke-width: %f; ")
+                .append("stroke-linecap: %s; ")
+                .append("stroke-linejoin: %s; ")
+                .append("}\n").toString(),
+            this.hashCode(),
+            this.color.toHex(),
+            this.width,
+            this.lineCap.toSVGCap(),
+            this.lineJoin.toSVGJoin()
+        );
     }
 }
