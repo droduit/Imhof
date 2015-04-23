@@ -53,10 +53,8 @@ public final class Point {
      * @return Changement de repère correspondant
      */
     public static Function<Point, Point> alignedCoordinateChange(Point p1a, Point p1b, Point p2a, Point p2b) {
-        if(p1a.x() == p1b.x() || p1a.y() == p1b.y())
-            throw new IllegalArgumentException("Le point 1 est aligné dans les 2 repères. Il est donc impossible de définir un changement de repère");
-        if(p2a.x() == p2b.x() || p2a.y() == p2b.y())
-            throw new IllegalArgumentException("Le point 2 est aligné dans les 2 repères. Il est donc impossible de définir un changement de repère");
+        if(p1a.x() == p2a.x() || p1a.y() == p2a.y())
+            throw new IllegalArgumentException("Le point 1 et 2 sont alignés. Il est donc impossible de définir un changement de repère");
         
         double ax = (p1b.x-p2b.x)/(p1a.x-p2a.x);
         double bx = (p1a.x*p2b.x-p2a.x*p1b.x)/(p1a.x-p2a.x);
