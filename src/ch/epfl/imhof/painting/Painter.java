@@ -110,7 +110,12 @@ public interface Painter {
         return outline(new LineStyle(width, color));
     }
     
-
+    /**
+     * Retourne un peintre se comportant comme celui auquel on l'applique, 
+     * si ce n'est qu'il ne considère que les éléments de la carte satisfaisant le prédicat.
+     * @param p Prédicat dont les éléments qui sont satisfaits sont ajouté à la carte
+     * @return Peintre de base (cf. description de la méthode)
+     */
     public default Painter when(Predicate<Attributed<?>> p) {
         return (map, canvas) -> {
             Map.Builder mb = new Map.Builder();
@@ -122,6 +127,12 @@ public interface Painter {
         };
     }
     
+    /**
+     * Retourne un peintre dessinant d'abord la carte produite par le 2e peintre pris en argument
+     * puis, par dessus, la carte produite par le premier peintre.
+     * @param p 2e peintre
+     * @return Peintre de base (cf. description de la méthode)
+     */
     public default Painter above(Painter p) {
         return (map, canvas) -> {
             p.drawMap(map, canvas);
@@ -129,7 +140,12 @@ public interface Painter {
         };
     }
     
-    
+    /**
+     * Retourne un peintre utilisant l'attribut layer attaché aux entités 
+     * de la carte pour la dessiner par couches, càd en dessinant d'abord toutes
+     * les entités de la couche -5, -4 et ainsi de suite jusqu'à la couche +5
+     * @return Peintre de base (cf. description de la méthode)
+     */
     public default Painter layered() {
         return (map, canvas) -> {
             IntStream.iterate(5, i -> i - 1)
