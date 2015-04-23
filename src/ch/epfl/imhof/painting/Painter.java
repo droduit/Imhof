@@ -8,8 +8,8 @@ import ch.epfl.imhof.Map;
 import ch.epfl.imhof.geometry.ClosedPolyLine;
 import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;
-import ch.epfl.imhof.painting.LineStyle.LINE_CAP;
-import ch.epfl.imhof.painting.LineStyle.LINE_JOIN;
+import ch.epfl.imhof.painting.LineStyle.LineCap;
+import ch.epfl.imhof.painting.LineStyle.LineJoin;
 
 
 /**
@@ -47,7 +47,7 @@ public interface Painter {
      * @param dashed Séquence d'alternance pour le dessin en traitillés des segments
      * @return Peintre de base (cf. description de la méthode)
      */
-    public static Painter line(LINE_CAP lc, LINE_JOIN lj, Color color, float width, float[] dashed) {
+    public static Painter line(LineCap lc, LineJoin lj, Color color, float width, float[] dashed) {
         return (map, canvas) -> {
             for(Attributed<PolyLine> p : map.polyLines()) 
                 canvas.drawPolyline(p.value(), new LineStyle(lc, lj, color, width, dashed));  
@@ -95,7 +95,7 @@ public interface Painter {
      * @param dashed Séquence d'alternance pour le dessin en traitillés des segments
      * @return Peintre de base (cf. description de la méthode)
      */
-    public static Painter outline(LINE_CAP lc, LINE_JOIN lj, Color color, float width, float[] dashed) {
+    public static Painter outline(LineCap lc, LineJoin lj, Color color, float width, float[] dashed) {
         return outline(new LineStyle(lc, lj, color, width, dashed));
     }
     

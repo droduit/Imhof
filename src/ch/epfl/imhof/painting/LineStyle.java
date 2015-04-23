@@ -14,14 +14,14 @@ public final class LineStyle {
     /**
      * Types de terminaisons des polylignes
      */
-    public static enum LINE_CAP {
-        BUTT(BasicStroke.CAP_BUTT, "butt"),
-        ROUND(BasicStroke.CAP_ROUND, "round"),
-        SQUARE(BasicStroke.CAP_SQUARE, "square");
+    public static enum LineCap {
+        Butt(BasicStroke.CAP_BUTT, "butt"),
+        Round(BasicStroke.CAP_ROUND, "round"),
+        Square(BasicStroke.CAP_SQUARE, "square");
 
         private final int awtCap;
         private final String svgCap;
-        private LINE_CAP (int awtCap, String svgCap) {
+        private LineCap (int awtCap, String svgCap) {
             this.awtCap = awtCap;
             this.svgCap = svgCap;
         }
@@ -32,14 +32,14 @@ public final class LineStyle {
     /**
      * Types de jointures des segments
      */
-    public static enum LINE_JOIN {
-        BEVEL(BasicStroke.JOIN_BEVEL, "bevel"),
-        MITER(BasicStroke.JOIN_MITER, "miter"),
-        ROUND(BasicStroke.JOIN_ROUND, "round");
+    public static enum LineJoin {
+        Bevel(BasicStroke.JOIN_BEVEL, "bevel"),
+        Miter(BasicStroke.JOIN_MITER, "miter"),
+        Round(BasicStroke.JOIN_ROUND, "round");
 
         private final int awtJoin;
         private final String svgJoin;
-        private LINE_JOIN (int awtJoin, String svgJoin) {
+        private LineJoin (int awtJoin, String svgJoin) {
             this.awtJoin = awtJoin;
             this.svgJoin = svgJoin;
         }
@@ -49,9 +49,9 @@ public final class LineStyle {
     }
    
     /** Type de terminaison de la ligne **/
-    private final LINE_CAP lineCap;
+    private final LineCap lineCap;
     /** Type de jointure **/
-    private final LINE_JOIN lineJoin;
+    private final LineJoin lineJoin;
     /** Couleur du trait **/
     private final Color color;
     /** Epaisseur du trait */
@@ -73,7 +73,7 @@ public final class LineStyle {
      * @throws IllegalArgumentException Si la largeur du trait est négative ou
      * si l'un des éléments de la séquence d'alernance des segments est négatif ou nul
      */
-    public LineStyle(LINE_CAP lc, LINE_JOIN lj, Color c, float thickness, float[] dashing) {
+    public LineStyle(LineCap lc, LineJoin lj, Color c, float thickness, float[] dashing) {
         if (thickness < 0)
             throw new IllegalArgumentException("La largeur du trait ne doit pas être négative");
 
@@ -101,7 +101,7 @@ public final class LineStyle {
      * @param c Couleur du trait
      */
     public LineStyle(float thickness, Color c) {
-        this(LINE_CAP.BUTT, LINE_JOIN.MITER, c, thickness, null);
+        this(LineCap.Butt, LineJoin.Miter, c, thickness, null);
     }
     
     /** ====== ACCESSEURS ======= */
@@ -109,11 +109,11 @@ public final class LineStyle {
     /**
      * @return Type de terminaison du style défini
      */
-    public LINE_CAP getLineCap() { return lineCap; }
+    public LineCap getLineCap() { return lineCap; }
     /**
      * @return Type de jointure des segments du style défini
      */
-    public LINE_JOIN getLineJoin() { return lineJoin; }
+    public LineJoin getLineJoin() { return lineJoin; }
     /**
      * @return Couleur des traits du style défini
      */
@@ -143,7 +143,7 @@ public final class LineStyle {
      * @param lc Type de terminaison
      * @return Style dérivé dont seul le type de terminaison change
      */
-    public LineStyle withLineCap(LINE_CAP lineCap) {
+    public LineStyle withLineCap(LineCap lineCap) {
         return new LineStyle(lineCap, this.lineJoin, this.color, this.width, this.dashingPattern);
     }
     
@@ -152,7 +152,7 @@ public final class LineStyle {
      * @param lj Type de jointure
      * @return Style dérivé dont seul le type de jointure change
      */
-    public LineStyle withLineJoin(LINE_JOIN lineJoin) {
+    public LineStyle withLineJoin(LineJoin lineJoin) {
         return new LineStyle(this.lineCap, lineJoin, this.color, this.width, this.dashingPattern);
     }
     
