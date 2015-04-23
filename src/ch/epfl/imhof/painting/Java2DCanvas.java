@@ -1,6 +1,5 @@
 package ch.epfl.imhof.painting;
 
-import java.util.Iterator;
 import java.util.function.Function;
 
 import java.awt.Graphics2D;
@@ -75,20 +74,20 @@ public final class Java2DCanvas implements Canvas {
         ctx.fill(polygon);
     }
     
-    private Path2D getPath(PolyLine p) {
+    private Path2D getPath(PolyLine polyline) {
         Path2D path = new Path2D.Double();
-        Iterator<Point> it = p.points().iterator();
         
         /* Un PolyLine a toujours au moins un point */
-        Point point = this.transform.apply(it.next());
+        Point firstPoint = this.transform.apply(polyline.firstPoint());
+        path.moveTo(firstPoint.x(), firstPoint.y());
+
+        polyline.points()
+            .stream()
+            .skip(1)
+            .map(this.transform)
+            .forEach( p -> path.lineTo(p.x(), p.y()) );
         
-        path.moveTo(point.x(), point.y());
-        while (it.hasNext()) {
-            point = this.transform.apply(it.next());
-            path.lineTo(point.x(), point.y());
-        }
-        
-        if (p.isClosed())
+        if (polyline.isClosed())
             path.closePath();
         
         return path;

@@ -91,6 +91,9 @@ public class Main {
             // TODO Auto-generated catch block
             e1.printStackTrace();
             System.out.println("Erreur");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Boom");
         }
     }
 }
