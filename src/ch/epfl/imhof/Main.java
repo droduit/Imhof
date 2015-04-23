@@ -20,6 +20,15 @@ import ch.epfl.imhof.painting.SVGCanvas;
 import ch.epfl.imhof.painting.Painter;
 import ch.epfl.imhof.projection.CH1903Projection;
 
+
+/**
+ * Eau : #a6c2b3
+ * Chemin de fer : #981320
+ * Batiments : #2f322f
+ * Autoroute : #c9a438
+ * Herbe : #99b785
+ *
+ */
 public class Main {
     public static void main(String[] args) {
         Predicate<Attributed<?>> isLake =
