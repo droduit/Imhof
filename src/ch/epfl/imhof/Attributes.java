@@ -33,7 +33,7 @@ public final class Attributes {
      *
      * @return Le nombre de pair clef/valeur
      */
-    public int size() {
+    private int size() {
         return this.attr.keySet().size();
     }
 

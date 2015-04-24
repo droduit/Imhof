@@ -68,12 +68,7 @@ public final class OSMWay extends OSMEntity {
      *         identique au premier
      */
     public List<OSMNode> nonRepeatingNodes() {
-        List<OSMNode> n = new ArrayList<>(this.nodes);
-
-        if (this.isClosed())
-            n.remove(nodesCount() - 1);
-
-        return Collections.unmodifiableList(n);
+        return Collections.unmodifiableList(this.nodes.subList(0, nodesCount()-1));
     }
 
     /**

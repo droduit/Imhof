@@ -17,7 +17,7 @@ import java.util.Collections;
  */
 
 public final class Graph<N> {
-    public Map<N, Set<N>> neighbors;
+    private final Map<N, Set<N>> neighbors;
 
     /**
      * Construit un graphe non orienté immuable à partir de la table d'adjacence
@@ -73,7 +73,7 @@ public final class Graph<N> {
      *            Type des noeuds du bâtisseur
      */
     public static final class Builder<N> {
-        public Map<N, Set<N>> neighbors = new HashMap<>();
+        private final Map<N, Set<N>> neighbors = new HashMap<>();
 
         /**
          * Ajoute le nœud donné au graphe en cours de construction, s'il n'en

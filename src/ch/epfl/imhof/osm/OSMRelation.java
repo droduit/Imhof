@@ -118,7 +118,7 @@ public final class OSMRelation extends OSMEntity {
      *
      */
     public final static class Builder extends OSMEntity.Builder {
-        private List<Member> members = new LinkedList<>();
+        private final List<Member> members = new LinkedList<>();
 
         /**
          * Construit un bâtisseur pour une relation ayant l'identifiant donné.

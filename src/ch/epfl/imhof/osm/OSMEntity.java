@@ -78,7 +78,7 @@ public abstract class OSMEntity {
      *
      */
     public static abstract class Builder {
-        private long id;
+        private final long id;
         private boolean isIncomplete = false;
         private Attributes.Builder attrBuilder = new Attributes.Builder();
 
@@ -132,7 +132,7 @@ public abstract class OSMEntity {
          * 
          * @return Identifiant unique de l'entité
          */
-        public long id() {
+        protected long id() {
             return this.id;
         }
 

@@ -4,8 +4,10 @@ import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.util.Deque;
 import java.util.ArrayDeque;
+
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
+
 import ch.epfl.imhof.*;
 
 /**
@@ -141,9 +143,6 @@ public final class OSMMapReader {
             case RELATION:
                 mapBuilder.addRelation(((OSMRelation.Builder) builder).build());
                 break;
-            case ND:
-            case MEMBER:
-            case TAG:
             default:
                 break;
             }
@@ -248,7 +247,7 @@ public final class OSMMapReader {
          * @throws IllegalStateException
          *             Si le bâtisseur parent n'est pas du type RELATION
          */
-        private void addRelationMember(org.xml.sax.Attributes attr) {
+        private void addRelationMember(org.xml.sax.Attributes attr) throws SAXException {
             long ref = Long.parseLong(attr.getValue("ref"));
             OSMRelation.Member.Type type = OSMRelation.Member.Type.valueOf(attr
                     .getValue("type").toUpperCase());
@@ -266,7 +265,7 @@ public final class OSMMapReader {
                 member = mapBuilder.relationForId(ref);
                 break;
             default:
-                break;
+                throw new SAXException();
             }
 
             Entity parent = this.entities.getLast();

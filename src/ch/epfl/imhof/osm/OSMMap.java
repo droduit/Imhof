@@ -61,9 +61,9 @@ public final class OSMMap {
      *
      */
     public static final class Builder {
-        private Map<Long, OSMNode> nodes = new HashMap<>();
-        private Map<Long, OSMWay> ways = new HashMap<>();
-        private Map<Long, OSMRelation> relations = new HashMap<>();
+        private final Map<Long, OSMNode> nodes = new HashMap<>();
+        private final Map<Long, OSMWay> ways = new HashMap<>();
+        private final Map<Long, OSMRelation> relations = new HashMap<>();
 
         /**
          * Ajoute le nœud donné au bâtisseur

@@ -13,7 +13,7 @@ import ch.epfl.imhof.Attributes;
  *
  */
 public final class OSMNode extends OSMEntity {
-    private PointGeo position;
+    private final PointGeo position;
 
     /**
      * Construit un nœud OSM avec l'identifiant, la position et les attributs
@@ -49,7 +49,7 @@ public final class OSMNode extends OSMEntity {
      * @author Dominique Roduit (234868)
      */
     public final static class Builder extends OSMEntity.Builder {
-        private PointGeo position;
+        private final PointGeo position;
 
         /**
          * Construit un bâtisseur pour un nœud ayant l'identifiant et la

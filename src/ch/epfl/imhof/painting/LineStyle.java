@@ -78,8 +78,8 @@ public final class LineStyle {
             throw new IllegalArgumentException("La largeur du trait ne doit pas être négative");
 
         if (dashing != null) {
-            for (int i = 0; i < dashing.length; ++i) {
-                if (dashing[i] <= 0)
+            for (float dash : dashing) {
+                if (dash <= 0)
                     throw new IllegalArgumentException("L'un des éléments de la séquence d'alternance des segments est négatif ou nul");
             }
         }
@@ -101,7 +101,7 @@ public final class LineStyle {
      * @param c Couleur du trait
      */
     public LineStyle(float thickness, Color c) {
-        this(LineCap.Butt, LineJoin.Miter, c, thickness, null);
+        this(LineCap.Butt, LineJoin.Miter, c, thickness, new float[]{});
     }
     
     /** ====== ACCESSEURS ======= */

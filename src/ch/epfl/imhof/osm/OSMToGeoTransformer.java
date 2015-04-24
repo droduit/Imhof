@@ -287,7 +287,7 @@ public final class OSMToGeoTransformer {
         Attributes attr = attributes.keepOnlyKeys(FILTER_POLYGONE_ATTRS);
 
         /* Pas de travail si notre relation n'est pas un polygone valide */
-        if (attr.size() <= 0)
+        if (attr.isEmpty())
             return polygons;
 
         List<ClosedPolyLine> inners = this.ringsForRole(relation, "inner");
