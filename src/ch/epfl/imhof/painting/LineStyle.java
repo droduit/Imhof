@@ -101,7 +101,7 @@ public final class LineStyle {
      * @param c Couleur du trait
      */
     public LineStyle(float thickness, Color c) {
-        this(LineCap.Butt, LineJoin.Miter, c, thickness, new float[]{});
+        this(LineCap.Butt, LineJoin.Miter, c, thickness, null);
     }
     
     /** ====== ACCESSEURS ======= */

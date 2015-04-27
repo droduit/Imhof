@@ -47,6 +47,10 @@ public final class Filters {
             
         return (x) -> x.hasAttribute(attr) && vals.contains(x.attributeValue(attr));
     }
+
+    public static Predicate<Attributed<?>> notTagged (String attr) {
+        return (x) -> !x.hasAttribute(attr);
+    }
     
     /**
      * Retourne un prédicat qui n'est vrai que lorsqu'on l'applique à une entitée

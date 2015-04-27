@@ -37,6 +37,13 @@ public interface Painter {
                 canvas.drawPolygon(p.value(), color);
         };
     }
+
+    public static Painter line(LineStyle style) {
+        return (map, canvas) -> {
+            for(Attributed<PolyLine> p : map.polyLines())
+                canvas.drawPolyline(p.value(), style);
+        };
+    }
     
     /**
      * Retourne un peintre dessinant toutes les lignes de la carte qu'on lui fournis avec le style correspondant
@@ -48,10 +55,7 @@ public interface Painter {
      * @return Peintre de base (cf. description de la méthode)
      */
     public static Painter line(LineCap lc, LineJoin lj, Color color, float width, float[] dashed) {
-        return (map, canvas) -> {
-            for(Attributed<PolyLine> p : map.polyLines()) 
-                canvas.drawPolyline(p.value(), new LineStyle(lc, lj, color, width, dashed));  
-        };
+        return line(new LineStyle(lc, lj, color, width, dashed));
     }
     
     /**
@@ -61,11 +65,7 @@ public interface Painter {
      * @return Peintre de base (cf. description de la méthode)
      */
     public static Painter line(float width, Color color) {
-        LineStyle style = new LineStyle(width, color);
-        return (map, canvas) -> {
-          for(Attributed<PolyLine> p : map.polyLines()) 
-              canvas.drawPolyline(p.value(), style);
-        };
+        return line(new LineStyle(width, color));
     }
     
     /**
