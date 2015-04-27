@@ -21,6 +21,13 @@ import ch.epfl.imhof.*;
 public final class OSMMapReader {
     private static OSMMap.Builder mapBuilder;
 
+    private static final String OSM_NODE = "node";
+    private static final String OSM_WAY = "way";
+    private static final String OSM_ND = "nd";
+    private static final String OSM_TAG = "tag";
+    private static final String OSM_RELATION = "relation";
+    private static final String OSM_MEMBER = "member";
+
     /**
      * Gestionnaire de contenu pour interpréter le contenu du fichier XML et
      * instancier les différentes entités.
@@ -93,22 +100,22 @@ public final class OSMMapReader {
         public void startElement(String uri, String lName, String qName,
                 org.xml.sax.Attributes attr) throws SAXException {
             switch (lName) {
-            case "node":
+            case OSM_NODE:
                 this.addNode(attr);
                 break;
-            case "way":
+            case OSM_WAY:
                 this.addWay(attr);
                 break;
-            case "nd":
+            case OSM_ND:
                 this.addNodeRef(attr);
                 break;
-            case "tag":
+            case OSM_TAG:
                 this.addTag(attr);
                 break;
-            case "relation":
+            case OSM_RELATION:
                 this.addRelation(attr);
                 break;
-            case "member":
+            case OSM_MEMBER:
                 this.addRelationMember(attr);
                 break;
             default:
@@ -143,6 +150,9 @@ public final class OSMMapReader {
             case RELATION:
                 mapBuilder.addRelation(((OSMRelation.Builder) builder).build());
                 break;
+            case ND:
+            case MEMBER:
+            case TAG:
             default:
                 break;
             }

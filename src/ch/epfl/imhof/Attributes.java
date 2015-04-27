@@ -29,15 +29,6 @@ public final class Attributes {
     }
 
     /**
-     * Retourne le nombre d'éléments de l'ensembles d'attributs.
-     *
-     * @return Le nombre de pair clef/valeur
-     */
-    private int size() {
-        return this.attr.keySet().size();
-    }
-
-    /**
      * Retourne vrai si et seulement si l'ensemble d'attributs est vide.
      *
      * @return Vrai, si l'ensemble des attributs est vide

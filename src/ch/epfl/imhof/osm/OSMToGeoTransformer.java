@@ -26,24 +26,24 @@ import ch.epfl.imhof.geometry.*;
 public final class OSMToGeoTransformer {
     private final Projection projection;
 
-    private final String TYPE_KEY = "type";
-    private final String TYPE_MULTIPOLYGON = "multipolygon";
+    private static final String TYPE_KEY = "type";
+    private static final String TYPE_MULTIPOLYGON = "multipolygon";
 
-    private final String AREA_KEY = "area";
-    private final Set<String> AREA_VALUES = new HashSet<>(Arrays.asList("yes",
+    private static final String AREA_KEY = "area";
+    private static final Set<String> AREA_VALUES = new HashSet<>(Arrays.asList("yes",
             "1", "true"));
 
-    private final Set<String> AREA_ATTRS = new HashSet<>(Arrays.asList(
+    private static final Set<String> AREA_ATTRS = new HashSet<>(Arrays.asList(
             "aeroway", "amenity", "building", "harbour", "historic", "landuse",
             "leisure", "man_made", "military", "natural", "office", "place",
             "power", "public_transport", "shop", "sport", "tourism", "water",
             "waterway", "wetland"));
 
-    private final Set<String> FILTER_POLYLINE_ATTRS = new HashSet<>(
+    private static final Set<String> FILTER_POLYLINE_ATTRS = new HashSet<>(
             Arrays.asList("bridge", "highway", "layer", "man_made", "railway",
                     "tunnel", "waterway"));
 
-    private final Set<String> FILTER_POLYGONE_ATTRS = new HashSet<>(
+    private static final Set<String> FILTER_POLYGONE_ATTRS = new HashSet<>(
             Arrays.asList("building", "landuse", "layer", "leisure", "natural",
                     "waterway"));
 
@@ -62,9 +62,7 @@ public final class OSMToGeoTransformer {
 
     private boolean isMultipolygon(OSMRelation relation) {
         return relation.attributeValue(TYPE_KEY) != null
-                && relation.attributeValue(TYPE_KEY).equals(TYPE_MULTIPOLYGON)
-                && !relation.attributes().keepOnlyKeys(FILTER_POLYGONE_ATTRS)
-                        .isEmpty();
+                && relation.attributeValue(TYPE_KEY).equals(TYPE_MULTIPOLYGON);
     }
 
     /**
@@ -297,16 +295,7 @@ public final class OSMToGeoTransformer {
         for (ClosedPolyLine outer : outers)
             rawPolygons.put(outer, new LinkedList<>());
 
-        /*
-         * Tris des outers par taille croissante. L'utilisation du Math.signum
-         * permet de s'assurer que le comparaison de l'aire reste correcte même
-         * lorsque les deux aires ont des valeurs proches.
-         * Exemple: o1.area() = 10.0 et o2.area() = 10.1
-         *   => (int)(o1.area() - o2.area()) = 0               -> FAUX
-         *   => (int)Math.signum(o1.area() - o2.area()) = -1   -> CORRECT
-         */
-        Collections.sort(outers,
-                (o1, o2) -> (int) Math.signum(o1.area() - o2.area()));
+        Collections.sort(outers, (p1, p2) -> Double.compare(p1.area(), p2.area()) );
 
         for (ClosedPolyLine inner : inners) {
             ClosedPolyLine container = null;
