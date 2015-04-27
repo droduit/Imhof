@@ -42,8 +42,8 @@ public final class Java2DCanvas implements Canvas {
     public Java2DCanvas(Point bottomLeft, Point topRight, int width, int height, int dpi, Color bgColor) {
         pica = dpi / 72.0;
 
-        Point canvasBottomLeft = new Point(0, height);
-        Point canvasTopRight   = new Point(width, 0);
+        Point canvasBottomLeft = new Point(0, height / pica);
+        Point canvasTopRight   = new Point(width / pica, 0);
         this.transform = Point.alignedCoordinateChange(bottomLeft, canvasBottomLeft, topRight, canvasTopRight);
         
         this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
