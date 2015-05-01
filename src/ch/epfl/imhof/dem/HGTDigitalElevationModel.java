@@ -27,16 +27,18 @@ public class HGTDigitalElevationModel implements DigitalElevationModel {
     private FileInputStream stream;
     private ShortBuffer buffer;
     private final Long length;
-    private final double delta = 1;
+    private final double delta;
     
     public HGTDigitalElevationModel(File file) throws Exception {
         String filename = file.getName();
         
         length = file.length();
-        Long sqrt_res = (new Double(Math.sqrt(length/2))).longValue();
+        Long sqrt_length = (new Double(Math.sqrt(length/2))).longValue();
         
-        if(2*Math.pow(sqrt_res, 2)==length)
+        if(2*Math.pow(sqrt_length, 2)==length)
            throw new IllegalArgumentException("La taille en octet n'a pas une racine carrée entière et paire");
+        
+        delta = 3600D/(Math.sqrt(length/2D)-1D);
         
         Pattern convention = Pattern.compile("^([NS]{1})(\\d{2})([EW]{1})(\\d{3})(\\.hgt)$");
         Matcher m = convention.matcher(filename);
@@ -56,9 +58,7 @@ public class HGTDigitalElevationModel implements DigitalElevationModel {
             stream = new FileInputStream(file);
             buffer = stream.getChannel()
                     .map(MapMode.READ_ONLY, 0, length)
-                    .asShortBuffer();
-            
-            // TODO calcul du delta (résolution angulaire du fichier HGT en radians)
+                    .asShortBuffer();          
         } finally {
             close();
         }
@@ -66,7 +66,7 @@ public class HGTDigitalElevationModel implements DigitalElevationModel {
     
     @Override
     public void close() throws Exception {
-        buffer = null;
+        // buffer = null;
         stream.close();
     }
 
