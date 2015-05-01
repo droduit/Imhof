@@ -30,7 +30,7 @@ public class HGTDigitalElevationModel implements DigitalElevationModel {
     private final double delta = 1;
     
     public HGTDigitalElevationModel(File file) throws Exception {
-        String filename = Objects.requireNonNull(file.getName());
+        String filename = file.getName();
         
         length = file.length();
         Long sqrt_res = (new Double(Math.sqrt(length/2))).longValue();
@@ -79,6 +79,7 @@ public class HGTDigitalElevationModel implements DigitalElevationModel {
         double s = Earth.RADIUS*delta;
         
         // TODO Calcul des deltas avec les 4 voisins du point donné
+        // Piazza @308
         double dZa = 0;
         double dZb = 0;
         double dZc = 0;
