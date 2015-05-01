@@ -38,7 +38,7 @@ public class HGTDigitalElevationModel implements DigitalElevationModel {
         if(2*Math.pow(sqrt_length, 2)==length)
            throw new IllegalArgumentException("La taille en octet n'a pas une racine carrée entière et paire");
         
-        delta = 3600D/(Math.sqrt(length/2D)-1D);
+        delta = Math.toRadians(3600D/(Math.sqrt(length/2D)-1D));
         
         Pattern convention = Pattern.compile("^([NS]{1})(\\d{2})([EW]{1})(\\d{3})(\\.hgt)$");
         Matcher m = convention.matcher(filename);
