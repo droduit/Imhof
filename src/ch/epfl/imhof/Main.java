@@ -71,14 +71,43 @@ public class Main {
         OSMToGeoTransformer trans = new OSMToGeoTransformer(new CH1903Projection());
         OSMMap m = null;
         try {
-            m = OSMMapReader.readOSMFile(Main.class.getClass().getResource("/lausanne.osm.gz").getFile(), true);
+            //m = OSMMapReader.readOSMFile(Main.class.getClass().getResource("/lausanne.osm.gz").getFile(), true);
+            //m = OSMMapReader.readOSMFile(Main.class.getClass().getResource("/interlaken.osm.gz").getFile(), true);
+            //m = OSMMapReader.readOSMFile(Main.class.getClass().getResource("/berne.osm.gz").getFile(), true);
+            m = OSMMapReader.readOSMFile(Main.class.getClass().getResource("/sion.osm.gz").getFile(), true);
             
             Map map = trans.transform(m); // Lue depuis lausanne.osm.gz
 
             // La toile
+            
+            /*
+            // Lausanne
             Point bl = new Point(532510, 150590);
             Point tr = new Point(539570, 155260);
             Java2DCanvas canvas = new Java2DCanvas(bl, tr, 1600, 1060, 150, Color.WHITE);
+            // */
+            
+            /*
+            // Interlaken
+            Point bl = new Point(628590, 168210);
+            Point tr = new Point(635660, 172870);
+            Java2DCanvas canvas = new Java2DCanvas(bl, tr, 800, 530, 72, Color.WHITE);
+            // */
+            
+            //*
+            // Sion
+            Point bl = new Point(587789, 115306);
+            Point tr = new Point(600629, 123346);
+            Java2DCanvas canvas = new Java2DCanvas(bl, tr, 12600, 10060, 600, Color.WHITE);
+            // */
+            
+            /*
+            // Lausanne
+            Point bl = new Point(532510, 150590);
+            Point tr = new Point(539570, 155260);
+            Java2DCanvas canvas = new Java2DCanvas(bl, tr, 1600, 1060, 150, Color.WHITE);
+            // */
+            
             //SVGCanvas canvas = new SVGCanvas(bl, tr, 800, 530, Color.WHITE);
 
             painter = SwissPainter.painter();
@@ -86,7 +115,11 @@ public class Main {
             painter.drawMap(map, canvas);
             try {
                 if (canvas instanceof Java2DCanvas) {
-                    ImageIO.write(canvas.image(), "png", new File("loz.png"));
+                    ImageIO.write(canvas.image(), "png", new File("sion.png"));
+                    //ImageIO.write(canvas.image(), "png", new File("lausanne.png"));
+                    //ImageIO.write(canvas.image(), "png", new File("berne.png"));
+                    //ImageIO.write(canvas.image(), "png", new File("interlaken.png"));
+                    System.out.println("Terminé ... ");
                 } else {
                     // canvas.svg("loz.svg");
                 }
