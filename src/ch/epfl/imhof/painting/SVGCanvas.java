@@ -32,21 +32,24 @@ public class SVGCanvas implements Canvas {
 
     private final int width;
     private final int height;
+    private final double pica;
 
     private final Function<Point, Point> transform;
 
     private final Set<LineStyle> lineStyles;
     private final Set<Color> polygonStyles;
 
-    public SVGCanvas (Point bottomLeft, Point topRight, int width, int height, Color bgColor) throws ParserConfigurationException {
+    public SVGCanvas (Point bottomLeft, Point topRight, int width, int height, int dpi, Color bgColor) throws ParserConfigurationException {
+        pica = dpi / 72.0;
+
         this.width = width;
         this.height = height;
 
         this.lineStyles = new HashSet<>();
         this.polygonStyles = new HashSet<>();
 
-        Point canvasBottomLeft = new Point(0, height);
-        Point canvasTopRight   = new Point(width, 0);
+        Point canvasBottomLeft = new Point(0, height / pica);
+        Point canvasTopRight   = new Point(width / pica, 0);
         this.transform = Point.alignedCoordinateChange(bottomLeft, canvasBottomLeft, topRight, canvasTopRight);
         
         this.doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -123,6 +126,7 @@ public class SVGCanvas implements Canvas {
 
     public void svg (String filepath) throws TransformerConfigurationException, TransformerException {
         StringBuilder styleBuilder = new StringBuilder();
+        styleBuilder.append(String.format("* { transform: scale(%f, %f); }", pica, pica));
         styleBuilder.append("mask rect { fill: white; stroke: none; }\n");
         styleBuilder.append("mask path { fill: black; stroke: none; }\n");
 

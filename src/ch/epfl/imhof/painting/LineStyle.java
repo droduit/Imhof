@@ -88,7 +88,11 @@ public final class LineStyle {
         this.lineJoin = lj;
         this.color = c;
         this.width = thickness;
-        this.dashingPattern = dashing;
+
+        if (dashing != null)
+            this.dashingPattern = dashing.clone();
+        else
+            this.dashingPattern = null;
     }
     
     /**
@@ -179,6 +183,20 @@ public final class LineStyle {
     }
 
     public String toCSS () {
+        StringBuilder dasharray = new StringBuilder();
+        if (this.dashingPattern != null) {
+            dasharray.append("stroke-dasharray: ");
+
+            for (int i = 0; i < this.dashingPattern.length; i++) {
+                if (i > 0)
+                    dasharray.append(",");
+
+                dasharray.append(this.dashingPattern[i]);
+            }
+
+            dasharray.append(";");
+        }
+
         return String.format(
             new StringBuilder()
                 .append(".c%d { ")
@@ -187,12 +205,14 @@ public final class LineStyle {
                 .append("stroke-width: %f; ")
                 .append("stroke-linecap: %s; ")
                 .append("stroke-linejoin: %s; ")
+                .append("%s")
                 .append("}\n").toString(),
             this.hashCode(),
             this.color.toHex(),
             this.width,
             this.lineCap.toSVGCap(),
-            this.lineJoin.toSVGJoin()
+            this.lineJoin.toSVGJoin(),
+            dasharray.toString()
         );
     }
 }
