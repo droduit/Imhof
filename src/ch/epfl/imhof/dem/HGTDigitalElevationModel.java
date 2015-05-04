@@ -2,11 +2,9 @@ package ch.epfl.imhof.dem;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel.MapMode;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,72 +18,93 @@ import ch.epfl.imhof.Vector3;
  *
  */
 public class HGTDigitalElevationModel implements DigitalElevationModel {
+    private static final double ARC = Math.toRadians(1);
 
-    private int lat_sw;
-    private int long_sw;
-    
-    private FileInputStream stream;
-    private ShortBuffer buffer;
-    private final Long length;
     private final double delta;
+    private final long sideSize;
+    private final PointGeo origin;
+    private final FileInputStream input;
+
+    private ShortBuffer buffer;
     
-    public HGTDigitalElevationModel(File file) throws Exception {
-        String filename = file.getName();
+    public HGTDigitalElevationModel(File file) throws IOException {
+        long length = file.length();
+        long pointsCount = length / 2;
+
+        sideSize = (long)Math.sqrt(pointsCount);
+
+        if (2 * sideSize * sideSize != length)
+           throw new IllegalArgumentException("La taille du fichier n'est pas valide");
         
-        length = file.length();
-        Long sqrt_length = (new Double(Math.sqrt(length/2))).longValue();
+        this.delta = Math.toRadians(1d / sideSize);
         
-        if(2*Math.pow(sqrt_length, 2)==length)
-           throw new IllegalArgumentException("La taille en octet n'a pas une racine carrée entière et paire");
+        Matcher m = Pattern
+            .compile("^([NS]{1})(\\d{2})([EW]{1})(\\d{3})\\.hgt$")
+            .matcher(file.getName());
         
-        delta = Math.toRadians(3600D/(Math.sqrt(length/2D)-1D));
-        
-        Pattern convention = Pattern.compile("^([NS]{1})(\\d{2})([EW]{1})(\\d{3})(\\.hgt)$");
-        Matcher m = convention.matcher(filename);
-        
-        if(!m.matches())
+        if (!m.matches())
             throw new IllegalArgumentException("La convention de nommage n'est pas respectée");
          
-        int lat_sw = Integer.parseInt(m.group(2));
-        if(m.group(1).equals("S"))
-            lat_sw = -lat_sw;
-        
-        int long_sw = Integer.parseInt(m.group(4));
-        if(m.group(3).equals("W"))
-            long_sw = -long_sw;
-        
-        try {
-            stream = new FileInputStream(file);
-            buffer = stream.getChannel()
-                    .map(MapMode.READ_ONLY, 0, length)
-                    .asShortBuffer();          
-        } finally {
-            close();
-        }
+        int lat = Integer.parseInt(m.group(2));
+        if (m.group(1).equals("S"))
+            lat = -lat;
+
+        int lon = Integer.parseInt(m.group(4));
+        if (m.group(3).equals("W"))
+            lon = -lon;
+
+        this.origin = new PointGeo(
+                Math.toRadians(lat),
+                Math.toRadians(lon));
+        System.out.println("Bounding box:");
+        System.out.println(this.origin);
+        System.out.println(new PointGeo(Math.toRadians(lat + 1), Math.toRadians(lon + 1)));
+
+        this.input = new FileInputStream(file);
+        this.buffer = this.input
+            .getChannel()
+            .map(MapMode.READ_ONLY, 0, length)
+            .asShortBuffer();
     }
     
     @Override
-    public void close() throws Exception {
-        // buffer = null;
-        stream.close();
+    public void close() throws IOException {
+        this.buffer = null;
+        this.input.close();
+    }
+
+    private boolean isInside (PointGeo p) {
+        return
+            p.latitude() >= this.origin.latitude() &&
+            p.latitude() <= this.origin.latitude() + ARC &&
+            p.longitude() >= this.origin.longitude() &&
+            p.longitude() <= this.origin.longitude() + ARC;
     }
 
     @Override
     public Vector3 normalAt(PointGeo point) {
-        if(point.longitude()>long_sw+1 || point.longitude()<long_sw ||
-           point.latitude()>lat_sw+1 || point.latitude()<lat_sw)
-            throw new IllegalArgumentException("Le point pour lequel le vecteur normal est demandé se trouve en dehors de la zone couverte par le MNT");
-        
-        double s = Earth.RADIUS*delta;
-        
-        // TODO Calcul des deltas avec les 4 voisins du point donné
-        // Piazza @308
-        double dZa = 0;
-        double dZb = 0;
-        double dZc = 0;
-        double dZd = 0;
-        
-        return new Vector3(0.5*s*(dZc-dZa), 0.5*s*(dZd-dZb), s*s);
-    }
+        if (!this.isInside(point))
+            throw new IllegalArgumentException("Le point est en dehors de cette zone MNT");
 
+        int ss = (int)this.sideSize;
+        int px =      (int)((point.latitude()  - this.origin.latitude())  / this.delta);
+        int py = ss - (int)((point.longitude() - this.origin.longitude()) / this.delta);
+
+        double z1 = this.buffer.get(ss * py + px);
+        double z2 = this.buffer.get(ss * py + px + 1);
+        double z3 = this.buffer.get(ss * (py + 1) + px);
+        double z4 = this.buffer.get(ss * (py + 1) + px + 1);
+
+        double dza = z2 - z1;
+        double dzb = z3 - z1;
+        double dzc = z3 - z4;
+        double dzd = z2 - z4;
+        
+        double s = this.delta * Earth.RADIUS;
+        return new Vector3(
+            0.5 * s * (dzc - dza),
+            0.5 * s * (dzd - dzb),
+            s * s
+        ).normalized();
+    }
 }

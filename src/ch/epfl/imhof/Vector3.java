@@ -8,6 +8,10 @@ package ch.epfl.imhof;
  */
 public final class Vector3 {
     private final double x, y, z;
+
+    public double x () { return this.x; };
+    public double y () { return this.y; };
+    public double z () { return this.z; };
     
     /**
      * Construit en vecteur tridimensionnel etant donné ses 3 composantes

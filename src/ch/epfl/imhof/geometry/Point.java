@@ -64,5 +64,4 @@ public final class Point {
         
         return (p) -> new Point(ax*p.x+bx, ay*p.y+by);
     }
-    
 }
