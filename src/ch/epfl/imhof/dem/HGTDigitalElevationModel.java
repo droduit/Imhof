@@ -96,8 +96,8 @@ public class HGTDigitalElevationModel implements DigitalElevationModel {
                         ));
 
         int ss = (int)this.sideSize;
-        int px =      (int)((point.longitude() - this.origin.longitude()) / this.delta);
-        int py = ss - (int)Math.ceil((point.latitude()  - this.origin.latitude())  / this.delta);
+        int px =      (int)Math.floor((point.longitude() - this.origin.longitude()) / this.delta);
+        int py = ss - (int)Math.ceil ((point.latitude()  - this.origin.latitude())  / this.delta);
 
         double z1 = this.buffer.get(ss * py + px);
         double z2 = this.buffer.get(ss * py + px + 1);
