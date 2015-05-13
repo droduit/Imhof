@@ -26,17 +26,24 @@ public class HGTDigitalElevationModel implements DigitalElevationModel {
     private final FileInputStream input;
 
     private ShortBuffer buffer;
+
+    public PointGeo bottomLeft () { return this.origin; }
+    public PointGeo topRight () {
+        return new PointGeo(
+                this.origin.longitude() + ARC,
+                this.origin.latitude()  + ARC);
+    }
     
     public HGTDigitalElevationModel(File file) throws IOException {
         long length = file.length();
         long pointsCount = length / 2;
 
-        sideSize = (long)Math.sqrt(pointsCount);
+        this.sideSize = (long)Math.sqrt(pointsCount);
 
         if (2 * sideSize * sideSize != length)
            throw new IllegalArgumentException("La taille du fichier n'est pas valide");
         
-        this.delta = Math.toRadians(1d / sideSize);
+        this.delta = Math.toRadians(1d / (sideSize - 1));
         
         Matcher m = Pattern
             .compile("^([NS]{1})(\\d{2})([EW]{1})(\\d{3})\\.hgt$")
@@ -54,11 +61,8 @@ public class HGTDigitalElevationModel implements DigitalElevationModel {
             lon = -lon;
 
         this.origin = new PointGeo(
-                Math.toRadians(lat),
-                Math.toRadians(lon));
-        System.out.println("Bounding box:");
-        System.out.println(this.origin);
-        System.out.println(new PointGeo(Math.toRadians(lat + 1), Math.toRadians(lon + 1)));
+                Math.toRadians(lon),
+                Math.toRadians(lat));
 
         this.input = new FileInputStream(file);
         this.buffer = this.input
@@ -84,16 +88,21 @@ public class HGTDigitalElevationModel implements DigitalElevationModel {
     @Override
     public Vector3 normalAt(PointGeo point) {
         if (!this.isInside(point))
-            throw new IllegalArgumentException("Le point est en dehors de cette zone MNT");
+            throw new IllegalArgumentException(
+                    String.format("Le point (%.4f, %.4f) est en dehors de cette zone MNT [%d, %d] [%d, %d]",
+                        Math.toDegrees(point.longitude()), Math.toDegrees(point.latitude()),
+                        (int)Math.toDegrees(this.origin.longitude()), (int)Math.toDegrees(this.origin.longitude()) + 1,
+                        (int)Math.toDegrees(this.origin.latitude()), (int)Math.toDegrees(this.origin.latitude()) + 1
+                        ));
 
         int ss = (int)this.sideSize;
-        int px =      (int)((point.latitude()  - this.origin.latitude())  / this.delta);
-        int py = ss - (int)((point.longitude() - this.origin.longitude()) / this.delta);
+        int px =      (int)((point.longitude() - this.origin.longitude()) / this.delta);
+        int py = ss - (int)Math.ceil((point.latitude()  - this.origin.latitude())  / this.delta);
 
         double z1 = this.buffer.get(ss * py + px);
         double z2 = this.buffer.get(ss * py + px + 1);
-        double z3 = this.buffer.get(ss * (py + 1) + px);
-        double z4 = this.buffer.get(ss * (py + 1) + px + 1);
+        double z3 = this.buffer.get(ss * (py - 1) + px);
+        double z4 = this.buffer.get(ss * (py - 1) + px + 1);
 
         double dza = z2 - z1;
         double dzb = z3 - z1;

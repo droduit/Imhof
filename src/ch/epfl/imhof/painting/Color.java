@@ -136,6 +136,14 @@ public final class Color {
     public java.awt.Color toAWTColor() {
         return new java.awt.Color((float)r, (float)g, (float)b);
     }
+
+    public int getRGB () {
+        int r = (int)(this.r * 255d);
+        int g = (int)(this.g * 255d);
+        int b = (int)(this.b * 255d);
+
+        return (r << 16) | (g << 8) | (b << 0);
+    }
     
     public String toHex () {
         return String.format("#%02X%02X%02X", (int)(this.r * 255), (int)(this.g * 255), (int)(this.b * 255));

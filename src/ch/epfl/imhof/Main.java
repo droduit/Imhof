@@ -2,10 +2,9 @@ package ch.epfl.imhof;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.function.Predicate;
 
-import java.io.PrintWriter;
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 import org.xml.sax.SAXException;
 
@@ -13,133 +12,95 @@ import ch.epfl.imhof.geometry.Point;
 import ch.epfl.imhof.osm.OSMMap;
 import ch.epfl.imhof.osm.OSMMapReader;
 import ch.epfl.imhof.osm.OSMToGeoTransformer;
-import ch.epfl.imhof.painting.Color;
-import ch.epfl.imhof.painting.Filters;
-import ch.epfl.imhof.painting.Java2DCanvas;
-import ch.epfl.imhof.painting.SVGCanvas;
-import ch.epfl.imhof.painting.Painter;
-import ch.epfl.imhof.projection.CH1903Projection;
+import ch.epfl.imhof.painting.*;
+import ch.epfl.imhof.projection.*;
+import ch.epfl.imhof.dem.*;
 
-
-/**
- * Eau : #a6c2b3
- * Chemin de fer : #981320
- * Batiments : #2f322f
- * Autoroute : #c9a438
- * Herbe : #99b785
- *
- */
 public class Main {
-    public static void main(String[] args) {
-        Predicate<Attributed<?>> isLake =
-            Filters.tagged("natural", "water");
-        Painter lakesPainter =
-            Painter.polygon(Color.BLUE).when(isLake);
+    private final static Projection PROJECTION = new CH1903Projection();
+    private final static Vector3 LIGHT_DIRECTION = new Vector3(-1, 1, 1);
+    private final static float GAUSS_FACTOR = 0.0017f;
 
-        Predicate<Attributed<?>> isBuilding =
-            Filters.tagged("building");
-        Painter buildingsPainter =
-            Painter.polygon(Color.BLACK).when(isBuilding);
+    private static void usage () {
+        System.out.println("imhof 'OSM path' 'HGT path' 'bottom left longitude' 'bottom left latitude' 'top right longitude' 'top right latitude' 'dpi' 'output path' [output format]\n");
+    }
 
-        Predicate<Attributed<?>> isWood =
-            Filters.tagged("natural", "wood");
-        Painter woodPainter =
-            Painter.polygon(Color.GREEN).when(isWood);
+    private static int dpiToDpm (int dpi) {
+        return (int)Math.round((dpi / 2.54) * 100);
+    }
 
-        Predicate<Attributed<?>> isPark =
-            Filters.tagged("leisure", "park");
-        Painter parkPainter =
-            Painter.polygon(Color.GREEN).when(isPark);
+    private static BufferedImage multiplyImages (BufferedImage back, BufferedImage front) {
+        int width = back.getWidth();
+        int height = back.getHeight();
 
-        Predicate<Attributed<?>> isRail =
-            Filters.tagged("railway");
-        Painter railPainter =
-            Painter.line(.6f, Color.gray(0.4)).when(isRail);
+        if (width != front.getWidth() || height != front.getHeight())
+            throw new IllegalArgumentException("Les images n'ont pas la même taille");
 
-        Predicate<Attributed<?>> isRoad =
-            Filters.tagged("highway");
-        Painter roadPainter =
-            Painter.line(.6f, Color.RED).when(isRoad);
+        BufferedImage composed = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-        Painter painter = buildingsPainter
-            .above(roadPainter)
-            .above(railPainter)
-            .above(woodPainter)
-            .above(lakesPainter)
-            .above(parkPainter);
-       
-        OSMToGeoTransformer trans = new OSMToGeoTransformer(new CH1903Projection());
-        OSMMap m = null;
-        try {
-            //m = OSMMapReader.readOSMFile(Main.class.getClass().getResource("/lausanne.osm.gz").getFile(), true);
-            //m = OSMMapReader.readOSMFile(Main.class.getClass().getResource("/interlaken.osm.gz").getFile(), true);
-            //m = OSMMapReader.readOSMFile(Main.class.getClass().getResource("/berne.osm.gz").getFile(), true);
-            m = OSMMapReader.readOSMFile(Main.class.getClass().getResource("/sion.osm.gz").getFile(), true);
-            
-            Map map = trans.transform(m); // Lue depuis lausanne.osm.gz
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Color backColor = Color.rgb(back.getRGB(x, y));
+                Color frontColor = Color.rgb(front.getRGB(x, y));
 
-            // La toile
-            
-            /*
-            // Lausanne
-            Point bl = new Point(532510, 150590);
-            Point tr = new Point(539570, 155260);
-            Java2DCanvas canvas = new Java2DCanvas(bl, tr, 1600, 1060, 150, Color.WHITE);
-            // */
-            
-            /*
-            // Interlaken
-            Point bl = new Point(628590, 168210);
-            Point tr = new Point(635660, 172870);
-            Java2DCanvas canvas = new Java2DCanvas(bl, tr, 800, 530, 72, Color.WHITE);
-            // */
-            
-            //*
-            // Sion
-            Point bl = new Point(587789, 115306);
-            Point tr = new Point(600629, 123346);
-            Java2DCanvas canvas = new Java2DCanvas(bl, tr, 12600, 10060, 600, Color.WHITE);
-            // */
-            
-            /*
-            // Lausanne
-            Point bl = new Point(532510, 150590);
-            Point tr = new Point(539570, 155260);
-            Java2DCanvas canvas = new Java2DCanvas(bl, tr, 1600, 1060, 150, Color.WHITE);
-            // */
-            
-            //SVGCanvas canvas = new SVGCanvas(bl, tr, 800, 530, Color.WHITE);
-
-            painter = SwissPainter.painter();
-            // Dessin de la carte et stockage dans un fichier
-            painter.drawMap(map, canvas);
-            try {
-                if (canvas instanceof Java2DCanvas) {
-                    ImageIO.write(canvas.image(), "png", new File("sion.png"));
-                    //ImageIO.write(canvas.image(), "png", new File("lausanne.png"));
-                    //ImageIO.write(canvas.image(), "png", new File("berne.png"));
-                    //ImageIO.write(canvas.image(), "png", new File("interlaken.png"));
-                    System.out.println("Terminé ... ");
-                } else {
-                    // canvas.svg("loz.svg");
-                }
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                System.out.println("Aille");
+                composed.setRGB(x, y, backColor.multiplyWith(frontColor).getRGB());
             }
-            
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-            System.out.println("Oups");
-        } catch (SAXException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-            System.out.println("Erreur");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Boom");
+        }
+
+        return composed;
+    }
+
+    public static void main(String[] args) throws IOException, SAXException {
+        if (args.length < 8) {
+            usage();
+            System.exit(1);
+        }
+
+        /* Récupérations des paramètres */
+        File osmFile = new File(args[0]);
+        File demFile = new File(args[1]);
+        PointGeo wgsBottomLeft = new PointGeo(
+            Math.toRadians(Double.parseDouble(args[2])),
+            Math.toRadians(Double.parseDouble(args[3])));
+        PointGeo wgsTopRight = new PointGeo(
+            Math.toRadians(Double.parseDouble(args[4])),
+            Math.toRadians(Double.parseDouble(args[5])));
+        int dpi = Integer.parseInt(args[6]);
+        File outFile = new File(args[7]);
+
+        /* Paramètre suplémentaires */
+        String outFormat = "png";
+        if (args.length >= 9)
+            outFormat = args[8];
+        
+        OSMMap osmMap = OSMMapReader.readOSMFile(osmFile.getPath(), true);
+        OSMToGeoTransformer transformer = new OSMToGeoTransformer(PROJECTION);
+
+        Map map = transformer.transform(osmMap);
+        Painter painter = SwissPainter.painter();
+
+        /* Calculs des dimensions */
+        Point chBottomLeft = PROJECTION.project(wgsBottomLeft);
+        Point chTopRight = PROJECTION.project(wgsTopRight);
+
+        int dpm = dpiToDpm(dpi);
+        int height = (int)Math.round((double)Earth.RADIUS * (double)dpm * (wgsTopRight.latitude() - wgsBottomLeft.latitude()) / 25000d);
+        int width = (int)Math.round((double)height * (chTopRight.x() - chBottomLeft.x()) / (chTopRight.y() - chBottomLeft.y()));
+        float gaussRadius = dpm * GAUSS_FACTOR;
+
+        DigitalElevationModel dem = new HGTDigitalElevationModel(demFile);
+        ReliefShader reliefShader = new ReliefShader(PROJECTION, dem, LIGHT_DIRECTION);
+        BufferedImage relief = reliefShader.shadedRelief(chBottomLeft, chTopRight, width, height, gaussRadius);
+
+        if (outFormat.equals("svg")) {
+        } else {
+            Java2DCanvas canvas = new Java2DCanvas(chBottomLeft, chTopRight, width, height, dpi, Color.WHITE);
+
+            painter.drawMap(map, canvas);
+
+            BufferedImage out = multiplyImages(relief, canvas.image());
+
+            ImageIO.write(out, outFormat, outFile);
         }
     }
 }
