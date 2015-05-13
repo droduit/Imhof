@@ -11,6 +11,14 @@ import java.util.stream.Collectors;
 import java.util.Set;
 import java.util.HashSet;
 
+import java.util.Base64;
+import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
@@ -124,11 +132,32 @@ public class SVGCanvas implements Canvas {
         this.polygonStyles.add(c);
     }
 
+    public void addRelief (BufferedImage reliefImage) throws IOException {
+        ByteArrayOutputStream reliefData = new ByteArrayOutputStream();
+        OutputStream encoder = Base64.getEncoder().wrap(reliefData);
+
+        ImageIO.write(reliefImage, "png", encoder);
+
+        encoder.close();
+
+        Element relief = this.doc.createElement("image");
+        relief.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+        relief.setAttribute("id", "relief");
+        relief.setAttribute("x", "0");
+        relief.setAttribute("y", "0");
+        relief.setAttribute("width", Integer.toString((int)(this.width / this.pica)));
+        relief.setAttribute("height", Integer.toString((int)(this.height / this.pica)));
+        relief.setAttribute("xlink:href", "data:image/png;base64," + reliefData.toString());
+
+        this.root.appendChild(relief);
+    }
+
     public void svg (String filepath) throws TransformerConfigurationException, TransformerException {
         StringBuilder styleBuilder = new StringBuilder();
         styleBuilder.append(String.format("* { transform: scale(%f, %f); }", pica, pica));
         styleBuilder.append("mask rect { fill: white; stroke: none; }\n");
         styleBuilder.append("mask path { fill: black; stroke: none; }\n");
+        styleBuilder.append("#relief { mix-blend-mode: multiply; }\n");
 
         for (LineStyle style : this.lineStyles)
             styleBuilder.append(style.toCSS());

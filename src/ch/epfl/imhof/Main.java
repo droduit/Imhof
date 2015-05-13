@@ -1,12 +1,9 @@
 package ch.epfl.imhof;
 
 import java.io.File;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-
-import org.xml.sax.SAXException;
 
 import ch.epfl.imhof.geometry.Point;
 import ch.epfl.imhof.osm.OSMMap;
@@ -50,7 +47,7 @@ public class Main {
         return composed;
     }
 
-    public static void main(String[] args) throws IOException, SAXException {
+    public static void main(String[] args) throws Exception {
         if (args.length < 8) {
             usage();
             System.exit(1);
@@ -93,6 +90,13 @@ public class Main {
         BufferedImage relief = reliefShader.shadedRelief(chBottomLeft, chTopRight, width, height, gaussRadius);
 
         if (outFormat.equals("svg")) {
+            SVGCanvas canvas = new SVGCanvas(chBottomLeft, chTopRight, width, height, dpi, Color.WHITE);
+
+            painter.drawMap(map, canvas);
+
+            canvas.addRelief(relief);
+
+            canvas.svg(outFile.getPath());
         } else {
             Java2DCanvas canvas = new Java2DCanvas(chBottomLeft, chTopRight, width, height, dpi, Color.WHITE);
 
