@@ -26,14 +26,13 @@ public class HGTDigitalElevationModel implements DigitalElevationModel {
     private final FileInputStream input;
 
     private ShortBuffer buffer;
-
-    public PointGeo bottomLeft () { return this.origin; }
-    public PointGeo topRight () {
-        return new PointGeo(
-                this.origin.longitude() + ARC,
-                this.origin.latitude()  + ARC);
-    }
     
+    /**
+     * 
+     * @param file Fichier HGT à lire
+     * @throws IOException S'il y a des erreurs d'entrées/sorties
+     * @throws IllegalArgumentException Si la taille du fichier n'est pas valide ou la convention de nommage des fichiers HGT n'est pas respectée
+     */
     public HGTDigitalElevationModel(File file) throws IOException {
         long length = file.length();
         long pointsCount = length / 2;
@@ -77,6 +76,11 @@ public class HGTDigitalElevationModel implements DigitalElevationModel {
         this.input.close();
     }
 
+    /**
+     * Contrôle que le point donné se trouve à l'intérieur de la zone couverte du MNT
+     * @param p Point dont on veut vérifier s'il se trouve à l'intérieur de la zone couverte
+     * @return true si le point se trouve à l'intérieur de la zone couvere par le MNT
+     */
     private boolean isInside (PointGeo p) {
         return
             p.latitude() >= this.origin.latitude() &&

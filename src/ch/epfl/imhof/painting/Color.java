@@ -52,10 +52,6 @@ public final class Color {
         this.g = g;
         this.b = b;
     }
-
-    public static Color random () {
-        return new Color(Math.random(), Math.random(), Math.random());
-    }
     
     /**
      * Construit une couleur grise d'intensité variable
@@ -136,7 +132,10 @@ public final class Color {
     public java.awt.Color toAWTColor() {
         return new java.awt.Color((float)r, (float)g, (float)b);
     }
-
+    
+    /**
+     * @return La valeur rgb empaquetée dans un entier
+     */
     public int getRGB () {
         int r = (int)(this.r * 255d);
         int g = (int)(this.g * 255d);
@@ -145,10 +144,16 @@ public final class Color {
         return (r << 16) | (g << 8) | (b << 0);
     }
     
+    /**
+     * @return Le code hexadécimal de la couleur (pour le rendu SVG)
+     */
     public String toHex () {
         return String.format("#%02X%02X%02X", (int)(this.r * 255), (int)(this.g * 255), (int)(this.b * 255));
     }
 
+    /**
+     * @return La regle CSS pour la couleur (pour le rendu SVG)
+     */
     public String toCSS () {
         return String.format(".c%d { fill: %s; }\n", this.hashCode(), this.toHex());
     }

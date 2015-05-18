@@ -13,6 +13,12 @@ import ch.epfl.imhof.painting.*;
 import ch.epfl.imhof.projection.*;
 import ch.epfl.imhof.dem.*;
 
+/**
+ * Classe principale du projet Imhof
+ * @author Thierry Treyer (235116)
+ * @author Dominique Roduit (234868)
+ *
+ */
 public class Main {
     private final static Projection PROJECTION = new CH1903Projection();
     private final static Vector3 LIGHT_DIRECTION = new Vector3(-1, 1, 1);
@@ -22,10 +28,21 @@ public class Main {
         System.out.println("imhof 'OSM path' 'HGT path' 'bottom left longitude' 'bottom left latitude' 'top right longitude' 'top right latitude' 'dpi' 'output path' [output format]\n");
     }
 
+    /**
+     * Conversion de dpi (points par pouces) vers dpm (points par metres (une invention personnelle))
+     * @param dpi Résolution en dpi a convertir en points par metres
+     * @return Nombre de points par metres
+     */
     private static int dpiToDpm (int dpi) {
         return (int)Math.round((dpi / 2.54) * 100);
     }
 
+    /**
+     * Superpose les deux images (la carte et le relief)
+     * @param back Image arrière (la carte)
+     * @param front  Image superposée à front (le relief)
+     * @return Image résultante de la fusion des deux images
+     */
     private static BufferedImage multiplyImages (BufferedImage back, BufferedImage front) {
         int width = back.getWidth();
         int height = back.getHeight();
@@ -46,7 +63,7 @@ public class Main {
 
         return composed;
     }
-
+    
     public static void main(String[] args) throws Exception {
         if (args.length < 8) {
             usage();

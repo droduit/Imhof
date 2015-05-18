@@ -9,8 +9,11 @@ package ch.epfl.imhof;
 public final class Vector3 {
     private final double x, y, z;
 
+    /** @return Composante x du vecteur 3D */
     public double x () { return this.x; };
+    /** @return Composante y du vecteur 3D */
     public double y () { return this.y; };
+    /** @return Composante z du vecteur 3D */
     public double z () { return this.z; };
     
     /**

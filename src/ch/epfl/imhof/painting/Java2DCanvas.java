@@ -74,6 +74,11 @@ public final class Java2DCanvas implements Canvas {
         ctx.fill(polygon);
     }
     
+    /**
+     * Retourne le chemin 2D de la polyligne passée en paramètre
+     * @param polyline Polyligne dont on veut obtenir le chemin 2D
+     * @return Chemin 2D de la polyligne donnée
+     */
     private Path2D getPath(PolyLine polyline) {
         Path2D path = new Path2D.Double();
         

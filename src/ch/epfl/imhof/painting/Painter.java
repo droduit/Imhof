@@ -38,6 +38,11 @@ public interface Painter {
         };
     }
 
+    /**
+     * Retourne un peintre dessinant toutes les lignes de la carte qu'on lui fournit avec ce style
+     * @param style Style des lignes
+     * @return Peintre de base (cf. description de la méthode)
+     */
     public static Painter line(LineStyle style) {
         return (map, canvas) -> {
             for(Attributed<PolyLine> p : map.polyLines())

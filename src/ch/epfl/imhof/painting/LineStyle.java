@@ -178,10 +178,16 @@ public final class LineStyle {
         return new LineStyle(this.lineCap, this.lineJoin, this.color, this.width, dashingPattern);
     }
 
+    /**
+     * @return Le style de ligne au format AWT
+     */
     public Stroke toAWTStroke () {
         return new BasicStroke(this.width, this.lineCap.toAWTCap(), this.lineJoin.toAWTJoin(), 10f, this.dashingPattern, 0f);
     }
 
+    /**
+     * @return La règle CSS pour le style de ligne (pour le rendu SVG)
+     */
     public String toCSS () {
         StringBuilder dasharray = new StringBuilder();
         if (this.dashingPattern != null) {

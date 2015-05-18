@@ -13,6 +13,11 @@ import ch.epfl.imhof.painting.Painter;
 import ch.epfl.imhof.painting.RoadPainterGenerator;
 import ch.epfl.imhof.painting.RoadPainterGenerator.RoadSpec;
 
+/**
+ * Représente un peintre pour les cartes suisses
+ * @author Michel Schinz
+ *
+ */
 public final class SwissPainter {
     private static final Painter PAINTER;
 

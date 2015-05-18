@@ -11,7 +11,7 @@ import static ch.epfl.imhof.painting.LineStyle.LineCap;
 import static ch.epfl.imhof.painting.LineStyle.LineJoin;
 
 /**
- * 
+ * Cette classe permet de générer un peintre pour le réseau routier (les routes, les ponts, les tunnels)
  * @author Thierry Treyer (235116)
  * @author Dominique Roduit (234868)
  *
@@ -91,30 +91,45 @@ public final class RoadPainterGenerator {
         private float tunnelWidth () { return this.innerWidth / 2f; }
         private float[] tunnelPattern () { return new float[]{ 2f * this.innerWidth, 2f * this.innerWidth }; }
 
+        /**
+         * @return Peintre pour l'intérieur des ponts 
+         */
         public Painter innerBridgePainter () {
             return Painter.line(
                     new LineStyle(LineCap.Round, LineJoin.Round, this.innerColor, this.innerWidth, null))
                 .when(this.filter.and(tagged("bridge")));
         }
 
+        /**
+         * @return Peintre pour la bordure des ponts
+         */
         public Painter castingBridgePainter () {
             return Painter.line(
                     new LineStyle(LineCap.Butt, LineJoin.Round, this.castingColor, this.outlineWidth(), null))
                 .when(this.filter.and(tagged("bridge")));
         }
 
+        /**
+         * @return Peintre pour l'intérieur des routes
+         */
         public Painter innerRoadPainter () {
             return Painter.line(
                     new LineStyle(LineCap.Round, LineJoin.Round, this.innerColor, this.innerWidth, null))
                 .when(this.filter.and(notTagged("bridge")).and(notTagged("tunnel")));
         }
 
+        /**
+         * @return Peintre pour le bord des routes
+         */
         public Painter castingRoadPainter () {
             return Painter.line(
                     new LineStyle(LineCap.Round, LineJoin.Round, this.castingColor, this.outlineWidth(), null))
                 .when(this.filter.and(notTagged("bridge")).and(notTagged("tunnel")));
         }
 
+        /**
+         * @return Peintre pour les tunnels
+         */
         public Painter tunnelPainter () {
             return Painter.line(
                     new LineStyle(LineCap.Butt, LineJoin.Round, this.castingColor, this.tunnelWidth(), this.tunnelPattern()))
