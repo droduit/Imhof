@@ -30,12 +30,12 @@ public final class Java2DCanvas implements Canvas {
     
     /**
      * Construit une image de la toile
-     * @param Pbl Coin bas-gauche de la toile
-     * @param Ptr Coin haut-droite de la toile
+     * @param bottomLeft Coin bas-gauche de la toile
+     * @param topRight Coin haut-droite de la toile
      * @param width Largeur de l'image de la toile (en pixels)
      * @param height Hauteur de l'image de la toile (en pixels)
      * @param dpi Résolution de l'image de la toile (en points par pouce, dpi)
-     * @param bg Couleur de fond de la toile
+     * @param bgColor Couleur de fond de la toile
      */
     public Java2DCanvas(Point bottomLeft, Point topRight, int width, int height, int dpi, Color bgColor) {
         double pica = dpi / 72.0;

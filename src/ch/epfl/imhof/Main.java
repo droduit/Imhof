@@ -96,7 +96,7 @@ public class Main {
 
             canvas.addRelief(relief);
 
-            canvas.svg(outFile.getPath());
+            canvas.write(outFile.getPath());
         } else {
             Java2DCanvas canvas = new Java2DCanvas(chBottomLeft, chTopRight, width, height, dpi, Color.WHITE);
 
