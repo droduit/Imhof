@@ -97,6 +97,7 @@ public final class ReliefShader {
     }
 
     /**
+     * Dessine le relief et applique le floutage demandé.
      * 
      * @param bottomLeft Coin bas-gauche du relief à dessiner en coordonnées du plan
      * @param topRight Coin haut-droit du relief à dessiner en coordonnées du plan

@@ -36,6 +36,14 @@ import javax.xml.transform.stream.StreamResult;
  * Mise en oeuvre concrète de toile qui dessine les primitives
  * demandées dans une image vectorielle.
  *
+ * Note:
+ * =====
+ *   Pas toutes les chaîne litérales ont été placées en static final, le code en serait plus
+ *   alourdi qu'autre chose. Ainsi, les noms de balises et d'attributs ont été laissés tel quel.
+ *
+ *   Ici, le choix a été fait de manipuler le DOM pour créer l'image vectorielle.
+ *   Une autre solution serait d'utiliser un système de template pour générer le SVG.
+ *
  * @author Thierry Treyer (235116)
  * @author Dominique Roduit (234868)
  */
@@ -45,6 +53,7 @@ public class SVGCanvas implements Canvas {
     private final static String XMLNS_SVG_URL = "http://www.w3.org/2000/svg";
     private final static String XMLNS_SVG_VERSION = "1.1";
     private final static String XMLNS_XLINK_URL = "http://www.w3.org/1999/xlink";
+    private final static String BASE64_DATA_HEAD = "data:image/png;base64,";
 
     private final Document doc;
     private final Element root;
@@ -187,7 +196,7 @@ public class SVGCanvas implements Canvas {
         relief.setAttribute("y", "0");
         relief.setAttribute("width", Integer.toString((int)(this.width / this.pica)));
         relief.setAttribute("height", Integer.toString((int)(this.height / this.pica)));
-        relief.setAttribute("xlink:href", "data:image/png;base64," + reliefData.toString());
+        relief.setAttribute("xlink:href", BASE64_DATA_HEAD + reliefData.toString());
 
         this.root.appendChild(relief);
     }

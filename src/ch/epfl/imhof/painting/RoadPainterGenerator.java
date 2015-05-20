@@ -17,6 +17,8 @@ import static ch.epfl.imhof.painting.LineStyle.LineJoin;
  *
  */
 public final class RoadPainterGenerator {
+    private static final String OSM_BRIDGE = "bridge";
+    private static final String OSM_TUNNEL = "tunnel";
     
     private RoadPainterGenerator() { 
     }
@@ -31,6 +33,7 @@ public final class RoadPainterGenerator {
         for (int i = 0; i < 5; i++)
             painters.add(new LinkedList<>());
 
+        // Récupération des painters de chaque specs
         for (int i = 0; i < specs.length; i++) {
             RoadSpec spec = specs[i];
 
@@ -43,9 +46,11 @@ public final class RoadPainterGenerator {
             painters.get(4).add(spec.tunnelPainter());
         }
 
+        // On "aplatit" les specs
         return painters
             .stream()
             .map(
+                // On "aplatit" les layers du specs
                 ls ->
                   ls.stream()
                     .reduce(Painter::above)
@@ -97,7 +102,7 @@ public final class RoadPainterGenerator {
         public Painter innerBridgePainter () {
             return Painter.line(
                     new LineStyle(LineCap.Round, LineJoin.Round, this.innerColor, this.innerWidth, null))
-                .when(this.filter.and(tagged("bridge")));
+                .when(this.filter.and(tagged(OSM_BRIDGE)));
         }
 
         /**
@@ -106,7 +111,7 @@ public final class RoadPainterGenerator {
         public Painter castingBridgePainter () {
             return Painter.line(
                     new LineStyle(LineCap.Butt, LineJoin.Round, this.castingColor, this.outlineWidth(), null))
-                .when(this.filter.and(tagged("bridge")));
+                .when(this.filter.and(tagged(OSM_BRIDGE)));
         }
 
         /**
@@ -115,7 +120,7 @@ public final class RoadPainterGenerator {
         public Painter innerRoadPainter () {
             return Painter.line(
                     new LineStyle(LineCap.Round, LineJoin.Round, this.innerColor, this.innerWidth, null))
-                .when(this.filter.and(notTagged("bridge")).and(notTagged("tunnel")));
+                .when(this.filter.and(notTagged(OSM_BRIDGE)).and(notTagged(OSM_TUNNEL)));
         }
 
         /**
@@ -124,7 +129,7 @@ public final class RoadPainterGenerator {
         public Painter castingRoadPainter () {
             return Painter.line(
                     new LineStyle(LineCap.Round, LineJoin.Round, this.castingColor, this.outlineWidth(), null))
-                .when(this.filter.and(notTagged("bridge")).and(notTagged("tunnel")));
+                .when(this.filter.and(notTagged(OSM_BRIDGE)).and(notTagged(OSM_TUNNEL)));
         }
 
         /**
@@ -133,7 +138,7 @@ public final class RoadPainterGenerator {
         public Painter tunnelPainter () {
             return Painter.line(
                     new LineStyle(LineCap.Butt, LineJoin.Round, this.castingColor, this.tunnelWidth(), this.tunnelPattern()))
-                .when(this.filter.and(tagged("tunnel")));
+                .when(this.filter.and(tagged(OSM_TUNNEL)));
         }
     }
 }
