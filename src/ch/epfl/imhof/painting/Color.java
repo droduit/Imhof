@@ -143,18 +143,4 @@ public final class Color {
 
         return (r << 16) | (g << 8) | (b << 0);
     }
-    
-    /**
-     * @return Le code hexadécimal de la couleur (pour le rendu SVG)
-     */
-    public String toHex () {
-        return String.format("#%02X%02X%02X", (int)(this.r * 255), (int)(this.g * 255), (int)(this.b * 255));
-    }
-
-    /**
-     * @return La regle CSS pour la couleur (pour le rendu SVG)
-     */
-    public String toCSS () {
-        return String.format(".c%d { fill: %s; }\n", this.hashCode(), this.toHex());
-    }
 }

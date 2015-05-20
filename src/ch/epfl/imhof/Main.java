@@ -23,6 +23,7 @@ public class Main {
     private final static Projection PROJECTION = new CH1903Projection();
     private final static Vector3 LIGHT_DIRECTION = new Vector3(-1, 1, 1);
     private final static float GAUSS_FACTOR = 0.0017f;
+    private final static String OUT_FORMAT = "png";
 
     private static void usage () {
         System.out.println("imhof 'OSM path' 'HGT path' 'bottom left longitude' 'bottom left latitude' 'top right longitude' 'top right latitude' 'dpi' 'output path' [output format]\n");
@@ -38,7 +39,7 @@ public class Main {
     }
 
     /**
-     * Superpose les deux images (la carte et le relief)
+     * Superpose les deux images en multipliant les couleurs (la carte et le relief)
      * @param back Image arrière (la carte)
      * @param front  Image superposée à front (le relief)
      * @return Image résultante de la fusion des deux images
@@ -82,11 +83,6 @@ public class Main {
         int dpi = Integer.parseInt(args[6]);
         File outFile = new File(args[7]);
 
-        /* Paramètre suplémentaires */
-        String outFormat = "png";
-        if (args.length >= 9)
-            outFormat = args[8];
-        
         OSMMap osmMap = OSMMapReader.readOSMFile(osmFile.getPath(), true);
         OSMToGeoTransformer transformer = new OSMToGeoTransformer(PROJECTION);
 
@@ -106,22 +102,12 @@ public class Main {
         ReliefShader reliefShader = new ReliefShader(PROJECTION, dem, LIGHT_DIRECTION);
         BufferedImage relief = reliefShader.shadedRelief(chBottomLeft, chTopRight, width, height, gaussRadius);
 
-        if (outFormat.equals("svg")) {
-            SVGCanvas canvas = new SVGCanvas(chBottomLeft, chTopRight, width, height, dpi, Color.WHITE);
+        Java2DCanvas canvas = new Java2DCanvas(chBottomLeft, chTopRight, width, height, dpi, Color.WHITE);
 
-            painter.drawMap(map, canvas);
+        painter.drawMap(map, canvas);
 
-            canvas.addRelief(relief);
+        BufferedImage out = multiplyImages(relief, canvas.image());
 
-            canvas.write(outFile.getPath());
-        } else {
-            Java2DCanvas canvas = new Java2DCanvas(chBottomLeft, chTopRight, width, height, dpi, Color.WHITE);
-
-            painter.drawMap(map, canvas);
-
-            BufferedImage out = multiplyImages(relief, canvas.image());
-
-            ImageIO.write(out, outFormat, outFile);
-        }
+        ImageIO.write(out, OUT_FORMAT, outFile);
     }
 }

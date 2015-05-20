@@ -184,41 +184,4 @@ public final class LineStyle {
     public Stroke toAWTStroke () {
         return new BasicStroke(this.width, this.lineCap.toAWTCap(), this.lineJoin.toAWTJoin(), 10f, this.dashingPattern, 0f);
     }
-
-    /**
-     * @return La règle CSS pour le style de ligne (pour le rendu SVG)
-     */
-    public String toCSS () {
-        StringBuilder dasharray = new StringBuilder();
-        if (this.dashingPattern != null) {
-            dasharray.append("stroke-dasharray: ");
-
-            for (int i = 0; i < this.dashingPattern.length; i++) {
-                if (i > 0)
-                    dasharray.append(",");
-
-                dasharray.append(this.dashingPattern[i]);
-            }
-
-            dasharray.append(";");
-        }
-
-        return String.format(
-            new StringBuilder()
-                .append(".c%d { ")
-                .append("fill: none; ")
-                .append("stroke: %s; ")
-                .append("stroke-width: %f; ")
-                .append("stroke-linecap: %s; ")
-                .append("stroke-linejoin: %s; ")
-                .append("%s")
-                .append("}\n").toString(),
-            this.hashCode(),
-            this.color.toHex(),
-            this.width,
-            this.lineCap.toSVGCap(),
-            this.lineJoin.toSVGJoin(),
-            dasharray.toString()
-        );
-    }
 }
