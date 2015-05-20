@@ -15,37 +15,27 @@ public final class LineStyle {
      * Types de terminaisons des polylignes
      */
     public static enum LineCap {
-        Butt(BasicStroke.CAP_BUTT, "butt"),
-        Round(BasicStroke.CAP_ROUND, "round"),
-        Square(BasicStroke.CAP_SQUARE, "square");
+        Butt(BasicStroke.CAP_BUTT),
+        Round(BasicStroke.CAP_ROUND),
+        Square(BasicStroke.CAP_SQUARE);
 
         private final int awtCap;
-        private final String svgCap;
-        private LineCap (int awtCap, String svgCap) {
-            this.awtCap = awtCap;
-            this.svgCap = svgCap;
-        }
+        private LineCap (int awtCap) { this.awtCap = awtCap; }
 
         public int toAWTCap () { return this.awtCap; }
-        public String toSVGCap () { return this.svgCap; }
     }
     /**
      * Types de jointures des segments
      */
     public static enum LineJoin {
-        Bevel(BasicStroke.JOIN_BEVEL, "bevel"),
-        Miter(BasicStroke.JOIN_MITER, "miter"),
-        Round(BasicStroke.JOIN_ROUND, "round");
+        Bevel(BasicStroke.JOIN_BEVEL),
+        Miter(BasicStroke.JOIN_MITER),
+        Round(BasicStroke.JOIN_ROUND);
 
         private final int awtJoin;
-        private final String svgJoin;
-        private LineJoin (int awtJoin, String svgJoin) {
-            this.awtJoin = awtJoin;
-            this.svgJoin = svgJoin;
-        }
+        private LineJoin (int awtJoin) { this.awtJoin = awtJoin; }
 
         public int toAWTJoin () { return this.awtJoin; }
-        public String toSVGJoin () { return this.svgJoin; }
     }
    
     /** Type de terminaison de la ligne **/
