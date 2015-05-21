@@ -15,36 +15,46 @@ import ch.epfl.imhof.geometry.PolyLine;
 import ch.epfl.imhof.geometry.Polygon;
 
 /**
- * Mise en oeuvre concrète de toile qui dessine les primitives
- * qu'on lui demande de dessiner dans une image discrète.
+ * Mise en oeuvre concrète de toile qui dessine les primitives qu'on lui demande
+ * de dessiner dans une image discrète.
  * 
  * @author Thierry Treyer (235116)
  * @author Dominique Roduit (234868)
  *
  */
 public final class Java2DCanvas implements Canvas {
-    private final BufferedImage image;    
+    private final BufferedImage image;
     private final Graphics2D ctx;
 
     private final Function<Point, Point> transform;
-    
+
     /**
      * Construit une image de la toile
-     * @param bottomLeft Coin bas-gauche de la toile
-     * @param topRight Coin haut-droite de la toile
-     * @param width Largeur de l'image de la toile (en pixels)
-     * @param height Hauteur de l'image de la toile (en pixels)
-     * @param dpi Résolution de l'image de la toile (en points par pouce, dpi)
-     * @param bgColor Couleur de fond de la toile
+     * 
+     * @param bottomLeft
+     *            Coin bas-gauche de la toile
+     * @param topRight
+     *            Coin haut-droite de la toile
+     * @param width
+     *            Largeur de l'image de la toile (en pixels)
+     * @param height
+     *            Hauteur de l'image de la toile (en pixels)
+     * @param dpi
+     *            Résolution de l'image de la toile (en points par pouce, dpi)
+     * @param bgColor
+     *            Couleur de fond de la toile
      */
-    public Java2DCanvas(Point bottomLeft, Point topRight, int width, int height, int dpi, Color bgColor) {
+    public Java2DCanvas(Point bottomLeft, Point topRight, int width,
+            int height, int dpi, Color bgColor) {
         double pica = dpi / 72.0;
 
         Point canvasBottomLeft = new Point(0, height / pica);
-        Point canvasTopRight   = new Point(width / pica, 0);
-        this.transform = Point.alignedCoordinateChange(bottomLeft, canvasBottomLeft, topRight, canvasTopRight);
-        
-        this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Point canvasTopRight = new Point(width / pica, 0);
+        this.transform = Point.alignedCoordinateChange(bottomLeft,
+                canvasBottomLeft, topRight, canvasTopRight);
+
+        this.image = new BufferedImage(width, height,
+                BufferedImage.TYPE_INT_RGB);
         this.ctx = image.createGraphics();
 
         ctx.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
@@ -54,52 +64,52 @@ public final class Java2DCanvas implements Canvas {
 
         ctx.scale(pica, pica);
     }
-    
+
     @Override
     public void drawPolyline(PolyLine p, LineStyle style) {
         ctx.setColor(style.getColor().toAWTColor());
         ctx.setStroke(style.toAWTStroke());
-        
+
         ctx.draw(getPath(p));
     }
 
     @Override
     public void drawPolygon(Polygon p, Color c) {
         ctx.setColor(c.toAWTColor());
-        
+
         Area polygon = new Area(getPath(p.shell()));
-        for(ClosedPolyLine hole : p.holes())
+        for (ClosedPolyLine hole : p.holes())
             polygon.subtract(new Area(getPath(hole)));
 
         ctx.fill(polygon);
     }
-    
+
     /**
      * Retourne le chemin 2D de la polyligne passée en paramètre
-     * @param polyline Polyligne dont on veut obtenir le chemin 2D
+     * 
+     * @param polyline
+     *            Polyligne dont on veut obtenir le chemin 2D
      * @return Chemin 2D de la polyligne donnée
      */
     private Path2D getPath(PolyLine polyline) {
         Path2D path = new Path2D.Double();
-        
+
         /* Un PolyLine a toujours au moins un point */
         Point firstPoint = this.transform.apply(polyline.firstPoint());
         path.moveTo(firstPoint.x(), firstPoint.y());
 
-        polyline.points()
-            .stream()
-            .skip(1)
-            .map(this.transform)
-            .forEach( p -> path.lineTo(p.x(), p.y()) );
-        
+        polyline.points().stream().skip(1).map(this.transform)
+                .forEach(p -> path.lineTo(p.x(), p.y()));
+
         if (polyline.isClosed())
             path.closePath();
-        
+
         return path;
     }
-    
+
     /**
      * Permet d'obtenir l'image de la toile
+     * 
      * @return Image de la toile
      */
     public BufferedImage image() {

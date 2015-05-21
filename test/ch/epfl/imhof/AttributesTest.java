@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class AttributesTest {
 
-    private HashMap<String, String> sampleAttributesValues () {
+    private HashMap<String, String> sampleAttributesValues() {
         HashMap<String, String> testData = new HashMap<>();
         testData.put("testKey 1", "testValue 1");
         testData.put("testKey 2", "testValue 2");
@@ -20,7 +20,7 @@ public class AttributesTest {
     }
 
     @Test
-    public void constructorAndNonMutableAttributes () {
+    public void constructorAndNonMutableAttributes() {
         HashMap<String, String> testData = sampleAttributesValues();
         Attributes testAttributes = new Attributes(testData);
         testData.put("testKey 4", "testValue 4");
@@ -29,29 +29,30 @@ public class AttributesTest {
     }
 
     @Test
-    public void emptyAttributesIndication () {
+    public void emptyAttributesIndication() {
         Attributes testAttributes = new Attributes(new HashMap<>());
         assertTrue(testAttributes.isEmpty());
     }
 
     @Test
-    public void attributesIsEmptyWhenNotEmpty () {
+    public void attributesIsEmptyWhenNotEmpty() {
         HashMap<String, String> testData = sampleAttributesValues();
         Attributes testAttributes = new Attributes(testData);
         assertFalse(testAttributes.isEmpty());
     }
 
     @Test
-    public void containedKeys () {
+    public void containedKeys() {
         HashMap<String, String> testData = sampleAttributesValues();
         Attributes testAttributes = new Attributes(testData);
-        assertTrue(testAttributes.contains("testKey 1") && testAttributes.contains("testKey 2")
+        assertTrue(testAttributes.contains("testKey 1")
+                && testAttributes.contains("testKey 2")
                 && testAttributes.contains("testKey 3"));
         assertFalse(testAttributes.contains("testKey 4"));
     }
 
     @Test
-    public void getTheValue () {
+    public void getTheValue() {
         HashMap<String, String> testData = sampleAttributesValues();
         Attributes testAttributes = new Attributes(testData);
         assertEquals("testValue 1", testAttributes.get("testKey 1"));
@@ -61,7 +62,7 @@ public class AttributesTest {
     }
 
     @Test
-    public void getWhereNoSuch () {
+    public void getWhereNoSuch() {
         HashMap<String, String> testData = sampleAttributesValues();
         Attributes testAttributes = new Attributes(testData);
         assertEquals("testValue 1", testAttributes.get("testKey 1", "No Such"));
@@ -69,7 +70,7 @@ public class AttributesTest {
     }
 
     @Test
-    public void getIntFromString () {
+    public void getIntFromString() {
         HashMap<String, String> testData = new HashMap<>();
         testData.put("testKey 1", "-81");
         testData.put("testKey 2", "42");
@@ -84,7 +85,7 @@ public class AttributesTest {
     }
 
     @Test
-    public void builderBuilt () {
+    public void builderBuilt() {
         Attributes.Builder testBuild = new Attributes.Builder();
         testBuild.put("testKey 1", "testValue 1");
         testBuild.put("testKey 2", "testValue 2");
@@ -100,7 +101,7 @@ public class AttributesTest {
     }
 
     @Test
-    public void keysWithEmptySet () {
+    public void keysWithEmptySet() {
         HashMap<String, String> testData = sampleAttributesValues();
         Attributes testAttributes = new Attributes(testData);
         HashSet<String> keptKeys = new HashSet<>();
@@ -109,19 +110,20 @@ public class AttributesTest {
     }
 
     @Test
-    public void someKeysKeepingFromInitial () {
+    public void someKeysKeepingFromInitial() {
         HashMap<String, String> testData = sampleAttributesValues();
         Attributes testAttributes = new Attributes(testData);
         HashSet<String> keptKeys = new HashSet<>();
         keptKeys.add("testKey 1");
         keptKeys.add("testKey 3");
         Attributes testResult = testAttributes.keepOnlyKeys(keptKeys);
-        assertTrue(testResult.contains("testKey 1") && testResult.contains("testKey 3")
+        assertTrue(testResult.contains("testKey 1")
+                && testResult.contains("testKey 3")
                 && !testResult.contains("testKey 2"));
     }
 
     @Test
-    public void allKeysKeepingFromInitial () {
+    public void allKeysKeepingFromInitial() {
         HashMap<String, String> testData = sampleAttributesValues();
         Attributes testAttributes = new Attributes(testData);
         HashSet<String> keptKeys = new HashSet<>();
@@ -130,12 +132,14 @@ public class AttributesTest {
         keptKeys.add("testKey 3");
         keptKeys.add("testKey 4");
         Attributes testResult = testAttributes.keepOnlyKeys(keptKeys);
-        assertTrue(testResult.contains("testKey 1") && testResult.contains("testKey 2")
-                && testResult.contains("testKey 3") && !testResult.contains("testKey 4"));
+        assertTrue(testResult.contains("testKey 1")
+                && testResult.contains("testKey 2")
+                && testResult.contains("testKey 3")
+                && !testResult.contains("testKey 4"));
     }
 
     @Test
-    public void keysWithKeyNotInMap () {
+    public void keysWithKeyNotInMap() {
         HashMap<String, String> testData = sampleAttributesValues();
         Attributes testAttributes = new Attributes(testData);
         HashSet<String> keptKeys = new HashSet<>();

@@ -71,7 +71,8 @@ public final class OSMWay extends OSMEntity {
         if (!this.isClosed())
             return this.nodes;
         else
-            return Collections.unmodifiableList(this.nodes.subList(0, nodesCount()-1));
+            return Collections.unmodifiableList(this.nodes.subList(0,
+                    nodesCount() - 1));
     }
 
     /**

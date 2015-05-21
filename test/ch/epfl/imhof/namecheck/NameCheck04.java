@@ -16,7 +16,7 @@ import ch.epfl.imhof.osm.OSMWay;
 public class NameCheck04 {
     @Test
     @Ignore
-    public void useAllStage04Names () {
+    public void useAllStage04Names() {
         // OSMEntity and OSMEntity.Builder
         OSMEntity e = Collections.<OSMEntity> emptyList().get(0);
         long l = e.id();
@@ -24,7 +24,8 @@ public class NameCheck04 {
         boolean b = e.hasAttribute("");
         String s = e.attributeValue("");
 
-        OSMEntity.Builder eb = Collections.<OSMEntity.Builder> emptyList().get(0);
+        OSMEntity.Builder eb = Collections.<OSMEntity.Builder> emptyList().get(
+                0);
         eb.setAttribute(s, s);
         eb.setIncomplete();
         b = eb.isIncomplete();

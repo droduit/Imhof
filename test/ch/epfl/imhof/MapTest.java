@@ -18,7 +18,7 @@ import ch.epfl.imhof.testUtilities.ListNonMutableTestUtility;
 
 public class MapTest {
 
-    private HashMap<String, String> sampleAttributesValues () {
+    private HashMap<String, String> sampleAttributesValues() {
         HashMap<String, String> testData = new HashMap<>();
         testData.put("testKey 1", "testValue 1");
         testData.put("testKey 2", "testValue 2");
@@ -27,7 +27,7 @@ public class MapTest {
     }
 
     @Test
-    public void constructorAndPolylinesListNonModifiable () {
+    public void constructorAndPolylinesListNonModifiable() {
         List<Attributed<PolyLine>> testAttributedPolyLineList = new ArrayList<>();
         List<Point> testPolyLine1PointList = new ArrayList<>();
         Point testPoint1 = new Point(0.125621, 0.803253);
@@ -36,10 +36,11 @@ public class MapTest {
         testPolyLine1PointList.add(testPoint2);
         Point testPoint3 = new Point(0.130156, 0.806719);
         testPolyLine1PointList.add(testPoint3);
-        ClosedPolyLine testPolyLine1 = new ClosedPolyLine(testPolyLine1PointList);
+        ClosedPolyLine testPolyLine1 = new ClosedPolyLine(
+                testPolyLine1PointList);
         Attributes testAttributes1 = new Attributes(sampleAttributesValues());
-        Attributed<PolyLine> testAttributedPolyLine1 = new Attributed<>(testPolyLine1,
-                testAttributes1);
+        Attributed<PolyLine> testAttributedPolyLine1 = new Attributed<>(
+                testPolyLine1, testAttributes1);
         testAttributedPolyLineList.add(testAttributedPolyLine1);
         List<Point> testPolyLine2PointList = new ArrayList<>();
         Point testPoint4 = new Point(0.124291, 0.802579);
@@ -48,18 +49,20 @@ public class MapTest {
         testPolyLine2PointList.add(testPoint5);
         Point testPoint6 = new Point(0.110721, 0.810231);
         testPolyLine2PointList.add(testPoint6);
-        ClosedPolyLine testPolyLine2 = new ClosedPolyLine(testPolyLine2PointList);
+        ClosedPolyLine testPolyLine2 = new ClosedPolyLine(
+                testPolyLine2PointList);
         Attributes testAttributes2 = new Attributes(sampleAttributesValues());
-        Attributed<PolyLine> testAttributedPolyLine2 = new Attributed<>(testPolyLine2,
-                testAttributes2);
+        Attributed<PolyLine> testAttributedPolyLine2 = new Attributed<>(
+                testPolyLine2, testAttributes2);
         testAttributedPolyLineList.add(testAttributedPolyLine2);
-        Map testMap = new Map(testAttributedPolyLineList, new ArrayList<Attributed<Polygon>>());
-        assertTrue(ListNonMutableTestUtility.nonMutableFieldListTest(testAttributedPolyLineList,
-                testMap.polyLines()));
+        Map testMap = new Map(testAttributedPolyLineList,
+                new ArrayList<Attributed<Polygon>>());
+        assertTrue(ListNonMutableTestUtility.nonMutableFieldListTest(
+                testAttributedPolyLineList, testMap.polyLines()));
     }
 
     @Test
-    public void constructorAndPolygonsListNonModifiable () {
+    public void constructorAndPolygonsListNonModifiable() {
         List<Attributed<Polygon>> testAttributedPolygonList = new ArrayList<>();
         List<Point> testPolygon1ShellPointList = new ArrayList<>();
         Point testPoint1 = new Point(0.125621, 0.803253);
@@ -68,10 +71,12 @@ public class MapTest {
         testPolygon1ShellPointList.add(testPoint2);
         Point testPoint3 = new Point(0.130156, 0.806719);
         testPolygon1ShellPointList.add(testPoint3);
-        ClosedPolyLine testPolygon1Shell = new ClosedPolyLine(testPolygon1ShellPointList);
+        ClosedPolyLine testPolygon1Shell = new ClosedPolyLine(
+                testPolygon1ShellPointList);
         Polygon testPolygon1 = new Polygon(testPolygon1Shell);
         Attributes testAttributes1 = new Attributes(sampleAttributesValues());
-        Attributed<Polygon> testAttributedPolygon1 = new Attributed<>(testPolygon1, testAttributes1);
+        Attributed<Polygon> testAttributedPolygon1 = new Attributed<>(
+                testPolygon1, testAttributes1);
         testAttributedPolygonList.add(testAttributedPolygon1);
         List<Point> testPolygon2ShellPointList = new ArrayList<>();
         Point testPoint4 = new Point(0.124291, 0.802579);
@@ -80,7 +85,8 @@ public class MapTest {
         testPolygon2ShellPointList.add(testPoint5);
         Point testPoint6 = new Point(0.110721, 0.810231);
         testPolygon2ShellPointList.add(testPoint6);
-        ClosedPolyLine testPolygon2Shell = new ClosedPolyLine(testPolygon2ShellPointList);
+        ClosedPolyLine testPolygon2Shell = new ClosedPolyLine(
+                testPolygon2ShellPointList);
         List<ClosedPolyLine> testPolygon2HolesList = new ArrayList<>();
         List<Point> testPolygon2Hole1PointList = new ArrayList<>();
         Point testPoint7 = new Point(0.121372, 0.803053);
@@ -89,19 +95,23 @@ public class MapTest {
         testPolygon2Hole1PointList.add(testPoint8);
         Point testPoint9 = new Point(0.111121, 0.806132);
         testPolygon2Hole1PointList.add(testPoint9);
-        ClosedPolyLine testPolygon2Hole1 = new ClosedPolyLine(testPolygon2Hole1PointList);
+        ClosedPolyLine testPolygon2Hole1 = new ClosedPolyLine(
+                testPolygon2Hole1PointList);
         testPolygon2HolesList.add(testPolygon2Hole1);
-        Polygon testPolygon2 = new Polygon(testPolygon2Shell, testPolygon2HolesList);
+        Polygon testPolygon2 = new Polygon(testPolygon2Shell,
+                testPolygon2HolesList);
         Attributes testAttributes2 = new Attributes(sampleAttributesValues());
-        Attributed<Polygon> testAttributedPolygon2 = new Attributed<>(testPolygon2, testAttributes2);
+        Attributed<Polygon> testAttributedPolygon2 = new Attributed<>(
+                testPolygon2, testAttributes2);
         testAttributedPolygonList.add(testAttributedPolygon2);
-        Map testMap = new Map(new ArrayList<Attributed<PolyLine>>(), testAttributedPolygonList);
-        assertTrue(ListNonMutableTestUtility.nonMutableFieldListTest(testAttributedPolygonList,
-                testMap.polygons()));
+        Map testMap = new Map(new ArrayList<Attributed<PolyLine>>(),
+                testAttributedPolygonList);
+        assertTrue(ListNonMutableTestUtility.nonMutableFieldListTest(
+                testAttributedPolygonList, testMap.polygons()));
     }
 
     @Test
-    public void builder () {
+    public void builder() {
         Attributes attributes = new Attributes(sampleAttributesValues());
         PolyLine.Builder polyLineBuilder = new PolyLine.Builder();
         polyLineBuilder.addPoint(new Point(0.123456, 0.654321));
@@ -118,9 +128,10 @@ public class MapTest {
         holeBuilder.addPoint(new Point(0.121372, 0.803053));
         holeBuilder.addPoint(new Point(0.112691, 0.802201));
         holeBuilder.addPoint(new Point(0.111121, 0.806132));
-        Polygon polygon = new Polygon(shellBuilder.buildClosed(), Arrays.asList(holeBuilder
-                .buildClosed()));
-        Attributed<Polygon> attributedPolygon = new Attributed<>(polygon, attributes);
+        Polygon polygon = new Polygon(shellBuilder.buildClosed(),
+                Arrays.asList(holeBuilder.buildClosed()));
+        Attributed<Polygon> attributedPolygon = new Attributed<>(polygon,
+                attributes);
 
         Map.Builder mapBuilder = new Map.Builder();
         mapBuilder.addPolyLine(attributedPolyLine);

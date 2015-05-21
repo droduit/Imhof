@@ -11,7 +11,9 @@ import static ch.epfl.imhof.painting.LineStyle.LineCap;
 import static ch.epfl.imhof.painting.LineStyle.LineJoin;
 
 /**
- * Cette classe permet de générer un peintre pour le réseau routier (les routes, les ponts, les tunnels)
+ * Cette classe permet de générer un peintre pour le réseau routier (les routes,
+ * les ponts, les tunnels)
+ * 
  * @author Thierry Treyer (235116)
  * @author Dominique Roduit (234868)
  *
@@ -19,13 +21,16 @@ import static ch.epfl.imhof.painting.LineStyle.LineJoin;
 public final class RoadPainterGenerator {
     private static final String OSM_BRIDGE = "bridge";
     private static final String OSM_TUNNEL = "tunnel";
-    
-    private RoadPainterGenerator() { 
+
+    private RoadPainterGenerator() {
     }
-    
+
     /**
      * Retourne un peintre pour le reseau routier spécifié par le filtre
-     * @param specs Spécifications de route décrivant le dessin des types de routes données
+     * 
+     * @param specs
+     *            Spécifications de route décrivant le dessin des types de
+     *            routes données
      * @return Peintre pour le réseau routier correspondant au filtre
      */
     public static Painter painterForRoads(RoadSpec... specs) {
@@ -47,20 +52,15 @@ public final class RoadPainterGenerator {
         }
 
         // On "aplatit" les specs
-        return painters
-            .stream()
-            .map(
-                // On "aplatit" les layers du specs
-                ls ->
-                  ls.stream()
-                    .reduce(Painter::above)
-                    .get() )
-            .reduce(Painter::above)
-            .get();
+        return painters.stream().map(
+        // On "aplatit" les layers du specs
+                ls -> ls.stream().reduce(Painter::above).get())
+                .reduce(Painter::above).get();
     }
 
     /**
      * Spécification de route qui décrit le dessin d'un type de route donné.
+     * 
      * @author Thierry Treyer (235116)
      * @author Dominique Roduit (234868)
      *
@@ -76,13 +76,20 @@ public final class RoadPainterGenerator {
 
         /**
          * Construit une spécification de route
-         * @param filter Filtre permettant de sélectionner le type de route donné
-         * @param innerWidth Largeur du trait de l'interieur
-         * @param innerColor Couleur du trait de l'intérieur
-         * @param castingWidth Largeur du trait de la bordure
-         * @param castingColor Couleur du trait de la bordure
+         * 
+         * @param filter
+         *            Filtre permettant de sélectionner le type de route donné
+         * @param innerWidth
+         *            Largeur du trait de l'interieur
+         * @param innerColor
+         *            Couleur du trait de l'intérieur
+         * @param castingWidth
+         *            Largeur du trait de la bordure
+         * @param castingColor
+         *            Couleur du trait de la bordure
          */
-        public RoadSpec(Predicate<Attributed<?>> filter, float innerWidth, Color innerColor, float castingWidth, Color castingColor) {
+        public RoadSpec(Predicate<Attributed<?>> filter, float innerWidth,
+                Color innerColor, float castingWidth, Color castingColor) {
             this.filter = filter;
 
             this.innerWidth = innerWidth;
@@ -92,53 +99,69 @@ public final class RoadPainterGenerator {
             this.castingColor = castingColor;
         }
 
-        private float outlineWidth () { return this.innerWidth + 2f * this.castingWidth; }
-        private float tunnelWidth () { return this.innerWidth / 2f; }
-        private float[] tunnelPattern () { return new float[]{ 2f * this.innerWidth, 2f * this.innerWidth }; }
+        private float outlineWidth() {
+            return this.innerWidth + 2f * this.castingWidth;
+        }
+
+        private float tunnelWidth() {
+            return this.innerWidth / 2f;
+        }
+
+        private float[] tunnelPattern() {
+            return new float[] { 2f * this.innerWidth, 2f * this.innerWidth };
+        }
 
         /**
-         * @return Peintre pour l'intérieur des ponts 
+         * @return Peintre pour l'intérieur des ponts
          */
-        public Painter innerBridgePainter () {
+        public Painter innerBridgePainter() {
             return Painter.line(
-                    new LineStyle(LineCap.Round, LineJoin.Round, this.innerColor, this.innerWidth, null))
-                .when(this.filter.and(tagged(OSM_BRIDGE)));
+                    new LineStyle(LineCap.Round, LineJoin.Round,
+                            this.innerColor, this.innerWidth, null)).when(
+                    this.filter.and(tagged(OSM_BRIDGE)));
         }
 
         /**
          * @return Peintre pour la bordure des ponts
          */
-        public Painter castingBridgePainter () {
+        public Painter castingBridgePainter() {
             return Painter.line(
-                    new LineStyle(LineCap.Butt, LineJoin.Round, this.castingColor, this.outlineWidth(), null))
-                .when(this.filter.and(tagged(OSM_BRIDGE)));
+                    new LineStyle(LineCap.Butt, LineJoin.Round,
+                            this.castingColor, this.outlineWidth(), null))
+                    .when(this.filter.and(tagged(OSM_BRIDGE)));
         }
 
         /**
          * @return Peintre pour l'intérieur des routes
          */
-        public Painter innerRoadPainter () {
+        public Painter innerRoadPainter() {
             return Painter.line(
-                    new LineStyle(LineCap.Round, LineJoin.Round, this.innerColor, this.innerWidth, null))
-                .when(this.filter.and(notTagged(OSM_BRIDGE)).and(notTagged(OSM_TUNNEL)));
+                    new LineStyle(LineCap.Round, LineJoin.Round,
+                            this.innerColor, this.innerWidth, null)).when(
+                    this.filter.and(notTagged(OSM_BRIDGE)).and(
+                            notTagged(OSM_TUNNEL)));
         }
 
         /**
          * @return Peintre pour le bord des routes
          */
-        public Painter castingRoadPainter () {
+        public Painter castingRoadPainter() {
             return Painter.line(
-                    new LineStyle(LineCap.Round, LineJoin.Round, this.castingColor, this.outlineWidth(), null))
-                .when(this.filter.and(notTagged(OSM_BRIDGE)).and(notTagged(OSM_TUNNEL)));
+                    new LineStyle(LineCap.Round, LineJoin.Round,
+                            this.castingColor, this.outlineWidth(), null))
+                    .when(this.filter.and(notTagged(OSM_BRIDGE)).and(
+                            notTagged(OSM_TUNNEL)));
         }
 
         /**
          * @return Peintre pour les tunnels
          */
-        public Painter tunnelPainter () {
+        public Painter tunnelPainter() {
             return Painter.line(
-                    new LineStyle(LineCap.Butt, LineJoin.Round, this.castingColor, this.tunnelWidth(), this.tunnelPattern()))
-                .when(this.filter.and(tagged(OSM_TUNNEL)));
+                    new LineStyle(LineCap.Butt, LineJoin.Round,
+                            this.castingColor, this.tunnelWidth(), this
+                                    .tunnelPattern())).when(
+                    this.filter.and(tagged(OSM_TUNNEL)));
         }
     }
 }

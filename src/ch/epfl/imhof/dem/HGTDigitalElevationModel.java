@@ -13,6 +13,7 @@ import ch.epfl.imhof.Vector3;
 
 /**
  * Représentation d'un fichier HGT en MNT
+ * 
  * @author Thierry Treyer (235116)
  * @author Dominique Roduit (234868)
  *
@@ -26,31 +27,37 @@ public final class HGTDigitalElevationModel implements DigitalElevationModel {
     private final FileInputStream input;
 
     private ShortBuffer buffer;
-    
+
     /**
      * 
-     * @param file Fichier HGT à lire
-     * @throws IOException S'il y a des erreurs d'entrées/sorties
-     * @throws IllegalArgumentException Si la taille du fichier n'est pas valide ou la convention de nommage des fichiers HGT n'est pas respectée
+     * @param file
+     *            Fichier HGT à lire
+     * @throws IOException
+     *             S'il y a des erreurs d'entrées/sorties
+     * @throws IllegalArgumentException
+     *             Si la taille du fichier n'est pas valide ou la convention de
+     *             nommage des fichiers HGT n'est pas respectée
      */
     public HGTDigitalElevationModel(File file) throws IOException {
         long length = file.length();
         long pointsCount = length / 2;
 
-        this.sideSize = (long)Math.sqrt(pointsCount);
+        this.sideSize = (long) Math.sqrt(pointsCount);
 
         if (2 * sideSize * sideSize != length)
-           throw new IllegalArgumentException("La taille du fichier n'est pas valide");
-        
+            throw new IllegalArgumentException(
+                    "La taille du fichier n'est pas valide");
+
         this.delta = Math.toRadians(1d / (sideSize - 1));
-        
-        Matcher m = Pattern
-            .compile("^([NS]{1})(\\d{2})([EW]{1})(\\d{3})\\.hgt$")
-            .matcher(file.getName());
-        
+
+        Matcher m = Pattern.compile(
+                "^([NS]{1})(\\d{2})([EW]{1})(\\d{3})\\.hgt$").matcher(
+                file.getName());
+
         if (!m.matches())
-            throw new IllegalArgumentException("La convention de nommage n'est pas respectée");
-         
+            throw new IllegalArgumentException(
+                    "La convention de nommage n'est pas respectée");
+
         int lat = Integer.parseInt(m.group(2));
         if (m.group(1).equals("S"))
             lat = -lat;
@@ -59,17 +66,13 @@ public final class HGTDigitalElevationModel implements DigitalElevationModel {
         if (m.group(3).equals("W"))
             lon = -lon;
 
-        this.origin = new PointGeo(
-                Math.toRadians(lon),
-                Math.toRadians(lat));
+        this.origin = new PointGeo(Math.toRadians(lon), Math.toRadians(lat));
 
         this.input = new FileInputStream(file);
-        this.buffer = this.input
-            .getChannel()
-            .map(MapMode.READ_ONLY, 0, length)
-            .asShortBuffer();
+        this.buffer = this.input.getChannel().map(MapMode.READ_ONLY, 0, length)
+                .asShortBuffer();
     }
-    
+
     @Override
     public void close() throws IOException {
         this.buffer = null;
@@ -77,31 +80,41 @@ public final class HGTDigitalElevationModel implements DigitalElevationModel {
     }
 
     /**
-     * Contrôle que le point donné se trouve à l'intérieur de la zone couverte du MNT
-     * @param p Point dont on veut vérifier s'il se trouve à l'intérieur de la zone couverte
-     * @return true si le point se trouve à l'intérieur de la zone couvere par le MNT
+     * Contrôle que le point donné se trouve à l'intérieur de la zone couverte
+     * du MNT
+     * 
+     * @param p
+     *            Point dont on veut vérifier s'il se trouve à l'intérieur de la
+     *            zone couverte
+     * @return true si le point se trouve à l'intérieur de la zone couvere par
+     *         le MNT
      */
-    private boolean isInside (PointGeo p) {
-        return
-            p.latitude() >= this.origin.latitude() &&
-            p.latitude() <= this.origin.latitude() + ARC &&
-            p.longitude() >= this.origin.longitude() &&
-            p.longitude() <= this.origin.longitude() + ARC;
+    private boolean isInside(PointGeo p) {
+        return p.latitude() >= this.origin.latitude()
+                && p.latitude() <= this.origin.latitude() + ARC
+                && p.longitude() >= this.origin.longitude()
+                && p.longitude() <= this.origin.longitude() + ARC;
     }
 
     @Override
     public Vector3 normalAt(PointGeo point) {
         if (!this.isInside(point))
             throw new IllegalArgumentException(
-                    String.format("Le point (%.4f, %.4f) est en dehors de cette zone MNT [%d, %d] [%d, %d]",
-                        Math.toDegrees(point.longitude()), Math.toDegrees(point.latitude()),
-                        (int)Math.toDegrees(this.origin.longitude()), (int)Math.toDegrees(this.origin.longitude()) + 1,
-                        (int)Math.toDegrees(this.origin.latitude()), (int)Math.toDegrees(this.origin.latitude()) + 1
-                        ));
+                    String.format(
+                            "Le point (%.4f, %.4f) est en dehors de cette zone MNT [%d, %d] [%d, %d]",
+                            Math.toDegrees(point.longitude()),
+                            Math.toDegrees(point.latitude()),
+                            (int) Math.toDegrees(this.origin.longitude()),
+                            (int) Math.toDegrees(this.origin.longitude()) + 1,
+                            (int) Math.toDegrees(this.origin.latitude()),
+                            (int) Math.toDegrees(this.origin.latitude()) + 1));
 
-        int ss = (int)this.sideSize;
-        int px =      (int)Math.floor((point.longitude() - this.origin.longitude()) / this.delta);
-        int py = ss - (int)Math.ceil ((point.latitude()  - this.origin.latitude())  / this.delta);
+        int ss = (int) this.sideSize;
+        int px = (int) Math.floor((point.longitude() - this.origin.longitude())
+                / this.delta);
+        int py = ss
+                - (int) Math.ceil((point.latitude() - this.origin.latitude())
+                        / this.delta);
 
         double z1 = this.buffer.get(ss * py + px);
         double z2 = this.buffer.get(ss * py + px + 1);
@@ -112,12 +125,9 @@ public final class HGTDigitalElevationModel implements DigitalElevationModel {
         double dzb = z3 - z1;
         double dzc = z3 - z4;
         double dzd = z2 - z4;
-        
+
         double s = this.delta * Earth.RADIUS;
-        return new Vector3(
-            0.5 * s * (dzc - dza),
-            0.5 * s * (dzd - dzb),
-            s * s
-        ).normalized();
+        return new Vector3(0.5 * s * (dzc - dza), 0.5 * s * (dzd - dzb), s * s)
+                .normalized();
     }
 }

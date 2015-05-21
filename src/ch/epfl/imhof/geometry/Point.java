@@ -45,23 +45,31 @@ public final class Point {
     }
 
     /**
-     * Retourne le changement de repère étant donnés deux paires de points dans 2 repères différents
-     * @param p1a Point 1 dans le repère a
-     * @param p2a Point 2 dans le repère a
-     * @param p1b Point 1 dans le repère b
-     * @param p2b Point 2 dans le repère b
+     * Retourne le changement de repère étant donnés deux paires de points dans
+     * 2 repères différents
+     * 
+     * @param p1a
+     *            Point 1 dans le repère a
+     * @param p2a
+     *            Point 2 dans le repère a
+     * @param p1b
+     *            Point 1 dans le repère b
+     * @param p2b
+     *            Point 2 dans le repère b
      * @return Changement de repère correspondant
      */
-    public static Function<Point, Point> alignedCoordinateChange(Point p1a, Point p1b, Point p2a, Point p2b) {
-        if(p1a.x() == p2a.x() || p1a.y() == p2a.y())
-            throw new IllegalArgumentException("Le point 1 et 2 sont alignés. Il est donc impossible de définir un changement de repère");
-        
-        double ax = (p1b.x-p2b.x)/(p1a.x-p2a.x);
-        double bx = (p1a.x*p2b.x-p2a.x*p1b.x)/(p1a.x-p2a.x);
-        
-        double ay = (p1b.y-p2b.y)/(p1a.y-p2a.y);
-        double by = (p1a.y*p2b.y-p2a.y*p1b.y)/(p1a.y-p2a.y);
-        
-        return (p) -> new Point(ax*p.x+bx, ay*p.y+by);
+    public static Function<Point, Point> alignedCoordinateChange(Point p1a,
+            Point p1b, Point p2a, Point p2b) {
+        if (p1a.x() == p2a.x() || p1a.y() == p2a.y())
+            throw new IllegalArgumentException(
+                    "Le point 1 et 2 sont alignés. Il est donc impossible de définir un changement de repère");
+
+        double ax = (p1b.x - p2b.x) / (p1a.x - p2a.x);
+        double bx = (p1a.x * p2b.x - p2a.x * p1b.x) / (p1a.x - p2a.x);
+
+        double ay = (p1b.y - p2b.y) / (p1a.y - p2a.y);
+        double by = (p1a.y * p2b.y - p2a.y * p1b.y) / (p1a.y - p2a.y);
+
+        return (p) -> new Point(ax * p.x + bx, ay * p.y + by);
     }
 }

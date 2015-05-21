@@ -37,7 +37,9 @@ public final class OSMMapReader {
      */
     public static final class OSMMapReaderHandler extends DefaultHandler {
         private Deque<Entity> entities = new ArrayDeque<>(16);
-        /* ^ Le Handler utilise une pile pour stocker les balises ouvertes au
+
+        /*
+         * ^ Le Handler utilise une pile pour stocker les balises ouvertes au
          * fur et à mesure de la lecture du fichier XML. Les balises sont
          * retirées de la pile à leur fermeture.
          */
@@ -257,7 +259,8 @@ public final class OSMMapReader {
          * @throws IllegalStateException
          *             Si le bâtisseur parent n'est pas du type RELATION
          */
-        private void addRelationMember(org.xml.sax.Attributes attr) throws SAXException {
+        private void addRelationMember(org.xml.sax.Attributes attr)
+                throws SAXException {
             long ref = Long.parseLong(attr.getValue("ref"));
             OSMRelation.Member.Type type = OSMRelation.Member.Type.valueOf(attr
                     .getValue("type").toUpperCase());

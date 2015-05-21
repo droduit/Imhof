@@ -11,30 +11,42 @@ public class CH1903ProjectionTest {
     private static final double DELTA = 0.000001;
 
     @Test
-    public void projectProducesTheRightValues () {
+    public void projectProducesTheRightValues() {
         Projection p = new CH1903Projection();
         // Musée Olympique à Lausanne ( 6.634088, 46.508732 )
-        assertEquals(538249.192648, p.project(new PointGeo(0.115786678, 0.811730504)).x(), DELTA);
-        assertEquals(151142.504634, p.project(new PointGeo(0.115786678, 0.811730504)).y(), DELTA);
+        assertEquals(538249.192648,
+                p.project(new PointGeo(0.115786678, 0.811730504)).x(), DELTA);
+        assertEquals(151142.504634,
+                p.project(new PointGeo(0.115786678, 0.811730504)).y(), DELTA);
         // Fosse aux ours de Berne ( 7.4600062, 46.947973 )
-        assertEquals(601627.169584, p.project(new PointGeo(0.13020167, 0.819396706)).x(), DELTA);
-        assertEquals(199654.501720, p.project(new PointGeo(0.13020167, 0.819396706)).y(), DELTA);
+        assertEquals(601627.169584,
+                p.project(new PointGeo(0.13020167, 0.819396706)).x(), DELTA);
+        assertEquals(199654.501720,
+                p.project(new PointGeo(0.13020167, 0.819396706)).y(), DELTA);
         // Swissminiatur à Lugano ( 8.9431137, 45.9444981 )
-        assertEquals(716668.533051, p.project(new PointGeo(0.156086779, 0.801882765)).x(), DELTA);
-        assertEquals(89219.439903, p.project(new PointGeo(0.156086779, 0.801882765)).y(), DELTA);
+        assertEquals(716668.533051,
+                p.project(new PointGeo(0.156086779, 0.801882765)).x(), DELTA);
+        assertEquals(89219.439903,
+                p.project(new PointGeo(0.156086779, 0.801882765)).y(), DELTA);
         // QG de la FIFA à Zurich ( 8.5749969, 47.3816222 )
-        assertEquals(685810.833124, p.project(new PointGeo(0.149661929, 0.826965312)).x(), DELTA);
-        assertEquals(248486.441073, p.project(new PointGeo(0.149661929, 0.826965312)).y(), DELTA);
+        assertEquals(685810.833124,
+                p.project(new PointGeo(0.149661929, 0.826965312)).x(), DELTA);
+        assertEquals(248486.441073,
+                p.project(new PointGeo(0.149661929, 0.826965312)).y(), DELTA);
         // Cathédrale de Bâle ( 7.592443, 47.556462 )
-        assertEquals(611577.774979, p.project(new PointGeo(0.132513129, 0.830016842)).x(), DELTA);
-        assertEquals(267316.611467, p.project(new PointGeo(0.132513129, 0.830016842)).y(), DELTA);
+        assertEquals(611577.774979,
+                p.project(new PointGeo(0.132513129, 0.830016842)).x(), DELTA);
+        assertEquals(267316.611467,
+                p.project(new PointGeo(0.132513129, 0.830016842)).y(), DELTA);
         // Exemple du document ( 8° 43' 49.79", 46° 2' 38.87" )
-        assertEquals(700108.820134, p.project(new PointGeo(0.1524, 0.8036)).x(), DELTA);
-        assertEquals(99863.666660, p.project(new PointGeo(0.1524, 0.8036)).y(), DELTA);
+        assertEquals(700108.820134,
+                p.project(new PointGeo(0.1524, 0.8036)).x(), DELTA);
+        assertEquals(99863.666660, p.project(new PointGeo(0.1524, 0.8036)).y(),
+                DELTA);
     }
 
     @Test
-    public void inverseProducesTheRightValues () {
+    public void inverseProducesTheRightValues() {
         Projection p = new CH1903Projection();
         // Musée Olympique à Lausanne ( 6.634088, 46.508732 )
         Point projectionM = p.project(new PointGeo(0.115786678, 0.811730504));

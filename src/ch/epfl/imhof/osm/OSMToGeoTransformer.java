@@ -30,8 +30,8 @@ public final class OSMToGeoTransformer {
     private static final String TYPE_MULTIPOLYGON = "multipolygon";
 
     private static final String AREA_KEY = "area";
-    private static final Set<String> AREA_VALUES = new HashSet<>(Arrays.asList("yes",
-            "1", "true"));
+    private static final Set<String> AREA_VALUES = new HashSet<>(Arrays.asList(
+            "yes", "1", "true"));
 
     private static final Set<String> AREA_ATTRS = new HashSet<>(Arrays.asList(
             "aeroway", "amenity", "building", "harbour", "historic", "landuse",
@@ -238,7 +238,8 @@ public final class OSMToGeoTransformer {
                 builder.addPoint(this.projection.project(current.position()));
             } while ((current = this.pickUnvisitedNode(
                     graph.neighborsOf(current), visitedNodes)) != null);
-            /* ^ On parcours successivement les noeuds de l'anneau en
+            /*
+             * ^ On parcours successivement les noeuds de l'anneau en
              * sélectionnant un voisin non-visité du noeud courant
              */
 
@@ -295,7 +296,8 @@ public final class OSMToGeoTransformer {
         for (ClosedPolyLine outer : outers)
             rawPolygons.put(outer, new LinkedList<>());
 
-        Collections.sort(outers, (p1, p2) -> Double.compare(p1.area(), p2.area()) );
+        Collections.sort(outers,
+                (p1, p2) -> Double.compare(p1.area(), p2.area()));
 
         for (ClosedPolyLine inner : inners) {
             ClosedPolyLine container = null;

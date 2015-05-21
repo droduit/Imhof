@@ -12,19 +12,19 @@ import org.junit.Test;
 public class ClosedPolyLineTest extends PolyLineTest {
 
     @Override
-    PolyLine newPolyLine (List<Point> ps) {
+    PolyLine newPolyLine(List<Point> ps) {
         return new ClosedPolyLine(ps);
     }
 
     @Test
-    public void closedPolyLineIsClosed () {
+    public void closedPolyLineIsClosed() {
         for (List<Point> lpt : pts) {
             assertTrue(new ClosedPolyLine(lpt).isClosed());
         }
     }
 
     @Test
-    public void builderCorrectlyBuildsClosedPolyLine () {
+    public void builderCorrectlyBuildsClosedPolyLine() {
         for (List<Point> lpt : pts) {
             PolyLine.Builder b = new PolyLine.Builder();
             for (Point p : lpt)
@@ -36,7 +36,7 @@ public class ClosedPolyLineTest extends PolyLineTest {
     }
 
     @Test
-    public void areaWorksWithSinglePoint () {
+    public void areaWorksWithSinglePoint() {
         ClosedPolyLine l = new ClosedPolyLine(Arrays.asList(new Point(2, 3)));
         assertEquals(0, l.area(), DELTA);
 
@@ -48,7 +48,7 @@ public class ClosedPolyLineTest extends PolyLineTest {
     }
 
     @Test
-    public void areaWorksWithTriangle () {
+    public void areaWorksWithTriangle() {
         ClosedPolyLine l = new ClosedPolyLine(ptsTriangle);
         assertEquals(0.5, l.area(), DELTA);
 
@@ -57,7 +57,7 @@ public class ClosedPolyLineTest extends PolyLineTest {
     }
 
     @Test
-    public void areaWorksWithUnitSquare () {
+    public void areaWorksWithUnitSquare() {
         ClosedPolyLine l = new ClosedPolyLine(ptsUnitSquare);
         assertEquals(1, l.area(), DELTA);
 
@@ -66,7 +66,7 @@ public class ClosedPolyLineTest extends PolyLineTest {
     }
 
     @Test
-    public void areaWorksWithPolygon () {
+    public void areaWorksWithPolygon() {
         ClosedPolyLine l = new ClosedPolyLine(ptsPolygon);
         assertEquals(84, l.area(), DELTA);
 
@@ -75,7 +75,7 @@ public class ClosedPolyLineTest extends PolyLineTest {
     }
 
     @Test
-    public void containsPointWorksWithSinglePoint () {
+    public void containsPointWorksWithSinglePoint() {
         Point p = new Point(2, 3);
         ClosedPolyLine l = new ClosedPolyLine(Arrays.asList(p));
         assertFalse(l.containsPoint(p));
@@ -90,7 +90,7 @@ public class ClosedPolyLineTest extends PolyLineTest {
     }
 
     @Test
-    public void containsPointWorksWithTriangle () {
+    public void containsPointWorksWithTriangle() {
         ClosedPolyLine l = new ClosedPolyLine(ptsTriangle);
         assertTrue(l.containsPoint(new Point(36.2, 54.3)));
         assertFalse(l.containsPoint(new Point(33, 54.3)));
@@ -101,7 +101,7 @@ public class ClosedPolyLineTest extends PolyLineTest {
     }
 
     @Test
-    public void containsPointWorksWithRectangle () {
+    public void containsPointWorksWithRectangle() {
         ClosedPolyLine l = new ClosedPolyLine(ptsRectangle);
         assertTrue(l.containsPoint(new Point(42, 58)));
         assertFalse(l.containsPoint(new Point(0, 54)));
@@ -112,7 +112,7 @@ public class ClosedPolyLineTest extends PolyLineTest {
     }
 
     @Test
-    public void containsPointWorksWithPolygon () {
+    public void containsPointWorksWithPolygon() {
         ClosedPolyLine l = new ClosedPolyLine(ptsPolygon);
         assertTrue(l.containsPoint(new Point(35, 56)));
         assertFalse(l.containsPoint(new Point(33, 51)));

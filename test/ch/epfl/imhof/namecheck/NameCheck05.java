@@ -20,7 +20,7 @@ import ch.epfl.imhof.osm.OSMWay;
 public class NameCheck05 {
     @Test
     @Ignore
-    public void useAllStage05Names () throws SAXException, IOException {
+    public void useAllStage05Names() throws SAXException, IOException {
         // OSMMapReader, OSMMap, OSMMap.Builder
         OSMMap m1 = OSMMapReader.readOSMFile("", false);
         Collection<OSMWay> cw = Collections.emptyList();
