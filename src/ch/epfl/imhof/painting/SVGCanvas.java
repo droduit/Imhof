@@ -47,7 +47,7 @@ import javax.xml.transform.stream.StreamResult;
  * @author Thierry Treyer (235116)
  * @author Dominique Roduit (234868)
  */
-public class SVGCanvas implements Canvas {
+public final class SVGCanvas implements Canvas {
     private final static String RELIEF_FORMAT = "png";
     private final static String XMLNS_URL = "http://www.w3.org/2000/xmlns/";
     private final static String XMLNS_SVG_URL = "http://www.w3.org/2000/svg";

@@ -48,6 +48,14 @@ public final class Filters {
         return (x) -> x.hasAttribute(attr) && vals.contains(x.attributeValue(attr));
     }
 
+    /**
+     * Retourne un prédicat qui n'est vrai que si la valeur attribuée
+     * à laquelle on applique le filtre ne possède PAS l'atrtibut désigné par attr,
+     * indépendament de sa valeur.
+     *
+     * @param attr Attribut dont on veut en vérifier l'absence
+     * @return Prédicat (cf. description de méthode)
+     */
     public static Predicate<Attributed<?>> notTagged (String attr) {
         return (x) -> !x.hasAttribute(attr);
     }

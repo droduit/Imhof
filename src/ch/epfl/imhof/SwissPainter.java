@@ -15,8 +15,9 @@ import ch.epfl.imhof.painting.RoadPainterGenerator.RoadSpec;
 
 /**
  * Représente un peintre pour les cartes suisses
- * @author Michel Schinz
+ * Ce fichier étant fournis, il n'a pas été commenté.
  *
+ * @author Michel Schinz
  */
 public final class SwissPainter {
     private static final Painter PAINTER;

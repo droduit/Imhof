@@ -17,7 +17,7 @@ import ch.epfl.imhof.Vector3;
  * @author Dominique Roduit (234868)
  *
  */
-public class HGTDigitalElevationModel implements DigitalElevationModel {
+public final class HGTDigitalElevationModel implements DigitalElevationModel {
     private static final double ARC = Math.toRadians(1);
 
     private final double delta;
