@@ -48,12 +48,12 @@ import javax.xml.transform.stream.StreamResult;
  * @author Dominique Roduit (234868)
  */
 public final class SVGCanvas implements Canvas {
-    private final static String RELIEF_FORMAT = "png";
     private final static String XMLNS_URL = "http://www.w3.org/2000/xmlns/";
     private final static String XMLNS_SVG_URL = "http://www.w3.org/2000/svg";
     private final static String XMLNS_SVG_VERSION = "1.1";
     private final static String XMLNS_XLINK_URL = "http://www.w3.org/1999/xlink";
-    private final static String BASE64_DATA_HEAD = "data:image/png;base64,";
+    private final static String RELIEF_FORMAT = "png";
+    private final static String BASE64_DATA_HEAD = "data:image/" + RELIEF_FORMAT + ";base64,";
 
     private final Document doc;
     private final Element root;
@@ -68,6 +68,8 @@ public final class SVGCanvas implements Canvas {
 
     private final Set<LineStyle> lineStyles;
     private final Set<Color> polygonStyles;
+
+    private Element relief;
 
     /**
      * Construit une image de la toile
@@ -179,7 +181,7 @@ public final class SVGCanvas implements Canvas {
      *
      * @param reliefImage L'image discrète du relief
      */
-    public void addRelief (BufferedImage reliefImage) throws IOException {
+    public void setRelief (BufferedImage reliefImage) throws IOException {
         // Conversion de l'image en Base64
         ByteArrayOutputStream reliefData = new ByteArrayOutputStream();
         OutputStream encoder = Base64.getEncoder().wrap(reliefData);
@@ -189,16 +191,17 @@ public final class SVGCanvas implements Canvas {
         encoder.close();
 
         // Création de la balise contenant l'image du relief
-        Element relief = this.doc.createElement("image");
-        relief.setAttributeNS(XMLNS_URL, "xmlns:xlink", XMLNS_XLINK_URL);
-        relief.setAttribute("id", "relief");
-        relief.setAttribute("x", "0");
-        relief.setAttribute("y", "0");
-        relief.setAttribute("width", Integer.toString((int)(this.width / this.pica)));
-        relief.setAttribute("height", Integer.toString((int)(this.height / this.pica)));
-        relief.setAttribute("xlink:href", BASE64_DATA_HEAD + reliefData.toString());
+        if (this.relief == null) {
+            this.relief = this.doc.createElement("image");
+            this.relief.setAttributeNS(XMLNS_URL, "xmlns:xlink", XMLNS_XLINK_URL);
+            this.relief.setAttribute("id", "relief");
+            this.relief.setAttribute("x", "0");
+            this.relief.setAttribute("y", "0");
+            this.relief.setAttribute("width", Integer.toString((int)(this.width / this.pica)));
+            this.relief.setAttribute("height", Integer.toString((int)(this.height / this.pica)));
+        }
 
-        this.root.appendChild(relief);
+        this.relief.setAttribute("xlink:href", BASE64_DATA_HEAD + reliefData.toString());
     }
 
     /**
@@ -223,6 +226,10 @@ public final class SVGCanvas implements Canvas {
             styleBuilder.append(color.toCSS());
 
         this.style.appendChild(this.doc.createTextNode(styleBuilder.toString()));
+
+        // Dessin du relief par dessus la carte
+        if (this.relief != null)
+            this.root.appendChild(this.relief);
 
         // Transformation du DOM en document XML
         Transformer t = TransformerFactory.newInstance().newTransformer();

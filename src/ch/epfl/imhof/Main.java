@@ -25,7 +25,16 @@ public class Main {
     private final static float GAUSS_FACTOR = 0.0017f;
 
     private static void usage () {
-        System.out.println("imhof 'OSM path' 'HGT path' 'bottom left longitude' 'bottom left latitude' 'top right longitude' 'top right latitude' 'dpi' 'output path' [output format]\n");
+        System.out.println("imhof osm hgt BL_lon BL_lat TR_lon TR_lat dpi out [format]");
+        System.out.println("       osm : Chemin du fichier OSM");
+        System.out.println("       hgt : Chemin du fichier HGT");
+        System.out.println("    BL_lon : Longitude du point en bas à gauche de la carte");
+        System.out.println("    BL_lat : Latitude du point en bas à gauche de la carte");
+        System.out.println("    TR_lon : Longitude du point en haut à droite de la carte");
+        System.out.println("    TR_lat : Latitude du point en haut à droite de la carte");
+        System.out.println("       dpi : Résolution de l'image");
+        System.out.println("       out : Chemin où la carte sera enregistrée");
+        System.out.println("    format : Format d'image (PNG, SVG,...) [Facultatif]");
     }
 
     /**
@@ -111,7 +120,7 @@ public class Main {
 
             painter.drawMap(map, canvas);
 
-            canvas.addRelief(relief);
+            canvas.setRelief(relief);
 
             canvas.write(outFile.getPath());
         } else {
